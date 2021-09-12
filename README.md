@@ -1,2 +1,2 @@
 # waccy
-Python Financial Analysis tools compatible with XBRL OIM
+Python Financial Analysis tools compatible with QBO and Xero
