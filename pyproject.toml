@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "waccy"
+version = "0.0.1"
+authors = [
+  { name="DecisionNerd", email="david@frontieranalytica.com" },
+]
+description = "Merger and acquisition financial modeling for Python"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/decsionnerd/waccy"
+"Bug Tracker" = "https://github.com/decisionnerd/waccy/issues"
