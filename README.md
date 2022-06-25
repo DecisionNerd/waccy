@@ -1,2 +1,3 @@
 # waccy
-Python Financial Analysis tools compatible with QBO and Xero
+Mergers and acquisition financial modeling for Python
+
