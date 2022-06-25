@@ -1,5 +1,5 @@
 
-# Contributor Covenant Code of Conduct
+# WACCY Code of Conduct
 
 ## Our Pledge
 
