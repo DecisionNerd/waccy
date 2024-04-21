@@ -1,5 +1,5 @@
 # waccy
-Mergers and acquisition financial modeling for Python
+Financial Modeling tools in Python
 
 ## Financial Modeling in Mergers and Acquisitions
 
