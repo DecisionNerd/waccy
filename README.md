@@ -1,8 +1,7 @@
 # waccy
 Financial Modeling tools in Python
 
-## Financial Modeling in Mergers and Acquisitions
-
+## Three Sheet Model
 TODO
 
 ## Forecasts based on Non-Financial Information
