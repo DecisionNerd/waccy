@@ -700,6 +700,14 @@ dependencies = [
     { name = "pydantic" },
 ]
 
+[package.optional-dependencies]
+edgar = [
+    { name = "waccy-edgar" },
+]
+quickbooks = [
+    { name = "waccy-quickbooks" },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "mypy" },
@@ -717,7 +725,10 @@ requires-dist = [
     { name = "pandera", specifier = ">=0.27.0" },
     { name = "polars", specifier = ">=1.36.1" },
     { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "waccy-edgar", marker = "extra == 'edgar'", specifier = ">=0.0.0" },
+    { name = "waccy-quickbooks", marker = "extra == 'quickbooks'", specifier = ">=0.0.0" },
 ]
+provides-extras = ["quickbooks", "edgar"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -727,6 +738,30 @@ dev = [
     { name = "ruff", specifier = ">=0.8.0" },
 ]
 docs = [{ name = "mkdocs", specifier = ">=1.6.1" }]
+
+[[package]]
+name = "waccy-edgar"
+version = "0.0.1a0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "waccy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6e/63/07e203beafed9309aa21916f03ea9fcce76fa0132a3074e93d37b1604f54/waccy_edgar-0.0.1a0.tar.gz", hash = "sha256:0eb3b7f794e928786e9c1e2e018b97127085f670566f0e04e373e5eaa6b8ce5a", size = 2489, upload-time = "2025-12-16T04:47:53.933Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/57/f0/7c5c4eb494dfad24aaf95ec53137fd7e40f2b407b22a038da1474d7d8db8/waccy_edgar-0.0.1a0-py3-none-any.whl", hash = "sha256:e7440a46dcdf47e1b2d17add0730bc8ac83d4e915a48dd49aa2cd6490dc7924c", size = 2678, upload-time = "2025-12-16T04:47:52.668Z" },
+]
+
+[[package]]
+name = "waccy-quickbooks"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "waccy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6e/38/d9244059de0560213bdfe301d451cdefe9231850010e8dd3f9a308572a43/waccy_quickbooks-0.1.0.tar.gz", hash = "sha256:c61e3752768742f46afc862b85d37094d23ea7f0d2b03c29e029657043caf8cb", size = 2473, upload-time = "2025-12-16T04:48:20.339Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/26/2c/b10da32ac7f203ac8e9a81a73e67a800e770fa27783119b0fb1a43632b64/waccy_quickbooks-0.1.0-py3-none-any.whl", hash = "sha256:1c99d77cecb835a8d018957c3d49ae4414a74c6b7196d7fcf28e8edd87e2486d", size = 2728, upload-time = "2025-12-16T04:48:19.566Z" },
+]
 
 [[package]]
 name = "watchdog"

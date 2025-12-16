@@ -1,6 +1,6 @@
 [project]
 name = "waccy-edgar"
-version = "0.0.1a"
+version = "0.0.2"
 description = "WACCY extension for SEC EDGAR filing parsing"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -17,7 +17,7 @@ classifiers = [
     "Topic :: Office/Business :: Financial",
 ]
 dependencies = [
-    "waccy>=0.0.2a",
+    "waccy>=0.0.2",
     # Add EDGAR parsing dependencies when implemented
     # "edgar-parser>=1.0.0",
 ]

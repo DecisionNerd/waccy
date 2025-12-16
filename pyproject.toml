@@ -1,6 +1,6 @@
 [project]
 name = "waccy"
-version = "0.0.2a"
+version = "0.0.2"
 description = "Intelligent financial modeling platform for small businesses"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -27,8 +27,8 @@ dependencies = [
 # Note: During development in monorepo, install extensions with:
 #   uv pip install -e extensions/waccy-quickbooks -e extensions/waccy-edgar
 # When published to PyPI, these reference published packages
-quickbooks = ["waccy-quickbooks>=0.1.0"]
-edgar = ["waccy-edgar>=0.1.0"]
+quickbooks = ["waccy-quickbooks>=0.0.1"]
+edgar = ["waccy-edgar>=0.0.1"]
 
 [project.scripts]
 waccy = "waccy.cli:main"
