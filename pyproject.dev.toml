@@ -1,0 +1,10 @@
+# Development configuration for monorepo
+# This file contains local path dependencies for development
+# Copy relevant sections to pyproject.toml when working locally
+# Or use: uv pip install -e extensions/waccy-quickbooks -e extensions/waccy-edgar
+
+[project.optional-dependencies]
+# Local development dependencies (use these in monorepo)
+quickbooks = ["waccy-quickbooks @ file:///${PROJECT_ROOT}/extensions/waccy-quickbooks"]
+edgar = ["waccy-edgar @ file:///${PROJECT_ROOT}/extensions/waccy-edgar"]
+

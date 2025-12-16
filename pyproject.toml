@@ -1,6 +1,6 @@
 [project]
 name = "waccy"
-version = "0.1.0"
+version = "0.0.2a"
 description = "Intelligent financial modeling platform for small businesses"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -24,11 +24,20 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Note: During development in monorepo, install extensions with:
+#   uv pip install -e extensions/waccy-quickbooks -e extensions/waccy-edgar
+# When published to PyPI, these reference published packages
 quickbooks = ["waccy-quickbooks>=0.1.0"]
 edgar = ["waccy-edgar>=0.1.0"]
 
 [project.scripts]
 waccy = "waccy.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/DecisionNerd/waccy"
+Repository = "https://github.com/DecisionNerd/waccy"
+Issues = "https://github.com/DecisionNerd/waccy/issues"
+Documentation = "https://github.com/DecisionNerd/waccy#readme"
 
 [build-system]
 requires = ["hatchling"]

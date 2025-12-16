@@ -254,10 +254,12 @@ Additional data sources available as modular extensions:
 
 ## 📁 Project Structure
 
+WACCY uses a **monorepo structure** where the core platform and first-party extensions are maintained together but built and published separately.
+
 ```
 waccy/
 ├── src/
-│   └── waccy/
+│   └── waccy/                       # Core platform
 │       ├── core/
 │       │   ├── ontology.py          # Standardized chart of accounts
 │       │   ├── models.py            # Core data models (Pydantic)
@@ -278,17 +280,37 @@ waccy/
 │           ├── dates.py
 │           ├── formatting.py
 │           └── validation.py
+├── extensions/                      # First-party extensions (monorepo)
+│   ├── waccy-quickbooks/            # QuickBooks Online integration
+│   │   ├── src/waccy_quickbooks/
+│   │   └── pyproject.toml
+│   └── waccy-edgar/                 # SEC EDGAR filing parser
+│       ├── src/waccy_edgar/
+│       └── pyproject.toml
 ├── tests/
 │   ├── unit/
 │   ├── integration/
 │   └── fixtures/
+├── scripts/
+│   ├── publish.py                   # Publish core package
+│   ├── build-extension.py          # Build extension packages
+│   └── publish-extension.py        # Publish extension packages
 ├── docs/
 │   ├── 0-MISSION.md
 │   ├── 1-ARCHITECTURE.md
 │   ├── 2-EXPERIENCE.md
 │   └── skills_models.md
-└── pyproject.toml
+└── pyproject.toml                   # Core package configuration
 ```
+
+### Monorepo Benefits
+
+- **Unified Development**: All packages in one repository for easier coordination
+- **Independent Publishing**: Each package builds and publishes separately to PyPI
+- **Shared Standards**: Consistent code quality, linting, and testing across packages
+- **Easier Refactoring**: Changes to core can be tested with all extensions immediately
+
+See [extensions/README.md](extensions/README.md) for details on working with extensions.
 
 ## 🧪 Testing
 

@@ -1,0 +1,77 @@
+[project]
+name = "waccy-quickbooks"
+version = "0.0.1a"
+description = "WACCY extension for QuickBooks Online integration"
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [
+    { name = "WACCY Contributors" }
+]
+keywords = ["finance", "financial-modeling", "accounting", "quickbooks", "waccy"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "waccy>=0.0.2a",
+    # Add QuickBooks API client dependency when implemented
+    # "quickbooks-python>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+]
+
+[project.entry-points."waccy.extractors"]
+quickbooks = "waccy_quickbooks.extractor:QuickBooksExtractor"
+
+[project.urls]
+Homepage = "https://github.com/DecisionNerd/waccy"
+Repository = "https://github.com/DecisionNerd/waccy"
+Issues = "https://github.com/DecisionNerd/waccy/issues"
+Documentation = "https://github.com/DecisionNerd/waccy#readme"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/waccy_quickbooks"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG", "SIM", "TCH", "PTH", "ERA", "PL", "PERF", "RET", "RUF"]
+ignore = ["E501", "PLR0913", "PLR2004"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.isort]
+known-first-party = ["waccy_quickbooks"]
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
