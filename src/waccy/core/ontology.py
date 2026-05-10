@@ -57,27 +57,27 @@ class StandardChartOfAccounts:
     def _initialize_standard_accounts(self) -> None:
         """Initialize the minimum chart of accounts for v0.1.0."""
         account_specs = [
-            ("revenue", "Revenue", AccountType.REVENUE, "income_statement", "credit", None, 100, ["sales", "sales revenue", "total revenue", "us-gaap:revenues", "revenues"]),
+            ("revenue", "Revenue", AccountType.REVENUE, "income_statement", "credit", None, 100, ["sales", "sales revenue", "total revenue", "income", "us-gaap:revenues", "revenues"]),
             ("cogs", "Cost of Goods Sold", AccountType.EXPENSE, "income_statement", "debit", None, 200, ["cost of goods sold", "cost of revenue", "cost of sales", "us-gaap:costofrevenue"]),
             ("operating_expenses", "Operating Expenses", AccountType.EXPENSE, "income_statement", "debit", None, 300, ["opex", "operating expense", "operating expenses", "general and administrative", "sg&a", "us-gaap:sellinggeneralandadministrativeexpense"]),
             ("depreciation_amortization", "Depreciation & Amortization", AccountType.EXPENSE, "income_statement", "debit", None, 350, ["depreciation", "amortization", "d&a", "us-gaap:depreciationdepletionandamortization"]),
             ("interest_expense", "Interest Expense", AccountType.EXPENSE, "income_statement", "debit", None, 400, ["interest", "interest expense", "us-gaap:interestexpense"]),
             ("tax_expense", "Tax Expense", AccountType.EXPENSE, "income_statement", "debit", None, 500, ["tax", "income tax", "income tax expense", "us-gaap:incometaxexpensebenefit"]),
-            ("cash", "Cash", AccountType.ASSET, "balance_sheet", "debit", None, 1000, ["bank", "cash and cash equivalents", "checking", "savings", "us-gaap:cashandcashequivalentsatcarryingvalue"]),
-            ("accounts_receivable", "Accounts Receivable", AccountType.ASSET, "balance_sheet", "debit", None, 1100, ["accounts receivable", "ar", "a/r", "us-gaap:accountsreceivablenetcurrent"]),
-            ("inventory", "Inventory", AccountType.ASSET, "balance_sheet", "debit", None, 1200, ["inventory", "stock", "us-gaap:inventorynet"]),
-            ("ppe", "Property, Plant & Equipment", AccountType.ASSET, "balance_sheet", "debit", None, 1300, ["fixed assets", "property plant and equipment", "ppe", "pp&e", "us-gaap:propertyplantandequipmentnet"]),
+            ("cash", "Cash", AccountType.ASSET, "balance_sheet", "debit", None, 1000, ["bank", "cash and cash equivalents", "checking", "savings", "undeposited funds", "us-gaap:cashandcashequivalentsatcarryingvalue"]),
+            ("accounts_receivable", "Accounts Receivable", AccountType.ASSET, "balance_sheet", "debit", None, 1100, ["accounts receivable", "accounts receivable a/r", "ar", "a/r", "us-gaap:accountsreceivablenetcurrent"]),
+            ("inventory", "Inventory", AccountType.ASSET, "balance_sheet", "debit", None, 1200, ["inventory", "inventory asset", "stock", "us-gaap:inventorynet"]),
+            ("ppe", "Property, Plant & Equipment", AccountType.ASSET, "balance_sheet", "debit", None, 1300, ["fixed assets", "original cost", "property plant and equipment", "ppe", "pp&e", "us-gaap:propertyplantandequipmentnet"]),
             ("accumulated_depreciation", "Accumulated Depreciation", AccountType.ASSET, "balance_sheet", "credit", None, 1350, ["accumulated depreciation", "us-gaap:accumulateddepreciationdepletionandamortizationpropertyplantandequipment"]),
-            ("accounts_payable", "Accounts Payable", AccountType.LIABILITY, "balance_sheet", "credit", None, 2000, ["accounts payable", "ap", "a/p", "us-gaap:accountspayablecurrent"]),
-            ("accrued_expenses", "Accrued Expenses", AccountType.LIABILITY, "balance_sheet", "credit", None, 2100, ["accrued expenses", "accruals", "accrued liabilities", "us-gaap:accruedliabilitiescurrent"]),
-            ("debt", "Debt", AccountType.LIABILITY, "balance_sheet", "credit", None, 2200, ["loan", "loans", "notes payable", "debt", "long-term debt", "us-gaap:longtermdebtcurrent", "us-gaap:longtermdebtnoncurrent"]),
-            ("equity", "Equity", AccountType.EQUITY, "balance_sheet", "credit", None, 3000, ["owners equity", "owner's equity", "members equity", "stockholders equity", "us-gaap:stockholdersequity"]),
+            ("accounts_payable", "Accounts Payable", AccountType.LIABILITY, "balance_sheet", "credit", None, 2000, ["accounts payable", "accounts payable a/p", "ap", "a/p", "us-gaap:accountspayablecurrent"]),
+            ("accrued_expenses", "Accrued Expenses", AccountType.LIABILITY, "balance_sheet", "credit", None, 2100, ["accrued expenses", "accruals", "accrued liabilities", "arizona dept of revenue payable", "board of equalization payable", "tax payable", "sales tax payable", "us-gaap:accruedliabilitiescurrent"]),
+            ("debt", "Debt", AccountType.LIABILITY, "balance_sheet", "credit", None, 2200, ["loan", "loans", "loan payable", "mastercard", "credit card", "notes payable", "debt", "long-term debt", "us-gaap:longtermdebtcurrent", "us-gaap:longtermdebtnoncurrent"]),
+            ("equity", "Equity", AccountType.EQUITY, "balance_sheet", "credit", None, 3000, ["owners equity", "owner's equity", "opening balance equity", "members equity", "stockholders equity", "us-gaap:stockholdersequity"]),
             ("retained_earnings", "Retained Earnings", AccountType.EQUITY, "balance_sheet", "credit", None, 3100, ["retained earnings", "us-gaap:retainedearningsaccumulateddeficit"]),
             ("net_income", "Net Income", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "operating", 4000, ["net income", "net earnings", "profit", "us-gaap:netincomeloss"]),
             ("depreciation_addback", "Depreciation Add-back", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "operating", 4100, ["depreciation addback", "depreciation and amortization", "us-gaap:depreciationdepletionandamortization"]),
             ("working_capital_movement", "Working Capital Movement", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "operating", 4200, ["change in working capital", "changes in operating assets and liabilities"]),
             ("capex", "Capital Expenditures", AccountType.CASH_FLOW, "cash_flow_statement", "debit", "investing", 5000, ["capex", "capital expenditures", "purchase of property and equipment", "us-gaap:paymentstoacquirepropertyplantandequipment"]),
-            ("financing_movement", "Financing Movement", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "financing", 6000, ["financing activities", "debt proceeds", "debt repayment", "us-gaap:proceedsfromissuanceoflongtermdebt"]),
+            ("financing_movement", "Financing Movement", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "financing", 6000, ["financing activities", "debt proceeds", "debt repayment", "net change in cash", "us-gaap:proceedsfromissuanceoflongtermdebt"]),
         ]
         for account_id, name, account_type, statement, normal_balance, cf_section, order, aliases in account_specs:
             self._add_account(

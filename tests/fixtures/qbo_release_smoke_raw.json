@@ -1,0 +1,191 @@
+{
+  "entity_name": "Sanitized QBO Release Fixture Co",
+  "company_info": {
+    "CompanyInfo": {
+      "CompanyName": "Sanitized QBO Release Fixture Co"
+    }
+  },
+  "accounts": [
+    {"Id": "1", "Name": "Sales", "AccountType": "Income"},
+    {"Id": "2", "Name": "Cost of Goods Sold", "AccountType": "Cost of Goods Sold"},
+    {"Id": "3", "Name": "Operating Expenses", "AccountType": "Expense"},
+    {"Id": "4", "Name": "Depreciation", "AccountType": "Expense"},
+    {"Id": "5", "Name": "Interest Expense", "AccountType": "Expense"},
+    {"Id": "6", "Name": "Income Tax Expense", "AccountType": "Expense"},
+    {"Id": "35", "Name": "Checking", "AccountType": "Bank"},
+    {"Id": "84", "Name": "Accounts Receivable (A/R)", "AccountType": "Accounts Receivable"},
+    {"Id": "81", "Name": "Inventory Asset", "AccountType": "Other Current Asset"},
+    {"Id": "4a", "Name": "Undeposited Funds", "AccountType": "Other Current Asset"},
+    {"Id": "90", "Name": "Original Cost", "AccountType": "Fixed Asset"},
+    {"Id": "91", "Name": "Accumulated Depreciation", "AccountType": "Fixed Asset"},
+    {"Id": "92", "Name": "Accounts Payable (A/P)", "AccountType": "Accounts Payable"},
+    {"Id": "93", "Name": "Arizona Dept. of Revenue Payable", "AccountType": "Other Current Liability"},
+    {"Id": "94", "Name": "Loan Payable", "AccountType": "Long Term Liability"},
+    {"Id": "95", "Name": "Opening Balance Equity", "AccountType": "Equity"},
+    {"Id": "96", "Name": "Retained Earnings", "AccountType": "Equity"}
+  ],
+  "reports": {
+    "2023": {
+      "ProfitAndLoss": {
+        "Header": {
+          "ReportName": "ProfitAndLoss",
+          "StartPeriod": "2023-01-01",
+          "EndPeriod": "2023-12-31",
+          "Currency": "USD",
+          "Option": [{"Name": "NoReportData", "Value": "false"}]
+        },
+        "Rows": {
+          "Row": [
+            {"Header": {"ColData": [{"value": "Income"}, {"value": ""}]}, "Rows": {"Row": [{"type": "Data", "ColData": [{"id": "1", "value": "Sales"}, {"value": "1000"}]}]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Cost of Goods Sold"}, {"value": ""}]}, "Rows": {"Row": [{"type": "Data", "ColData": [{"id": "2", "value": "Cost of Goods Sold"}, {"value": "400"}]}]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Expenses"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"id": "3", "value": "Operating Expenses"}, {"value": "200"}]},
+              {"type": "Data", "ColData": [{"id": "4", "value": "Depreciation"}, {"value": "50"}]},
+              {"type": "Data", "ColData": [{"id": "5", "value": "Interest Expense"}, {"value": "20"}]},
+              {"type": "Data", "ColData": [{"id": "6", "value": "Income Tax Expense"}, {"value": "66"}]}
+            ]}, "type": "Section"}
+          ]
+        }
+      },
+      "BalanceSheet": {
+        "Header": {
+          "ReportName": "BalanceSheet",
+          "StartPeriod": "2023-01-01",
+          "EndPeriod": "2023-12-31",
+          "Currency": "USD",
+          "Option": [{"Name": "NoReportData", "Value": "false"}]
+        },
+        "Rows": {
+          "Row": [
+            {"Header": {"ColData": [{"value": "ASSETS"}, {"value": ""}]}, "Rows": {"Row": [
+              {"Header": {"ColData": [{"value": "Current Assets"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "35", "value": "Checking"}, {"value": "100"}]},
+                {"type": "Data", "ColData": [{"id": "84", "value": "Accounts Receivable (A/R)"}, {"value": "150"}]},
+                {"type": "Data", "ColData": [{"id": "81", "value": "Inventory Asset"}, {"value": "100"}]}
+              ]}, "type": "Section"},
+              {"Header": {"ColData": [{"value": "Fixed Assets"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "90", "value": "Original Cost"}, {"value": "500"}]},
+                {"type": "Data", "ColData": [{"id": "91", "value": "Accumulated Depreciation"}, {"value": "50"}]}
+              ]}, "type": "Section"}
+            ]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "LIABILITIES AND EQUITY"}, {"value": ""}]}, "Rows": {"Row": [
+              {"Header": {"ColData": [{"value": "Liabilities"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "92", "value": "Accounts Payable (A/P)"}, {"value": "120"}]},
+                {"type": "Data", "ColData": [{"id": "93", "value": "Arizona Dept. of Revenue Payable"}, {"value": "80"}]},
+                {"type": "Data", "ColData": [{"id": "94", "value": "Loan Payable"}, {"value": "300"}]}
+              ]}, "type": "Section"},
+              {"Header": {"ColData": [{"value": "Equity"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "95", "value": "Opening Balance Equity"}, {"value": "36"}]},
+                {"type": "Data", "ColData": [{"id": "96", "value": "Retained Earnings"}, {"value": "264"}]}
+              ]}, "type": "Section"}
+            ]}, "type": "Section"}
+          ]
+        }
+      },
+      "CashFlow": {
+        "Header": {
+          "ReportName": "CashFlow",
+          "StartPeriod": "2023-01-01",
+          "EndPeriod": "2023-12-31",
+          "Currency": "USD",
+          "Option": [{"Name": "NoReportData", "Value": "false"}]
+        },
+        "Rows": {
+          "Row": [
+            {"Header": {"ColData": [{"value": "Operating Activities"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"value": "Depreciation Addback"}, {"value": "50"}]},
+              {"type": "Data", "ColData": [{"value": "Change in Working Capital"}, {"value": "-20"}]}
+            ]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Investing Activities"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"value": "Capital Expenditures"}, {"value": "-100"}]}
+            ]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Financing Activities"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"value": "Debt Proceeds"}, {"value": "70"}]}
+            ]}, "Summary": {"ColData": [{"value": "Net Change In Cash"}, {"value": "264"}]}, "type": "Section"}
+          ]
+        }
+      }
+    },
+    "2024": {
+      "ProfitAndLoss": {
+        "Header": {
+          "ReportName": "ProfitAndLoss",
+          "StartPeriod": "2024-01-01",
+          "EndPeriod": "2024-12-31",
+          "Currency": "USD",
+          "Option": [{"Name": "NoReportData", "Value": "false"}]
+        },
+        "Rows": {
+          "Row": [
+            {"Header": {"ColData": [{"value": "Income"}, {"value": ""}]}, "Rows": {"Row": [{"type": "Data", "ColData": [{"id": "1", "value": "Sales"}, {"value": "1200"}]}]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Cost of Goods Sold"}, {"value": ""}]}, "Rows": {"Row": [{"type": "Data", "ColData": [{"id": "2", "value": "Cost of Goods Sold"}, {"value": "480"}]}]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Expenses"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"id": "3", "value": "Operating Expenses"}, {"value": "240"}]},
+              {"type": "Data", "ColData": [{"id": "4", "value": "Depreciation"}, {"value": "60"}]},
+              {"type": "Data", "ColData": [{"id": "5", "value": "Interest Expense"}, {"value": "25"}]},
+              {"type": "Data", "ColData": [{"id": "6", "value": "Income Tax Expense"}, {"value": "79"}]}
+            ]}, "type": "Section"}
+          ]
+        }
+      },
+      "BalanceSheet": {
+        "Header": {
+          "ReportName": "BalanceSheet",
+          "StartPeriod": "2024-01-01",
+          "EndPeriod": "2024-12-31",
+          "Currency": "USD",
+          "Option": [{"Name": "NoReportData", "Value": "false"}]
+        },
+        "Rows": {
+          "Row": [
+            {"Header": {"ColData": [{"value": "ASSETS"}, {"value": ""}]}, "Rows": {"Row": [
+              {"Header": {"ColData": [{"value": "Current Assets"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "35", "value": "Checking"}, {"value": "380"}]},
+                {"type": "Data", "ColData": [{"id": "84", "value": "Accounts Receivable (A/R)"}, {"value": "180"}]},
+                {"type": "Data", "ColData": [{"id": "81", "value": "Inventory Asset"}, {"value": "120"}]}
+              ]}, "type": "Section"},
+              {"Header": {"ColData": [{"value": "Fixed Assets"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "90", "value": "Original Cost"}, {"value": "600"}]},
+                {"type": "Data", "ColData": [{"id": "91", "value": "Accumulated Depreciation"}, {"value": "110"}]}
+              ]}, "type": "Section"}
+            ]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "LIABILITIES AND EQUITY"}, {"value": ""}]}, "Rows": {"Row": [
+              {"Header": {"ColData": [{"value": "Liabilities"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "92", "value": "Accounts Payable (A/P)"}, {"value": "140"}]},
+                {"type": "Data", "ColData": [{"id": "93", "value": "Arizona Dept. of Revenue Payable"}, {"value": "90"}]},
+                {"type": "Data", "ColData": [{"id": "94", "value": "Loan Payable"}, {"value": "354"}]}
+              ]}, "type": "Section"},
+              {"Header": {"ColData": [{"value": "Equity"}, {"value": ""}]}, "Rows": {"Row": [
+                {"type": "Data", "ColData": [{"id": "95", "value": "Opening Balance Equity"}, {"value": "270"}]},
+                {"type": "Data", "ColData": [{"id": "96", "value": "Retained Earnings"}, {"value": "316"}]}
+              ]}, "type": "Section"}
+            ]}, "type": "Section"}
+          ]
+        }
+      },
+      "CashFlow": {
+        "Header": {
+          "ReportName": "CashFlow",
+          "StartPeriod": "2024-01-01",
+          "EndPeriod": "2024-12-31",
+          "Currency": "USD",
+          "Option": [{"Name": "NoReportData", "Value": "false"}]
+        },
+        "Rows": {
+          "Row": [
+            {"Header": {"ColData": [{"value": "Operating Activities"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"value": "Depreciation Addback"}, {"value": "60"}]},
+              {"type": "Data", "ColData": [{"value": "Change in Working Capital"}, {"value": "-50"}]}
+            ]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Investing Activities"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"value": "Capital Expenditures"}, {"value": "-100"}]}
+            ]}, "type": "Section"},
+            {"Header": {"ColData": [{"value": "Financing Activities"}, {"value": ""}]}, "Rows": {"Row": [
+              {"type": "Data", "ColData": [{"value": "Debt Proceeds"}, {"value": "54"}]}
+            ]}, "Summary": {"ColData": [{"value": "Net Change In Cash"}, {"value": "280"}]}, "type": "Section"}
+          ]
+        }
+      }
+    }
+  }
+}

@@ -17,9 +17,8 @@ classifiers = [
     "Topic :: Office/Business :: Financial",
 ]
 dependencies = [
+    "intuit-oauth>=1.2.6",
     "waccy>=0.0.2",
-    # Add QuickBooks API client dependency when implemented
-    # "quickbooks-python>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -76,3 +75,7 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["intuitlib", "intuitlib.*", "waccy", "waccy.*"]
+ignore_missing_imports = true
