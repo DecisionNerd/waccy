@@ -76,6 +76,11 @@ class QuickBooksExtractor(Extractor):
 
 
 def _period_from_dict(data: dict[str, Any]) -> ReportingPeriod:
+    missing_keys = {"label", "start_date", "end_date"} - data.keys()
+    if missing_keys:
+        missing = ", ".join(sorted(missing_keys))
+        raise ValueError(f"QuickBooks fixture period is missing required keys: {missing}. Period: {data!r}")
+
     return ReportingPeriod(
         label=str(data["label"]),
         start_date=date.fromisoformat(str(data["start_date"])),

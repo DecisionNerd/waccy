@@ -156,6 +156,8 @@ def test_qbo_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
         extractor.extract({"fixture": {"records": ["not-a-dict"]}})
     with pytest.raises(ValueError, match="periods must be dictionaries"):
         extractor.extract({"fixture": {"records": [], "periods": ["not-a-dict"]}})
+    with pytest.raises(ValueError, match="missing required keys: end_date"):
+        extractor.extract({"fixture": {"records": [], "periods": [{"label": "2024", "start_date": "2024-01-01"}]}})
     with pytest.raises(ValueError, match="accounts must be a list"):
         extractor.extract({"fixture": {"records": [], "accounts": "not-a-list"}})
     with pytest.raises(ValueError, match="accounts must be dictionaries"):
@@ -197,6 +199,8 @@ def test_edgar_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
         extractor.extract({"fixture": {"records": ["not-a-dict"]}})
     with pytest.raises(ValueError, match="periods must be dictionaries"):
         extractor.extract({"fixture": {"records": [], "periods": ["not-a-dict"]}})
+    with pytest.raises(ValueError, match="missing required keys: end_date"):
+        extractor.extract({"fixture": {"records": [], "periods": [{"label": "2024", "start_date": "2024-01-01"}]}})
 
 
 def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> None:
