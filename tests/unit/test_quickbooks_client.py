@@ -82,6 +82,7 @@ def test_api_client_pulls_company_accounts_and_financial_reports() -> None:
     assert set(pull.reports) == {"ProfitAndLoss", "BalanceSheet", "CashFlow"}
     assert all("sandbox-quickbooks.api.intuit.com" in url for url in seen_urls)
     assert any("start_date=2024-01-01" in url for url in seen_urls)
+    assert any("end_date=2024-12-31" in url for url in seen_urls)
 
 
 def test_api_client_from_token_cache_refreshes_expired_token(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
