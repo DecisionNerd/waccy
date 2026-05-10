@@ -3,7 +3,8 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from waccy.core.models import ExtractedData
+from waccy.core.models import ExtractedData, ExtractedTransaction
+from waccy.core.validation import validate_extracted_data
 
 
 class Extractor(ABC):
@@ -33,14 +34,6 @@ class Extractor(ABC):
 
     def validate(self, data: ExtractedData) -> bool:
         """Validate extracted data."""
-        # Default implementation using Pandera
-        from waccy.core.validation import validate_extracted_data
-
         return validate_extracted_data(data)
 
-
-# Re-export for convenience
-from waccy.core.models import ExtractedData, ExtractedTransaction  # noqa: E402
-
-__all__ = ["Extractor", "ExtractedData", "ExtractedTransaction"]
-
+__all__ = ["ExtractedData", "ExtractedTransaction", "Extractor"]

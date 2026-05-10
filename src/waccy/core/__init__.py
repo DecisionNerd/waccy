@@ -1,15 +1,50 @@
 """Core platform components: ontology, models, and validation."""
 
-from waccy.core.models import ExtractedData, ExtractedTransaction
+from waccy.core.models import (
+    ExtractedData,
+    ExtractedTransaction,
+    FinancialStatement,
+    IssueSeverity,
+    MappedFinancialDataset,
+    MappedFinancialRecord,
+    MappingDiagnostic,
+    MappingOverride,
+    MappingStatus,
+    NormalizedFinancialDataset,
+    PeriodType,
+    ReportingPeriod,
+    SourceRecord,
+    SourceReference,
+    StatementLine,
+    ThreeStatementModel,
+    ValidatedFinancialDataset,
+    ValidationIssue,
+)
 from waccy.core.ontology import AccountCategory, AccountType, StandardChartOfAccounts
-from waccy.core.validation import validate_extracted_data
+from waccy.core.validation import validate_extracted_data, validate_mapped_dataset
 
 __all__ = [
     "AccountCategory",
     "AccountType",
     "ExtractedData",
     "ExtractedTransaction",
+    "FinancialStatement",
+    "IssueSeverity",
+    "MappedFinancialDataset",
+    "MappedFinancialRecord",
+    "MappingDiagnostic",
+    "MappingOverride",
+    "MappingStatus",
+    "NormalizedFinancialDataset",
+    "PeriodType",
+    "ReportingPeriod",
+    "SourceRecord",
+    "SourceReference",
     "StandardChartOfAccounts",
+    "StatementLine",
+    "ThreeStatementModel",
+    "ValidatedFinancialDataset",
+    "ValidationIssue",
     "validate_extracted_data",
+    "validate_mapped_dataset",
 ]
-

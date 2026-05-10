@@ -1,12 +1,17 @@
-"""SEC EDGAR extractor implementation."""
+"""SEC EDGAR fixture-first extractor implementation."""
 
+from __future__ import annotations
+
+from datetime import date
 from typing import Any
 
-from waccy.extraction.base import ExtractedData, Extractor
+from waccy.core.models import ExtractedData, PeriodType, ReportingPeriod
+from waccy.extraction.base import Extractor
+from waccy.extraction.mapper import source_record_from_dict
 
 
 class EdgarExtractor(Extractor):
-    """Extractor for SEC EDGAR filings."""
+    """Extractor for SEC EDGAR-shaped fixture data."""
 
     @property
     def name(self) -> str:
@@ -19,19 +24,39 @@ class EdgarExtractor(Extractor):
         return "edgar"
 
     def authenticate(self, credentials: dict[str, str]) -> bool:
-        """Authenticate with SEC EDGAR (no authentication required)."""
-        # EDGAR is publicly accessible, no authentication needed
+        """Authenticate with SEC EDGAR fixture mode."""
+        del credentials
         return True
 
     def extract(self, config: dict[str, Any]) -> ExtractedData:
-        """Extract data from SEC EDGAR filings."""
-        # TODO: Implement EDGAR extraction
-        # This will:
-        # 1. Fetch filings from SEC EDGAR API
-        # 2. Parse 10-K, 10-Q, 8-K filings
-        # 3. Extract financial statements
-        # 4. Extract pattern data for learning
-        # 5. Map to WACCY standard accounts
-        # 6. Return ExtractedData
-        raise NotImplementedError("EDGAR extraction not yet implemented")
+        """Extract data from an EDGAR-shaped fixture or dictionary."""
+        fixture = config.get("fixture") or config.get("data") or config
+        if "records" not in fixture:
+            raise ValueError("EDGAR fixture extraction requires a 'records' list.")
 
+        periods = [_period_from_dict(period) for period in fixture.get("periods", [])]
+        records = [
+            source_record_from_dict(record, self.data_source)
+            for record in fixture["records"]
+        ]
+        return ExtractedData(
+            entity_name=str(fixture.get("entity_name", config.get("ticker", "EDGAR Entity"))),
+            periods=periods,
+            source_records=records,
+            metadata={
+                "source": self.data_source,
+                "mode": "fixture",
+                "ticker": config.get("ticker"),
+                **dict(fixture.get("metadata", {})),
+            },
+            quality_score=1.0,
+        )
+
+
+def _period_from_dict(data: dict[str, Any]) -> ReportingPeriod:
+    return ReportingPeriod(
+        label=str(data["label"]),
+        start_date=date.fromisoformat(str(data["start_date"])),
+        end_date=date.fromisoformat(str(data["end_date"])),
+        period_type=PeriodType(str(data.get("period_type", "year"))),
+    )

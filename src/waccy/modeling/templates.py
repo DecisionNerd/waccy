@@ -23,6 +23,6 @@ class ModelTemplate:
 
     def apply_template(self, data: dict[str, Any]) -> dict[str, Any]:
         """Apply template to data."""
+        del data
         # TODO: Implement template application
         return {}
-

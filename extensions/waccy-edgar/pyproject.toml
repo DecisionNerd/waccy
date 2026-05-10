@@ -48,6 +48,8 @@ packages = ["src/waccy_edgar"]
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+
+[tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG", "SIM", "TCH", "PTH", "ERA", "PL", "PERF", "RET", "RUF"]
 ignore = ["E501", "PLR0913", "PLR2004"]
 
@@ -74,4 +76,3 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
-

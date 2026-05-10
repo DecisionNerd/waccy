@@ -1,6 +1,7 @@
 """Validation utility functions."""
 
 from datetime import date
+from math import isnan
 
 
 def validate_date_range(start: date, end: date) -> bool:
@@ -10,5 +11,4 @@ def validate_date_range(start: date, end: date) -> bool:
 
 def validate_amount(amount: float | int) -> bool:
     """Validate that amount is a valid number."""
-    return isinstance(amount, (int, float)) and not (isinstance(amount, float) and amount != amount)  # Check for NaN
-
+    return isinstance(amount, (int, float)) and not (isinstance(amount, float) and isnan(amount))

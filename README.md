@@ -14,7 +14,17 @@ WACCY is an intelligent financial modeling platform designed to automatically ex
 
 Unlike large enterprises with dedicated accounting teams, small businesses often have inconsistent record-keeping, ambiguous account classifications, incomplete data, and limited financial infrastructure. WACCY transforms this raw, often chaotic business data into comprehensive, auditable, and decision-ready financial models that adhere to institutional-quality standards.
 
-## 🚀 Quick Start
+## Current Status
+
+WACCY is currently an early scaffold. The published packages expose the core interfaces, registry, data model shells, and first-party extension packages, but the end-to-end extraction and financial model workflow is not implemented yet.
+
+The first useful vertical slice is tracked in [milestone v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1) and [issue #15](https://github.com/DecisionNerd/waccy/issues/15). That release is focused on generating a three-sheet workbook from QBO/QuickBooks and EDGAR fixture data:
+
+* Income Statement
+* Balance Sheet
+* Cash Flow Statement
+
+## Quick Start
 
 ### Installation
 
@@ -35,36 +45,28 @@ uv pip install waccy-quickbooks
 uv pip install waccy-edgar
 ```
 
-### Basic Usage
+### What Works Today
+
+The current package can discover installed extractor entry points and expose the public API skeleton:
 
 ```python
 from waccy.extraction import ExtractorRegistry
-from waccy.modeling import ModelBuilder
 
-# Discover available extractors
 registry = ExtractorRegistry()
 available_sources = registry.list_extractors()
 print(f"Available data sources: {available_sources}")
-
-# Extract data from QuickBooks Online
-quickbooks_extractor = registry.get_extractor("quickbooks")
-extracted_data = quickbooks_extractor().extract({
-    "company_id": "your_company_id",
-    "date_range": ("2023-01-01", "2024-12-31")
-})
-
-# Build a 3-statement financial model
-builder = ModelBuilder()
-model = builder.build_three_statement_model(
-    extracted_data=extracted_data,
-    forecast_periods=12
-)
-
-# Export to Google Sheets
-builder.export_to_sheets(model, output_path="financial_model.xlsx")
 ```
 
-## 📋 Core Features
+The following APIs are intentionally present but still raise `NotImplementedError` or return placeholders:
+
+* QuickBooks extraction
+* EDGAR extraction
+* account mapping and classification
+* three-statement model building
+* spreadsheet export
+* validation and quality reporting
+
+## Planned Capabilities
 
 ### 🤖 **AI-Powered Data Extraction & Classification**
 
@@ -115,13 +117,15 @@ builder.export_to_sheets(model, output_path="financial_model.xlsx")
 
 ### 📝 **Professional Model Outputs**
 
-* **Google Sheets Export**: Production-ready spreadsheet models with proper formatting
+* **Spreadsheet Export**: Production-ready workbook models with proper formatting
 * **Professional Architecture**: Modular tab structures, consistent time axis, clear sign conventions
 * **Color Conventions**: Inputs in blue, calculations in black, outputs in green
 * **Balance Checks**: Built-in reconciliation tables and error flags
 * **Scenario Tooling**: Data tables for sensitivity analysis, scenario toggles, goal seek integration
 
-## 🔄 Complete Workflow
+## Planned Workflow
+
+The target v0.1.0 workflow looks like this, but it is not runnable in the current package:
 
 ```python
 from waccy.extraction import ExtractorRegistry
@@ -172,7 +176,7 @@ dcf_model = builder.build_dcf_model(
     exit_multiple=12.0
 )
 
-# 5. Export to Google Sheets
+# 5. Export to spreadsheet output
 builder.export_to_sheets(model, output_path="financial_model.xlsx")
 builder.export_to_sheets(dcf_model, output_path="dcf_valuation.xlsx")
 
@@ -183,7 +187,7 @@ print(f"Average mapping confidence: {quality_report.avg_confidence:.2f}")
 print(f"Issues flagged: {len(quality_report.issues)}")
 ```
 
-## 📊 Example Output
+## Target Output
 
 ### Standardized Account Mapping
 
@@ -192,32 +196,13 @@ print(f"Issues flagged: {len(quality_report.issues)}")
 **Confidence**: 0.95  
 **Validation**: ✅ Transaction patterns match revenue recognition
 
-### 3-Statement Model Structure
+### v0.1.0 Workbook Structure
 
 ```
 Financial Model.xlsx
-├── Assumptions
-│   ├── Revenue Drivers
-│   ├── Cost Assumptions
-│   └── Working Capital
 ├── Income Statement
-│   ├── Historical (3 years)
-│   └── Forecast (2 years)
 ├── Balance Sheet
-│   ├── Assets (Current & Non-Current)
-│   ├── Liabilities (Current & Non-Current)
-│   └── Equity
-├── Cash Flow Statement
-│   ├── Operating Activities
-│   ├── Investing Activities
-│   └── Financing Activities
-├── Supporting Schedules
-│   ├── Working Capital Detail
-│   ├── Debt Schedule
-│   └── Depreciation
-└── Checks & Reconciliations
-    ├── Balance Checks
-    └── Quality Metrics
+└── Cash Flow Statement
 ```
 
 ## 🔗 Core Data Sources
@@ -226,25 +211,27 @@ Financial Model.xlsx
 
 **Primary Data Source** - The accounting system most commonly used by small businesses.
 
-* Direct API integration for chart of accounts, general ledger, and financial statements
-* Intelligent handling of ambiguous, inconsistently-named accounts
-* Transaction-level detail extraction
-* Vendor and customer data integration
+Planned for v0.1.0:
+
+* Fixture-first extraction path for chart of accounts and statement data
+* Real-client path documented behind explicit credentials/configuration
+* Account normalization and source provenance
 * Skeptical treatment of source classifications with validation
 
 ### SEC EDGAR
 
 **Pattern Learning & Reference Data** - High-quality financial data for learning and benchmarking.
 
-* Automated parsing of 10-K, 10-Q, 8-K filings
-* Proxy statement and registration statement processing
-* Pattern extraction for proper financial classification
-* Learning causal chains from professional financial reports
-* Application of learned patterns to small business data
+Planned for v0.1.0:
+
+* Fixture-first extraction path for public company statement data
+* Deterministic XBRL/concept mapping to WACCY accounts
+* Period normalization and source provenance
+* A clear decision on whether EDGAR pattern learning ships in v0.1.0 or is deferred
 
 ### Extension Packages
 
-Additional data sources available as modular extensions:
+Additional data sources are planned as modular extensions, but they are not included in the current repository:
 
 * `waccy-google` - Google Drive and Gmail integration
 * `waccy-xero` - Xero accounting system
@@ -275,7 +262,7 @@ waccy/
 │       ├── modeling/
 │       │   ├── builder.py           # Model construction
 │       │   ├── templates.py         # Model templates
-│       │   └── exporters.py         # Google Sheets export
+│       │   └── exporters.py         # Spreadsheet export
 │       └── utils/
 │           ├── dates.py
 │           ├── formatting.py
@@ -297,9 +284,12 @@ waccy/
 │   └── publish-extension.py        # Publish extension packages
 ├── docs/
 │   ├── 0-MISSION.md
-│   ├── 1-ARCHITECTURE.md
-│   ├── 2-EXPERIENCE.md
-│   └── skills_models.md
+│   ├── 1-EXPERIENCE.md
+│   ├── 2-REQUIREMENTS.md
+│   ├── 3-ARCHITECTURE.md
+│   ├── assets/
+│   ├── examples/
+│   └── references/
 └── pyproject.toml                   # Core package configuration
 ```
 
@@ -339,9 +329,9 @@ uv run mypy src/waccy
 ## 📚 Documentation
 
 * **[Mission Statement](docs/0-MISSION.md)** - Project goals, philosophy, and roadmap
-* **[Architecture](docs/1-ARCHITECTURE.md)** - Technical architecture and design principles
-* **[Experience Guide](docs/2-EXPERIENCE.md)** - User experience and workflows
-* **[Skills & Models](docs/skills_models.md)** - Financial modeling capabilities
+* **[Experience](docs/1-EXPERIENCE.md)** - Target user workflows and release experience
+* **[Requirements](docs/2-REQUIREMENTS.md)** - Financial modeling requirements and capabilities
+* **[Architecture](docs/3-ARCHITECTURE.md)** - Technical architecture and design principles
 
 ## 🏛️ Design Principles
 
@@ -395,23 +385,29 @@ Want to add a new data source? Create an extension package:
 1. Create a new package: `waccy-yourdatasource`
 2. Implement the `Extractor` interface from `waccy.extraction.base`
 3. Register your extension via entry points
-4. Follow the [Extension Development Guide](docs/1-ARCHITECTURE.md#extension-development-guide)
+4. Follow the [Extension Development Guide](docs/3-ARCHITECTURE.md#extension-development-guide)
 
-See our [Architecture Documentation](docs/1-ARCHITECTURE.md) for detailed extension development guidelines.
+See our [Architecture Documentation](docs/3-ARCHITECTURE.md) for detailed extension development guidelines.
 
 ### Code of Conduct
 
 Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming environment for all contributors.
 
-## 📈 Project Status
+## Project Status
 
-* **Phase 1**: 📋 Planned - Core foundation and 3-statement models
-* **Phase 2**: 📋 Planned - Public market data and pattern learning (EDGAR)
-* **Phase 3**: 📋 Planned - Advanced valuation models (DCF, M&A, LBO)
-* **Phase 4**: 📋 Planned - Specialized model types (SaaS, REIT, project finance)
-* **Phase 5**: 📋 Planned - Advanced analysis and decision support
+* **Current published core**: `waccy 0.0.2`
+* **Current published first-party extensions**: `waccy-quickbooks 0.1.0`, `waccy-edgar 0.0.2`
+* **Current implementation**: early scaffold with public interfaces and extension discovery
+* **Next milestone**: [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1), focused on QBO/EDGAR three-sheet financial model generation
 
-**Current Status**: Early development - Architecture and core platform design  
+Planned phases:
+
+* **Phase 1**: Core foundation and three-statement models
+* **Phase 2**: Public market data and pattern learning
+* **Phase 3**: Advanced valuation models
+* **Phase 4**: Specialized model types
+* **Phase 5**: Advanced analysis and decision support
+
 **Python Version**: 3.13+  
 **Package Manager**: [uv](https://github.com/astral-sh/uv)  
 **CI/CD**: GitHub Actions (coming soon)

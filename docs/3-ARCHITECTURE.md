@@ -9,6 +9,134 @@ WACCY is designed as a core platform with a modular extension architecture. The 
 - **Clean Separation**: Core platform logic independent of data source implementations
 - **Easy Distribution**: Both core and extensions publishable to PyPI independently
 
+## Current Implementation Status
+
+This document describes both the intended architecture and the current scaffold. As of the published package set:
+
+- `waccy` is `0.0.2`
+- `waccy-quickbooks` is `0.1.0`
+- `waccy-edgar` is `0.0.2`
+
+The repository currently contains the core interfaces, public package exports, extension discovery, placeholder extractors, and build/publish tooling. The end-to-end workflow is tracked for [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1): QBO/QuickBooks and EDGAR inputs, canonical mapping, a three-statement model object, and XLSX export.
+
+## Layered Data Contract
+
+WACCY should keep extraction, normalization, modeling, metrics, and export as separate layers. The v0.1.0 implementation should make these contracts explicit so future model types can reuse the same normalized financial data.
+
+```text
+source extractor
+  -> raw extracted data
+  -> normalized financial dataset
+  -> mapped financial dataset
+  -> validated financial dataset
+  -> model and metric builders
+  -> exporters
+```
+
+### Source Extractor
+
+An extractor is source-specific. It knows how to read QBO, EDGAR, or another system and return source records with provenance. It should not know how to build a three-statement model.
+
+### Raw Extracted Data
+
+Raw extracted data preserves source-native concepts: account names, account IDs, statement labels, transaction IDs, dates, periods, units, and source metadata. This layer is useful for auditability and debugging.
+
+### Normalized Financial Dataset
+
+The normalized financial dataset is the reusable contract between extraction and downstream analysis. It should represent source records in a consistent shape: periods, entities, accounts or concepts, amounts, units, source system, and provenance. It is still allowed to contain source-native account IDs and concepts.
+
+This layer is what lets WACCY support future metric extraction and model types without rewriting extractors.
+
+### Mapped Financial Dataset
+
+The mapped dataset connects normalized records to the WACCY ontology. It adds canonical account IDs, confidence, review status, ambiguity diagnostics, and optional user overrides.
+
+### Validated Financial Dataset
+
+The validated dataset adds quality and reconciliation results: missing periods, unmapped accounts, balance checks, cash-flow tie-outs, and other diagnostics. Model and metric builders should consume this layer rather than raw source data.
+
+### Model And Metric Builders
+
+Builders should be source-agnostic. A three-statement model builder, DCF builder, SaaS metric extractor, covenant calculator, or comparables spreader should consume the validated dataset and ontology metadata rather than source-specific QBO or EDGAR structures.
+
+### Exporters
+
+Exporters render model or metric outputs into files or external systems. v0.1.0 targets XLSX workbook export; other output targets can be added later without changing extractor contracts.
+
+## Data Source Strategy
+
+WACCY keeps the core platform focused while allowing data sources to be added through extension packages. The first-party source strategy centers on QBO/QuickBooks and SEC EDGAR because they solve different parts of the small-business modeling problem.
+
+### QBO / QuickBooks
+
+QBO is the primary small-business accounting source. The integration should extract chart of accounts, financial statements, general ledger or transaction-level detail, and metadata needed to preserve source provenance.
+
+Architecturally, QBO data should not be trusted blindly. Source account names and account types are useful signals, but WACCY should still map them through the standard ontology and report confidence or ambiguity.
+
+### SEC EDGAR
+
+EDGAR serves two architectural roles:
+
+- a structured public-company source for comparable financial statement data
+- a reference corpus for professional classification, terminology, and financial-statement patterns
+
+For v0.1.0, deterministic EDGAR/XBRL concept mapping is enough to support the vertical slice. Pattern learning can be added later without blocking the first model-generation path.
+
+### Modular Extensions
+
+All other source systems should be added as modular packages that implement the same extractor contract. Examples include:
+
+- Google Drive, Gmail, PDFs, and spreadsheets
+- banking and payment systems
+- CRM and sales systems
+- HR and payroll systems
+- ERP and inventory systems
+- market data APIs
+- other accounting systems such as Xero, Sage, and NetSuite
+
+The core platform should remain source-agnostic after extraction. All sources must normalize into the shared financial dataset contract and then map into the WACCY ontology before model construction or metric extraction.
+
+## Parsing And Classification Philosophy
+
+WACCY should use deterministic logic wherever source structures are known:
+
+- structured APIs for QBO and other accounting systems
+- XBRL/company-facts structures for EDGAR
+- explicit mappings for known account names, account types, and concepts
+- formulaic financial statement construction and reconciliation
+
+LLMs can assist where ambiguity is unavoidable:
+
+- ambiguous account names
+- incomplete context
+- document interpretation
+- classification suggestions
+- relationship inference between source records
+
+LLMs should not be the authority for financial calculations. They may propose classifications or explanations, but deterministic validation and reconciliation must remain the guardrails.
+
+## Standard Ontology Architecture
+
+The standard chart of accounts is the canonical layer between source data and model output. It should include:
+
+- canonical account IDs and names
+- account type and hierarchy
+- statement placement
+- normal balance and sign convention
+- cash-flow section and treatment
+- source aliases for QBO accounts and EDGAR/XBRL concepts
+- metadata for confidence, review status, and auditability
+
+The ontology enables:
+
+- consistent model construction across sources
+- cross-company comparison
+- mapping quality measurement
+- downstream model extensibility
+- user review of ambiguous or unmapped accounts
+
+Industry-specific templates can extend the ontology, but they should map back to standard parent accounts so customization does not destroy comparability.
+
 ## Project Structure
 
 ### Core Package (`waccy`)
@@ -24,9 +152,12 @@ waccy/
 ├── CODE_OF_CONDUCT.md
 ├── docs/
 │   ├── 0-MISSION.md
-│   ├── 1-ARCHITECTURE.md
-│   ├── 2-EXPERIENCE.md
-│   └── skills_models.md
+│   ├── 1-EXPERIENCE.md
+│   ├── 2-REQUIREMENTS.md
+│   ├── 3-ARCHITECTURE.md
+│   ├── assets/
+│   ├── examples/
+│   └── references/
 ├── src/
 │   └── waccy/
 │       ├── __init__.py
@@ -44,7 +175,7 @@ waccy/
 │       │   ├── __init__.py
 │       │   ├── builder.py            # Model construction logic
 │       │   ├── templates.py          # Model templates
-│       │   └── exporters.py          # Google Sheets export
+│       │   └── exporters.py          # Spreadsheet export
 │       ├── classification/
 │       │   ├── __init__.py
 │       │   ├── engine.py             # LLM-enhanced classification
@@ -71,41 +202,26 @@ Extension packages follow a consistent naming convention and structure:
 ```
 waccy-quickbooks/
 ├── pyproject.toml
-├── uv.lock
 ├── README.md
 ├── src/
 │   └── waccy_quickbooks/
 │       ├── __init__.py
-│       ├── client.py                # QuickBooks API client
 │       ├── extractor.py             # Implements waccy.extraction.base.Extractor
-│       └── mapper.py                # QBO-specific mappings
-└── tests/
+│       └── ...
+└── dist/
 
 waccy-edgar/
 ├── pyproject.toml
-├── uv.lock
 ├── README.md
 ├── src/
 │   └── waccy_edgar/
 │       ├── __init__.py
-│       ├── client.py                # SEC EDGAR API client
-│       ├── extractor.py             # Filing parser and extractor
-│       ├── parser.py                # 10-K, 10-Q parsing
-│       └── patterns.py              # Pattern extraction for learning
-└── tests/
-
-waccy-google/
-├── pyproject.toml
-├── uv.lock
-├── README.md
-├── src/
-│   └── waccy_google/
-│       ├── __init__.py
-│       ├── drive.py                 # Google Drive integration
-│       ├── gmail.py                 # Gmail integration
-│       └── extractor.py             # Document/email extractor
-└── tests/
+│       ├── extractor.py             # Implements waccy.extraction.base.Extractor
+│       └── ...
+└── dist/
 ```
+
+Future extension packages may add clients, parsers, mappers, and tests as implementation grows. Those files should be added when the corresponding integration work lands.
 
 ## Package Configuration
 
@@ -114,7 +230,7 @@ waccy-google/
 ```toml
 [project]
 name = "waccy"
-version = "0.1.0"
+version = "0.0.2"
 description = "Intelligent financial modeling platform for small businesses"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -143,8 +259,8 @@ dependencies = [
 
 [project.optional-dependencies]
 # Core extensions (maintained by WACCY team)
-quickbooks = ["waccy-quickbooks>=0.1.0"]
-edgar = ["waccy-edgar>=0.1.0"]
+quickbooks = ["waccy-quickbooks>=0.0.1"]
+edgar = ["waccy-edgar>=0.0.1"]
 # Community extensions listed in docs but not as dependencies
 
 [project.scripts]
@@ -221,13 +337,13 @@ disallow_untyped_defs = false
 ```toml
 [project]
 name = "waccy-{name}"
-version = "0.1.0"
+version = "0.0.1"
 description = "WACCY extension for {description}"
 readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "MIT" }
 dependencies = [
-    "waccy>=0.1.0",  # Core platform dependency
+    "waccy>=0.0.2",  # Core platform dependency
     # Extension-specific dependencies
 ]
 
@@ -281,7 +397,10 @@ class ExtractorRegistry:
         """Discover extensions via entry points"""
         discovered = entry_points(group="waccy.extractors")
         for ep in discovered:
-            extractor_class = ep.load()
+            try:
+                extractor_class = ep.load()
+            except (ImportError, ModuleNotFoundError):
+                continue
             instance = extractor_class()
             self._extractors[instance.data_source] = extractor_class
     
@@ -467,14 +586,14 @@ class ModelBuilder:
         # 2. Build historical statements
         # 3. Apply forecasting logic
         # 4. Ensure balance checks
-        ...
+        raise NotImplementedError("3-statement model not yet implemented")
     
     def export_to_sheets(
         self, 
         model: "ThreeStatementModel",
         output_path: str
     ):
-        """Export model to Google Sheets"""
+        """Export model to spreadsheet output."""
         ...
 ```
 
@@ -491,7 +610,7 @@ uv init --name waccy_{name} --package
 
 2. **Add core dependency**:
 ```toml
-dependencies = ["waccy>=0.1.0"]
+dependencies = ["waccy>=0.0.2"]
 ```
 
 3. **Implement Extractor**:

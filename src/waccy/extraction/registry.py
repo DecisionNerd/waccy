@@ -1,11 +1,9 @@
 """Extension registry and discovery for data source extractors."""
 
-from typing import Optional, Protocol, Type
+from importlib.metadata import entry_points
+from typing import Protocol
 
-try:
-    from importlib.metadata import entry_points
-except ImportError:
-    from importlib_metadata import entry_points  # type: ignore
+from waccy.core.models import ExtractedData
 
 
 class ExtractorProtocol(Protocol):
@@ -14,7 +12,7 @@ class ExtractorProtocol(Protocol):
     name: str
     data_source: str
 
-    def extract(self, config: dict) -> "ExtractedData":  # noqa: F821
+    def extract(self, config: dict) -> ExtractedData:
         """Extract data from the source."""
         ...
 
@@ -24,22 +22,21 @@ class ExtractorRegistry:
 
     def __init__(self) -> None:
         """Initialize the registry and load extensions."""
-        self._extractors: dict[str, Type[ExtractorProtocol]] = {}
+        self._extractors: dict[str, type[ExtractorProtocol]] = {}
         self._load_extensions()
 
     def _load_extensions(self) -> None:
         """Discover extensions via entry points."""
-        try:
-            discovered = entry_points(group="waccy.extractors")
-        except TypeError:
-            # Python < 3.10 compatibility
-            discovered = entry_points().get("waccy.extractors", [])
+        discovered = entry_points(group="waccy.extractors")
         for ep in discovered:
-            extractor_class = ep.load()
+            try:
+                extractor_class = ep.load()
+            except (ImportError, ModuleNotFoundError):
+                continue
             instance = extractor_class()
             self._extractors[instance.data_source] = extractor_class
 
-    def get_extractor(self, data_source: str) -> Optional[Type[ExtractorProtocol]]:
+    def get_extractor(self, data_source: str) -> type[ExtractorProtocol] | None:
         """Get extractor class for a data source."""
         return self._extractors.get(data_source)
 
@@ -48,8 +45,7 @@ class ExtractorRegistry:
         return list(self._extractors.keys())
 
     def register_extractor(
-        self, data_source: str, extractor_class: Type[ExtractorProtocol]
+        self, data_source: str, extractor_class: type[ExtractorProtocol]
     ) -> None:
         """Manually register an extractor (useful for testing)."""
         self._extractors[data_source] = extractor_class
-

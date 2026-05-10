@@ -1,0 +1,40 @@
+name: Feature slice
+description: Track one issue-sized outcome through implementation and CI.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Describe the user-visible result this issue should create.
+      placeholder: A user can...
+    validations:
+      required: true
+  - type: textarea
+    id: expectations
+    attributes:
+      label: Feature expectations
+      description: List outcome-level expectations that should become BDD scenarios when practical.
+      placeholder: |
+        Given...
+        When...
+        Then...
+    validations:
+      required: true
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation notes
+      description: Capture likely modules, APIs, or migration concerns.
+    validations:
+      required: false
+  - type: checkboxes
+    id: done
+    attributes:
+      label: Done when
+      options:
+        - label: Outcome-level BDD coverage exists or the issue explains why it is not applicable.
+        - label: Unit or integration coverage protects important implementation details.
+        - label: CI, Codecov, and CodeRabbit checks pass on the PR.
