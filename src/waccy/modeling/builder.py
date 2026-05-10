@@ -49,7 +49,9 @@ class ModelBuilder:
         income_lines = self._build_income_statement_lines(dataset.records, period_labels)
         balance_lines = self._build_balance_sheet_lines(dataset.records, period_labels)
         cash_flow_lines = self._build_cash_flow_lines(dataset.records, income_lines, balance_lines, period_labels)
-        issues.extend(self._statement_issues(balance_lines, cash_flow_lines, period_labels))
+        issues.extend(
+            self._statement_issues(balance_lines, cash_flow_lines, period_labels, dataset.metadata)
+        )
 
         return ThreeStatementModel(
             entity_name=dataset.entity_name,
@@ -321,19 +323,28 @@ class ModelBuilder:
         balance_lines: list[StatementLine],
         cash_flow_lines: list[StatementLine],
         period_labels: list[str],
+        metadata: dict[str, Any],
     ) -> list[ValidationIssue]:
         issues: list[ValidationIssue] = []
         balance_check = self._find_line(balance_lines, "Balance Check")
         cash_flow_tie_out = self._find_line(cash_flow_lines, "Cash Flow Tie-Out")
+        has_partial_edgar_extraction = bool(metadata.get("edgar_source_issues"))
         for index, period in enumerate(period_labels):
             if balance_check.values[period] != ZERO:
                 issues.append(
                     ValidationIssue(
                         code="balance_sheet_imbalance",
                         message=f"Balance sheet does not balance for {period}.",
-                        severity=IssueSeverity.ERROR,
+                        severity=(
+                            IssueSeverity.WARNING
+                            if has_partial_edgar_extraction
+                            else IssueSeverity.ERROR
+                        ),
                         period_label=period,
-                        metadata={"difference": str(balance_check.values[period])},
+                        metadata={
+                            "difference": str(balance_check.values[period]),
+                            "partial_source_extraction": has_partial_edgar_extraction,
+                        },
                     )
                 )
             if index > 0 and cash_flow_tie_out.values[period] != ZERO:
@@ -349,7 +360,11 @@ class ModelBuilder:
         return issues
 
     def _source_completeness_issues(self, metadata: dict[str, Any]) -> list[ValidationIssue]:
-        source_issues = metadata.get("qbo_source_issues", [])
+        source_issues = []
+        for key in ("qbo_source_issues", "edgar_source_issues", "source_issues"):
+            value = metadata.get(key, [])
+            if isinstance(value, list):
+                source_issues.extend(value)
         if not isinstance(source_issues, list):
             return []
         issues: list[ValidationIssue] = []
