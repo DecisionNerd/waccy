@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable  # noqa: TC003
 from decimal import Decimal
-from typing import NoReturn
+from typing import Any, Literal, NoReturn
 
 from waccy.core.models import (
     ExtractedData,
@@ -20,7 +20,7 @@ from waccy.core.models import (
 from waccy.core.ontology import StandardChartOfAccounts
 from waccy.core.validation import validate_mapped_dataset
 from waccy.extraction.mapper import DataMapper
-from waccy.modeling.exporters import SheetExporter
+from waccy.modeling.exporters import PandasExporter, SheetExporter
 
 ZERO = Decimal("0")
 
@@ -44,6 +44,7 @@ class ModelBuilder:
         periods = dataset.periods
         period_labels = [period.label for period in periods]
         issues = list(validated.issues)
+        issues.extend(self._source_completeness_issues(dataset.metadata))
 
         income_lines = self._build_income_statement_lines(dataset.records, period_labels)
         balance_lines = self._build_balance_sheet_lines(dataset.records, period_labels)
@@ -91,6 +92,16 @@ class ModelBuilder:
         """Export model to spreadsheet output."""
         exporter = SheetExporter()
         exporter.export(model, output_path)
+
+    def export_to_pandas(
+        self,
+        model: ThreeStatementModel,
+        *,
+        value_type: Literal["decimal", "float"] = "decimal",
+    ) -> dict[str, Any]:
+        """Export model statements to pandas DataFrames."""
+        exporter = PandasExporter()
+        return exporter.export(model, value_type=value_type)
 
     def _ensure_validated(
         self,
@@ -335,4 +346,37 @@ class ModelBuilder:
                         metadata={"difference": str(cash_flow_tie_out.values[period])},
                     )
                 )
+        return issues
+
+    def _source_completeness_issues(self, metadata: dict[str, Any]) -> list[ValidationIssue]:
+        source_issues = metadata.get("qbo_source_issues", [])
+        if not isinstance(source_issues, list):
+            return []
+        issues: list[ValidationIssue] = []
+        for source_issue in source_issues:
+            if not isinstance(source_issue, dict):
+                continue
+            code = str(source_issue.get("code", "source_data_issue"))
+            try:
+                severity = IssueSeverity(str(source_issue.get("severity", "error")))
+            except ValueError:
+                severity = IssueSeverity.ERROR
+                code = "invalid_source_issue_severity"
+            issues.append(
+                ValidationIssue(
+                    code=code,
+                    message=str(source_issue.get("message", code)),
+                    severity=severity,
+                    period_label=(
+                        str(source_issue["period_label"])
+                        if source_issue.get("period_label") is not None
+                        else None
+                    ),
+                    metadata={
+                        key: value
+                        for key, value in source_issue.items()
+                        if key not in {"code", "message", "severity", "period_label"}
+                    },
+                )
+            )
         return issues

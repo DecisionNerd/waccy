@@ -19,13 +19,15 @@ Unlike large enterprises with dedicated accounting teams, small businesses often
 WACCY is an early package, but the v0.1.0 vertical slice now implements a fixture-first financial modeling path:
 
 * QBO/QuickBooks-shaped fixture extraction through `QuickBooksExtractor`
+* a small typed QuickBooks OAuth/report puller in `waccy-quickbooks`
 * EDGAR/XBRL-shaped fixture extraction through `EdgarExtractor`
 * normalized, mapped, and validated financial datasets
 * deterministic source-to-WACCY account mapping with override support
 * three-statement model construction with reconciliation checks
 * XLSX export with the three required workbook sheets
+* pandas DataFrame export for follow-on modeling outside WACCY
 
-Live QuickBooks and EDGAR API clients are not implemented yet. The first milestone remains focused on hardening the fixture-first path into the [v0.1.0 release](https://github.com/DecisionNerd/waccy/milestone/1), tracked by [issue #15](https://github.com/DecisionNerd/waccy/issues/15).
+The QuickBooks helper pulls raw QBO company info, chart of accounts, and reports, then normalizes those reports into WACCY source records. Live EDGAR fetching and richer filing parsing remain planned. The first milestone remains focused on hardening the QBO/EDGAR path into the [v0.1.0 release](https://github.com/DecisionNerd/waccy/milestone/1), tracked by [issue #15](https://github.com/DecisionNerd/waccy/issues/15).
 
 ## Quick Start
 
@@ -63,15 +65,17 @@ print(f"Available data sources: {available_sources}")
 Implemented v0.1.0 components include:
 
 * fixture-first QBO and EDGAR extraction
+* typed QBO OAuth token cache, raw report pulling, and deterministic report normalization
 * standard account ontology and deterministic aliases
 * mapping, validation, reconciliation, and quality diagnostics
 * three-statement model building
 * spreadsheet export
+* pandas DataFrame handoff for external modeling workflows
 * local and CI quality gates with BDD outcome specs
 
 Still planned:
 
-* live QuickBooks OAuth/API extraction
+* full live QuickBooks product workflow beyond report pulling and normalization
 * live EDGAR fetching and richer filing parsing
 * LLM-assisted classification and confidence scoring beyond placeholders
 * advanced model types such as DCF, LBO, M&A, and specialized industry models
@@ -406,6 +410,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   * [uv](https://github.com/astral-sh/uv) - Modern Python package manager
   * [ruff](https://github.com/astral-sh/ruff) - Fast Python linter and formatter
   * [Pydantic](https://github.com/pydantic/pydantic) - Data validation framework
+  * [pandas](https://github.com/pandas-dev/pandas) - DataFrame handoff for downstream modeling
   * [Polars](https://github.com/pola-rs/polars) - High-performance data manipulation
   * [Pandera](https://github.com/pandera-dev/pandera) - Statistical data validation
 

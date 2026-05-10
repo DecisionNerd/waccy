@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import sys
 from decimal import Decimal
 from pathlib import Path
 from types import ModuleType
@@ -27,9 +29,17 @@ from waccy.core.ontology import StandardChartOfAccounts
 from waccy.core.validation import validate_mapped_dataset
 from waccy.extraction.mapper import DataMapper, source_record_from_dict
 from waccy.modeling.builder import ModelBuilder
-from waccy.modeling.exporters import SheetExporter
+from waccy.modeling.exporters import PandasExporter, SheetExporter
 
 ROOT = Path(__file__).resolve().parents[2]
+QUICKBOOKS_SRC = ROOT / "extensions" / "waccy-quickbooks" / "src"
+if QUICKBOOKS_SRC.exists():
+    sys.path.insert(0, str(QUICKBOOKS_SRC))
+
+try:
+    from waccy_quickbooks import QuickBooksReportNormalizer
+except ModuleNotFoundError:
+    QuickBooksReportNormalizer = None  # type: ignore[assignment]
 
 
 def test_core_dataset_models_round_trip() -> None:
@@ -328,6 +338,76 @@ def test_xlsx_export_writes_three_sheet_workbook(tmp_path: Path) -> None:
         assert cash_flow_statement["C8"].value == 0
     finally:
         workbook.close()
+
+
+def test_pandas_export_returns_statement_dataframes() -> None:
+    """The pandas exporter exposes the same three statements for follow-on modeling."""
+    model = ModelBuilder().build_three_statement_model(_extracted(sample_qbo_fixture(), "qbo"))
+
+    frames = PandasExporter().export(model)
+    float_frames = ModelBuilder().export_to_pandas(model, value_type="float")
+
+    assert list(frames) == ["Income Statement", "Balance Sheet", "Cash Flow Statement"]
+    income_statement = frames["Income Statement"]
+    balance_sheet = frames["Balance Sheet"]
+    assert income_statement.loc[income_statement["line_item"] == "Net Income", "2024"].item() == Decimal(
+        "316"
+    )
+    assert balance_sheet.loc[balance_sheet["line_item"] == "Balance Check", "2024"].item() == Decimal(
+        "0"
+    )
+    assert float_frames["Income Statement"].loc[
+        float_frames["Income Statement"]["line_item"] == "Net Income", "2024"
+    ].item() == 316.0
+
+
+def test_qbo_raw_report_fixture_builds_release_valid_outputs(tmp_path: Path) -> None:
+    """A sanitized QBO raw report fixture reaches XLSX and pandas outputs."""
+    if QuickBooksReportNormalizer is None:
+        pytest.skip("waccy-quickbooks extension is not importable.")
+    raw_fixture = json.loads((ROOT / "tests" / "fixtures" / "qbo_release_smoke_raw.json").read_text())
+    fixture = QuickBooksReportNormalizer().to_fixture(raw_fixture)
+    extractor_class = _load_extension_class(
+        ROOT / "extensions" / "waccy-quickbooks" / "src" / "waccy_quickbooks" / "extractor.py",
+        "local_waccy_quickbooks_extractor_release",
+        "QuickBooksExtractor",
+    )
+    model = ModelBuilder().build_three_statement_model(
+        extractor_class().extract({"fixture": fixture})
+    )
+    output_path = tmp_path / "qbo-release-smoke.xlsx"
+
+    SheetExporter().export(model, str(output_path))
+    frames = PandasExporter().export(model, value_type="float")
+    workbook = load_workbook(output_path)
+    try:
+        assert workbook.sheetnames == ["Income Statement", "Balance Sheet", "Cash Flow Statement"]
+    finally:
+        workbook.close()
+    assert frames["Income Statement"].loc[
+        frames["Income Statement"]["line_item"] == "Net Income", "2024"
+    ].item() == 316.0
+    assert all(issue.severity != IssueSeverity.ERROR for issue in model.validation_issues)
+
+
+def test_qbo_source_completeness_issues_are_model_errors() -> None:
+    """QBO NoReportData diagnostics become explicit model validation errors."""
+    if QuickBooksReportNormalizer is None:
+        pytest.skip("waccy-quickbooks extension is not importable.")
+    raw_fixture = json.loads((ROOT / "tests" / "fixtures" / "qbo_release_smoke_raw.json").read_text())
+    raw_fixture["reports"] = {"2024": {"BalanceSheet": raw_fixture["reports"]["2024"]["BalanceSheet"]}}
+    fixture = QuickBooksReportNormalizer().to_fixture(raw_fixture)
+    extracted = ExtractedData(
+        entity_name=str(fixture["entity_name"]),
+        periods=[],
+        source_records=[source_record_from_dict(record, "qbo") for record in fixture["records"]],
+        metadata=fixture["metadata"],
+    )
+    model = ModelBuilder().build_three_statement_model(extracted)
+    issue_codes = {issue.code for issue in model.validation_issues}
+
+    assert "missing_required_source_statement" in issue_codes
+    assert any(issue.severity == IssueSeverity.ERROR for issue in model.validation_issues)
 
 
 def _source_record(account_id: str, account_name: str) -> SourceRecord:

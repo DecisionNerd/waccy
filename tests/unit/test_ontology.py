@@ -30,3 +30,25 @@ def test_standard_chart_of_accounts() -> None:
     ontology = StandardChartOfAccounts()
     assert isinstance(ontology.accounts, dict)
 
+
+def test_qbo_live_smoke_aliases_map_deterministically() -> None:
+    """QBO names surfaced by the live sandbox smoke map into canonical accounts."""
+    ontology = StandardChartOfAccounts()
+    expected = {
+        "Accounts Receivable (A/R)": "accounts_receivable",
+        "Inventory Asset": "inventory",
+        "Undeposited Funds": "cash",
+        "Original Cost": "ppe",
+        "Accounts Payable (A/P)": "accounts_payable",
+        "Mastercard": "debt",
+        "Arizona Dept. of Revenue Payable": "accrued_expenses",
+        "Board of Equalization Payable": "accrued_expenses",
+        "Loan Payable": "debt",
+        "Opening Balance Equity": "equity",
+        "Net Change In Cash": "financing_movement",
+    }
+
+    for source_name, account_id in expected.items():
+        account = ontology.map_account(source_name, "qbo")
+        assert account is not None
+        assert account.id == account_id

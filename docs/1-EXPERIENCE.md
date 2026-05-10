@@ -71,7 +71,7 @@ Confidence scoring should help prioritize review. It should not imply false prec
 
 The following are important to the broader mission but should not block the first vertical slice:
 
-- Full live QuickBooks OAuth flow beyond a documented integration path
+- A full live QuickBooks product workflow beyond the typed OAuth/report-pull helper
 - Full EDGAR pattern-learning system
 - DCF, LBO, M&A, SaaS cohort, or other advanced model types
 - Google Sheets API export

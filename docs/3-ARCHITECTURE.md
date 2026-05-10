@@ -73,6 +73,8 @@ QBO is the primary small-business accounting source. The integration should extr
 
 Architecturally, QBO data should not be trusted blindly. Source account names and account types are useful signals, but WACCY should still map them through the standard ontology and report confidence or ambiguity.
 
+The v0.1.0 QBO path keeps live API access and raw report normalization in `waccy-quickbooks`. Raw QBO `CompanyInfo`, `Account`, `ProfitAndLoss`, `BalanceSheet`, and `CashFlow` payloads are normalized into WACCY fixture-shaped source records before the core mapper, validator, model builder, XLSX exporter, or pandas handoff sees them.
+
 ### SEC EDGAR
 
 EDGAR serves two architectural roles:
@@ -249,6 +251,7 @@ classifiers = [
 
 dependencies = [
     "numpy>=2.3.5",
+    "pandas>=3.0.2",
     "pandera>=0.27.0",
     "polars>=1.36.1",
     "pydantic>=2.12.5",
@@ -695,7 +698,8 @@ uv publish
 
 Core platform maintains minimal dependencies:
 - **pydantic**: Data validation and models
-- **polars**: Efficient data manipulation (preferred over pandas for performance)
+- **pandas**: DataFrame handoff for downstream modeling outside WACCY
+- **polars**: Efficient internal data manipulation where columnar performance matters
 - **pandera**: Data validation schemas
 - **numpy**: Numerical computations
 
