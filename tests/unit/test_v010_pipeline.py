@@ -86,7 +86,9 @@ def test_ontology_contains_required_accounts_and_aliases() -> None:
     assert required.issubset(ontology.accounts)
     assert ontology.map_account("Sales", "qbo").id == "revenue"
     assert ontology.map_account("us-gaap:Revenues", "edgar").id == "revenue"
-    assert ontology.map_account("us-gaap:CashAndCashEquivalentsAtCarryingValue", "edgar").id == "cash"
+    assert (
+        ontology.map_account("us-gaap:CashAndCashEquivalentsAtCarryingValue", "edgar").id == "cash"
+    )
 
 
 def test_mapper_statuses_for_mapped_ambiguous_overridden_and_unmapped() -> None:
@@ -157,7 +159,9 @@ def test_qbo_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
     with pytest.raises(ValueError, match="periods must be dictionaries"):
         extractor.extract({"fixture": {"records": [], "periods": ["not-a-dict"]}})
     with pytest.raises(ValueError, match="missing required keys: end_date"):
-        extractor.extract({"fixture": {"records": [], "periods": [{"label": "2024", "start_date": "2024-01-01"}]}})
+        extractor.extract(
+            {"fixture": {"records": [], "periods": [{"label": "2024", "start_date": "2024-01-01"}]}}
+        )
     with pytest.raises(ValueError, match="accounts must be a list"):
         extractor.extract({"fixture": {"records": [], "accounts": "not-a-list"}})
     with pytest.raises(ValueError, match="accounts must be dictionaries"):
@@ -200,7 +204,9 @@ def test_edgar_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
     with pytest.raises(ValueError, match="periods must be dictionaries"):
         extractor.extract({"fixture": {"records": [], "periods": ["not-a-dict"]}})
     with pytest.raises(ValueError, match="missing required keys: end_date"):
-        extractor.extract({"fixture": {"records": [], "periods": [{"label": "2024", "start_date": "2024-01-01"}]}})
+        extractor.extract(
+            {"fixture": {"records": [], "periods": [{"label": "2024", "start_date": "2024-01-01"}]}}
+        )
 
 
 def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> None:
@@ -210,7 +216,10 @@ def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> 
     dataset = NormalizedFinancialDataset(
         entity_name="Fixture Co",
         periods=[period, period],
-        records=[source_record_from_dict({"name": "Sales", "period": "2025", "amount": 1}, "qbo"), source],
+        records=[
+            source_record_from_dict({"name": "Sales", "period": "2025", "amount": 1}, "qbo"),
+            source,
+        ],
     )
     mapped = DataMapper().map_dataset(dataset)
     validated = validate_mapped_dataset(mapped)
@@ -221,7 +230,7 @@ def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> 
 
 
 def test_mapper_infers_quarterly_and_monthly_reporting_periods() -> None:
-    """Mapper-created periods preserve common monthly and quarterly labels."""
+    """Mapper-created periods canonicalize common monthly and quarterly labels."""
     extracted = ExtractedData(
         entity_name="Fixture Co",
         source_records=[
@@ -238,7 +247,12 @@ def test_mapper_infers_quarterly_and_monthly_reporting_periods() -> None:
     assert periods["2024Q1"].start_date.isoformat() == "2024-01-01"
     assert periods["2024Q1"].end_date.isoformat() == "2024-03-31"
     assert periods["2024-02"].start_date.isoformat() == "2024-02-01"
-    assert periods["202403"].end_date.isoformat() == "2024-03-31"
+    assert periods["2024-03"].end_date.isoformat() == "2024-03-31"
+    assert [record.period_label for record in normalized.records] == [
+        "2024Q1",
+        "2024-02",
+        "2024-03",
+    ]
 
 
 def test_mapper_preserves_explicit_noninferable_period_labels() -> None:
@@ -286,7 +300,9 @@ def test_model_builder_builds_qbo_and_edgar_three_statement_models() -> None:
 
     assert _line_value(qbo_model.income_statement.lines, "Net Income", "2024") == Decimal("316")
     assert _line_value(qbo_model.balance_sheet.lines, "Balance Check", "2024") == Decimal("0")
-    assert _line_value(qbo_model.cash_flow_statement.lines, "Cash Flow Tie-Out", "2024") == Decimal("0")
+    assert _line_value(qbo_model.cash_flow_statement.lines, "Cash Flow Tie-Out", "2024") == Decimal(
+        "0"
+    )
     assert _line_value(edgar_model.income_statement.lines, "Revenue", "2024") == Decimal("1200")
     assert all(issue.severity != IssueSeverity.ERROR for issue in qbo_model.validation_issues)
     assert all(issue.severity != IssueSeverity.ERROR for issue in edgar_model.validation_issues)
@@ -320,7 +336,9 @@ def _source_record(account_id: str, account_name: str) -> SourceRecord:
         source_account_name=account_name,
         amount=Decimal("100"),
         period_label="2023",
-        source=SourceReference(source_system="fixture", source_id=account_id, source_label=account_name),
+        source=SourceReference(
+            source_system="fixture", source_id=account_id, source_label=account_name
+        ),
     )
 
 

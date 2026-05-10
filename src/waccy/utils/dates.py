@@ -17,12 +17,7 @@ def parse_date_range(date_range: DateRangeInput) -> tuple[date, date]:
         if len(date_range) != 2:
             raise ValueError("Date range must contain exactly two ISO dates.")
         start_raw, end_raw = date_range
-        if isinstance(start_raw, date) and isinstance(end_raw, date):
-            start_date, end_date = start_raw, end_raw
-        elif isinstance(start_raw, str) and isinstance(end_raw, str) and start_raw and end_raw:
-            start_date, end_date = _parse_iso_dates(start_raw, end_raw)
-        else:
-            raise ValueError("Date range values must use ISO format YYYY-MM-DD.")
+        start_date, end_date = _coerce_date(start_raw), _coerce_date(end_raw)
     else:
         separator = next((sep for sep in (" to ", ",", "|") if sep in date_range), None)
         if separator is None:
@@ -57,7 +52,7 @@ def infer_reporting_period(label: str) -> ReportingPeriod:
         start_month = ((quarter - 1) * 3) + 1
         end_month = start_month + 2
         return ReportingPeriod(
-            label=clean_label,
+            label=f"{year}Q{quarter}",
             start_date=date(year, start_month, 1),
             end_date=date(year, end_month, calendar.monthrange(year, end_month)[1]),
             period_type=PeriodType.QUARTER,
@@ -66,7 +61,7 @@ def infer_reporting_period(label: str) -> ReportingPeriod:
         year = int(month_match.group(1))
         month = int(month_match.group(2))
         return ReportingPeriod(
-            label=clean_label,
+            label=f"{year}-{month:02d}",
             start_date=date(year, month, 1),
             end_date=date(year, month, calendar.monthrange(year, month)[1]),
             period_type=PeriodType.MONTH,
@@ -80,7 +75,9 @@ def generate_reporting_periods(
 ) -> list[ReportingPeriod]:
     """Generate deterministic reporting periods for a date range."""
     start_date, end_date = parse_date_range(date_range)
-    period_type = period_type if isinstance(period_type, PeriodType) else PeriodType(str(period_type))
+    period_type = (
+        period_type if isinstance(period_type, PeriodType) else PeriodType(str(period_type))
+    )
     periods: list[ReportingPeriod] = []
 
     if period_type == PeriodType.YEAR:
@@ -155,3 +152,14 @@ def _parse_iso_dates(start_str: str, end_str: str) -> tuple[date, date]:
         return date.fromisoformat(start_str), date.fromisoformat(end_str)
     except ValueError as exc:
         raise ValueError("Date range values must use ISO format YYYY-MM-DD.") from exc
+
+
+def _coerce_date(value: str | date) -> date:
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str) and value.strip():
+        try:
+            return date.fromisoformat(value.strip())
+        except ValueError as exc:
+            raise ValueError("Date range values must use ISO format YYYY-MM-DD.") from exc
+    raise ValueError("Date range values must use ISO format YYYY-MM-DD.")

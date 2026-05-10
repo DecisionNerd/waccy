@@ -63,6 +63,10 @@ def test_utils_parse_format_and_validate_values() -> None:
         date(2024, 1, 1),
         date(2024, 12, 31),
     )
+    assert parse_date_range((date(2024, 1, 1), "2024-12-31")) == (
+        date(2024, 1, 1),
+        date(2024, 12, 31),
+    )
     assert parse_date_range("2024-01-01 to 2024-12-31") == (
         date(2024, 1, 1),
         date(2024, 12, 31),
@@ -87,7 +91,7 @@ def test_utils_parse_format_and_validate_values() -> None:
     with pytest.raises(ValueError, match="exactly two ISO dates"):
         parse_date_range(("2024-01-01", "2024-12-31", "2025-12-31"))
     with pytest.raises(ValueError, match="ISO format"):
-        parse_date_range((date(2024, 1, 1), "2024-12-31"))
+        parse_date_range((date(2024, 1, 1), ""))
     with pytest.raises(ValueError, match="on or before"):
         parse_date_range("2024-12-31 to 2024-01-01")
 
@@ -106,9 +110,11 @@ def test_reporting_period_generation_and_label_inference() -> None:
     assert infer_reporting_period("2024").period_type == PeriodType.YEAR
     assert infer_reporting_period("2024Q2").start_date == date(2024, 4, 1)
     assert infer_reporting_period("2024-Q3").end_date == date(2024, 9, 30)
+    assert infer_reporting_period("2024-Q3").label == "2024Q3"
     assert infer_reporting_period("2024-2").end_date == date(2024, 2, 29)
     assert infer_reporting_period("202402").end_date == date(2024, 2, 29)
     assert infer_reporting_period("2024-02").period_type == PeriodType.MONTH
+    assert infer_reporting_period("2024-2").label == "2024-02"
     with pytest.raises(ValueError, match="Unsupported reporting period"):
         infer_reporting_period("FY24")
 
@@ -221,7 +227,9 @@ def test_ontology_filters_accounts_and_handles_missing_mappings() -> None:
 
     assert ontology.map_account("not a real account", "qbo") is None
     assert ontology.get_account("not-real") is None
-    assert all(account.type == AccountType.ASSET for account in ontology.list_accounts(AccountType.ASSET))
+    assert all(
+        account.type == AccountType.ASSET for account in ontology.list_accounts(AccountType.ASSET)
+    )
 
 
 def test_mapper_creates_periods_for_legacy_transactions_and_handles_missing_names() -> None:
