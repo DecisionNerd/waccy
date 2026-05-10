@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 ROOT = Path(__file__).resolve().parents[2]
 QUICKBOOKS_SRC = ROOT / "extensions" / "waccy-quickbooks" / "src"
+if not QUICKBOOKS_SRC.exists():
+    pytest.skip("waccy-quickbooks extension source tree is not available.", allow_module_level=True)
 sys.path.insert(0, str(QUICKBOOKS_SRC))
 
 from waccy_quickbooks import (  # noqa: E402
