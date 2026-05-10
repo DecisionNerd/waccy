@@ -76,3 +76,7 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["waccy", "waccy.*"]
+ignore_missing_imports = true

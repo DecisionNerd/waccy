@@ -4,7 +4,7 @@ WACCY extension for SEC EDGAR filing parsing and pattern learning.
 
 ## Status
 
-This package currently provides fixture-first EDGAR/XBRL-shaped extraction and the entry point for `ExtractorRegistry` discovery. Live EDGAR fetching and richer filing parsing are not implemented yet. The v0.1.0 work is tracked in:
+This package provides fixture-first EDGAR/XBRL-shaped extraction, deterministic SEC companyfacts normalization, and the entry point for `ExtractorRegistry` discovery. Live SEC fetching is still kept separate from fixture normalization. The v0.1.0 work is tracked in:
 
 - [#6 Implement EDGAR extraction for comparable three-statement source data](https://github.com/DecisionNerd/waccy/issues/6)
 - [#14 Decide and implement EDGAR pattern-learning scope for v0.1.0](https://github.com/DecisionNerd/waccy/issues/14)
@@ -32,21 +32,16 @@ extractor = registry.get_extractor("edgar")()
 print(extractor.name)
 ```
 
-The following live API path is planned but not runnable yet:
+Companyfacts JSON can be normalized into WACCY fixture records before extraction:
 
 ```python
-from waccy.extraction import ExtractorRegistry
+from waccy_edgar import EdgarCompanyFactsNormalizer, EdgarExtractor
 
-registry = ExtractorRegistry()
-extractor = registry.get_extractor("edgar")()
-
-# Extract data from SEC filings
-data = extractor.extract({
-    "ticker": "AAPL",
-    "filing_types": ["10-K", "10-Q"],
-    "date_range": ("2022-01-01", "2024-12-31")
-})
+fixture = EdgarCompanyFactsNormalizer().to_fixture(companyfacts_json)
+extracted = EdgarExtractor().extract({"fixture": fixture})
 ```
+
+The normalizer selects annual 10-K facts, preserves fiscal-year and instant-fact provenance, emits `FYyyyy` periods, and carries partial-extraction diagnostics in fixture metadata.
 
 ## Development
 
