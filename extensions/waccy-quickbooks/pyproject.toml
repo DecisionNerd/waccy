@@ -1,6 +1,6 @@
 [project]
 name = "waccy-quickbooks"
-version = "0.0.2"
+version = "0.1.0"
 description = "WACCY extension for QuickBooks Online integration"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -10,7 +10,7 @@ authors = [
 ]
 keywords = ["finance", "financial-modeling", "accounting", "quickbooks", "waccy"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Financial and Insurance Industry",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.13",
@@ -48,6 +48,8 @@ packages = ["src/waccy_quickbooks"]
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+
+[tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG", "SIM", "TCH", "PTH", "ERA", "PL", "PERF", "RET", "RUF"]
 ignore = ["E501", "PLR0913", "PLR2004"]
 
@@ -74,4 +76,3 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
-

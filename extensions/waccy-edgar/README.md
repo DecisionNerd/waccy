@@ -2,6 +2,14 @@
 
 WACCY extension for SEC EDGAR filing parsing and pattern learning.
 
+## Status
+
+This package currently provides fixture-first EDGAR/XBRL-shaped extraction and the entry point for `ExtractorRegistry` discovery. Live EDGAR fetching and richer filing parsing are not implemented yet. The v0.1.0 work is tracked in:
+
+- [#6 Implement EDGAR extraction for comparable three-statement source data](https://github.com/DecisionNerd/waccy/issues/6)
+- [#14 Decide and implement EDGAR pattern-learning scope for v0.1.0](https://github.com/DecisionNerd/waccy/issues/14)
+- [v0.1.0 milestone](https://github.com/DecisionNerd/waccy/milestone/1)
+
 ## Installation
 
 ```bash
@@ -14,7 +22,17 @@ Or install with the core platform:
 uv pip install "waccy[edgar]"
 ```
 
-## Usage
+## Current Usage
+
+```python
+from waccy.extraction import ExtractorRegistry
+
+registry = ExtractorRegistry()
+extractor = registry.get_extractor("edgar")()
+print(extractor.name)
+```
+
+The following live API path is planned but not runnable yet:
 
 ```python
 from waccy.extraction import ExtractorRegistry
@@ -33,4 +51,3 @@ data = extractor.extract({
 ## Development
 
 This package is part of the WACCY monorepo. See the main [README](../README.md) for development setup.
-

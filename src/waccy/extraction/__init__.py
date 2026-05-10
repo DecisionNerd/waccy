@@ -5,10 +5,9 @@ from waccy.extraction.mapper import DataMapper
 from waccy.extraction.registry import ExtractorRegistry
 
 __all__ = [
+    "DataMapper",
     "ExtractedData",
     "ExtractedTransaction",
     "Extractor",
-    "DataMapper",
     "ExtractorRegistry",
 ]
-

@@ -20,7 +20,7 @@ def publish_extension(
 
     dist_dir = extension_dir / "dist"
     if not dist_dir.exists() or not list(dist_dir.glob("*")):
-        print(f"❌ No distribution files found. Build first with:")
+        print("❌ No distribution files found. Build first with:")
         print(f"   python scripts/build-extension.py {extension_name}")
         return 1
 

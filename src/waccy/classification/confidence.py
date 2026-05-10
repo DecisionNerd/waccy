@@ -14,6 +14,7 @@ class ConfidenceScorer:
         validation_results: dict[str, Any],
     ) -> float:
         """Calculate confidence score for an account mapping."""
+        del source_account, mapped_account, transaction_patterns, validation_results
         # TODO: Implement confidence scoring logic
         # Factors to consider:
         # - Name similarity
@@ -21,4 +22,3 @@ class ConfidenceScorer:
         # - Validation results
         # - Historical accuracy
         return 0.0
-

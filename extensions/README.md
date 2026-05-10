@@ -69,7 +69,7 @@ python scripts/publish-extension.py waccy-quickbooks --token pypi-<your-token>
    ```
 5. Add dependency on `waccy` in `pyproject.toml`:
    ```toml
-   dependencies = ["waccy>=0.0.2a"]
+   dependencies = ["waccy>=0.0.2"]
    ```
 
 ## Extension Package Requirements
@@ -90,4 +90,3 @@ Each extension package must:
 - **Unified versioning**: Coordinate releases across packages
 - **Simplified CI/CD**: Test all packages together
 - **Independent publishing**: Each package can be published separately to PyPI
-

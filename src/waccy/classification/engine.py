@@ -1,6 +1,5 @@
 """LLM-powered classification for ambiguous accounts."""
 
-from typing import Optional
 
 from waccy.core.ontology import AccountCategory, StandardChartOfAccounts
 
@@ -8,7 +7,7 @@ from waccy.core.ontology import AccountCategory, StandardChartOfAccounts
 class ClassificationEngine:
     """LLM-powered classification for ambiguous accounts."""
 
-    def __init__(self, llm_provider: Optional[str] = None) -> None:
+    def __init__(self, llm_provider: str | None = None) -> None:
         """Initialize the classification engine."""
         self.ontology = StandardChartOfAccounts()
         self.llm_provider = llm_provider

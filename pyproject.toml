@@ -18,6 +18,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=2.3.5",
+    "openpyxl>=3.1.5",
     "pandera>=0.27.0",
     "polars>=1.36.1",
     "pydantic>=2.12.5",
@@ -48,6 +49,7 @@ packages = ["src/waccy"]
 
 [dependency-groups]
 dev = [
+    "pytest-bdd>=8.1.0",
     "pytest>=9.0.2",
     "pytest-cov>=6.0.0",
     "ruff>=0.8.0",
@@ -60,6 +62,8 @@ docs = [
 [tool.ruff]
 line-length = 100
 target-version = "py313"
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -109,3 +113,17 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["openpyxl", "openpyxl.*"]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "src"]
+bdd_features_base_dir = "tests/bdd/features"
+markers = [
+    "bdd: outcome-oriented behavior specifications",
+    "outcome: product expectation tests written from user-visible outcomes",
+]

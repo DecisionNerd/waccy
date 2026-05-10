@@ -1,6 +1,7 @@
 """Build a specific extension package."""
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -22,8 +23,6 @@ def build_extension(extension_name: str, clean: bool = False) -> int:
         dist_dir = extension_dir / "dist"
         if dist_dir.exists():
             print(f"Cleaning {dist_dir}...")
-            import shutil
-
             shutil.rmtree(dist_dir)
 
     print(f"Building {extension_name}...")
@@ -85,4 +84,3 @@ Examples:
 
 if __name__ == "__main__":
     sys.exit(main())
-

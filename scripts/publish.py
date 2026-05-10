@@ -1,6 +1,7 @@
 """Helper script for publishing to PyPI."""
 
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -31,8 +32,6 @@ def build_package(clean: bool = False) -> int:
         dist_dir = Path("dist")
         if dist_dir.exists():
             print("Cleaning dist/ directory...")
-            import shutil
-
             shutil.rmtree(dist_dir)
 
     print("Building package...")
@@ -174,14 +173,12 @@ Examples:
             return 0
 
     # Publish
-    publish_result = publish_package(
+    return publish_package(
         testpypi=args.testpypi,
         dry_run=args.dry_run,
         token=args.token,
     )
-    return publish_result
 
 
 if __name__ == "__main__":
     sys.exit(main())
-

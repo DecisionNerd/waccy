@@ -1,10 +1,9 @@
 """Date utility functions."""
 
 from datetime import date
-from typing import Optional, Tuple
 
 
-def parse_date_range(date_range: str | Tuple[str, str]) -> Tuple[date, date]:
+def parse_date_range(date_range: str | tuple[str, str]) -> tuple[date, date]:
     """Parse a date range string or tuple into date objects."""
     if isinstance(date_range, tuple):
         start_str, end_str = date_range

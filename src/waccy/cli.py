@@ -1,10 +1,9 @@
 """Command-line interface for WACCY."""
 
 import sys
-from typing import Optional
 
 
-def main(args: Optional[list[str]] = None) -> int:
+def main(args: list[str] | None = None) -> int:
     """Main CLI entry point."""
     if args is None:
         args = sys.argv[1:]
