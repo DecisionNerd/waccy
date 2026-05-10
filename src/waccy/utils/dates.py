@@ -8,11 +8,21 @@ from datetime import date
 
 from waccy.core.models import PeriodType, ReportingPeriod
 
+DateRangeInput = str | tuple[str | date, str | date]
 
-def parse_date_range(date_range: str | tuple[str, str]) -> tuple[date, date]:
+
+def parse_date_range(date_range: DateRangeInput) -> tuple[date, date]:
     """Parse a date range string or tuple into date objects."""
     if isinstance(date_range, tuple):
-        start_str, end_str = date_range
+        if len(date_range) != 2:
+            raise ValueError("Date range must contain exactly two ISO dates.")
+        start_raw, end_raw = date_range
+        if isinstance(start_raw, date) and isinstance(end_raw, date):
+            start_date, end_date = start_raw, end_raw
+        elif isinstance(start_raw, str) and isinstance(end_raw, str) and start_raw and end_raw:
+            start_date, end_date = _parse_iso_dates(start_raw, end_raw)
+        else:
+            raise ValueError("Date range values must use ISO format YYYY-MM-DD.")
     else:
         separator = next((sep for sep in (" to ", ",", "|") if sep in date_range), None)
         if separator is None:
@@ -20,13 +30,7 @@ def parse_date_range(date_range: str | tuple[str, str]) -> tuple[date, date]:
         parts = [part.strip() for part in date_range.split(separator)]
         if len(parts) != 2 or not all(parts):
             raise ValueError("Date range must contain exactly two ISO dates.")
-        start_str, end_str = parts
-
-    try:
-        start_date = date.fromisoformat(start_str)
-        end_date = date.fromisoformat(end_str)
-    except ValueError as exc:
-        raise ValueError("Date range values must use ISO format YYYY-MM-DD.") from exc
+        start_date, end_date = _parse_iso_dates(parts[0], parts[1])
     if start_date > end_date:
         raise ValueError("Date range start date must be on or before the end date.")
     return start_date, end_date
@@ -37,7 +41,7 @@ def infer_reporting_period(label: str) -> ReportingPeriod:
     clean_label = label.strip()
     annual_match = re.fullmatch(r"(\d{4})", clean_label)
     quarter_match = re.fullmatch(r"(\d{4})-?Q([1-4])", clean_label, flags=re.IGNORECASE)
-    month_match = re.fullmatch(r"(\d{4})-?([0-1]\d)", clean_label)
+    month_match = re.fullmatch(r"(\d{4})-?(0?[1-9]|1[0-2])", clean_label)
 
     if annual_match:
         year = int(annual_match.group(1))
@@ -73,7 +77,7 @@ def infer_reporting_period(label: str) -> ReportingPeriod:
 
 
 def generate_reporting_periods(
-    date_range: str | tuple[str, str],
+    date_range: DateRangeInput,
     period_type: PeriodType | str = PeriodType.YEAR,
 ) -> list[ReportingPeriod]:
     """Generate deterministic reporting periods for a date range."""
@@ -146,3 +150,10 @@ def format_date(d: date, format_str: str = "%Y-%m-%d") -> str:
 def validate_date_range(start: date, end: date) -> bool:
     """Validate that start date is before end date."""
     return start <= end
+
+
+def _parse_iso_dates(start_str: str, end_str: str) -> tuple[date, date]:
+    try:
+        return date.fromisoformat(start_str), date.fromisoformat(end_str)
+    except ValueError as exc:
+        raise ValueError("Date range values must use ISO format YYYY-MM-DD.") from exc

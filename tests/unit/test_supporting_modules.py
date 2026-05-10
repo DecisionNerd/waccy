@@ -59,6 +59,10 @@ def test_utils_parse_format_and_validate_values() -> None:
         date(2024, 1, 1),
         date(2024, 12, 31),
     )
+    assert parse_date_range((date(2024, 1, 1), date(2024, 12, 31))) == (
+        date(2024, 1, 1),
+        date(2024, 12, 31),
+    )
     assert parse_date_range("2024-01-01 to 2024-12-31") == (
         date(2024, 1, 1),
         date(2024, 12, 31),
@@ -80,6 +84,10 @@ def test_utils_parse_format_and_validate_values() -> None:
     assert not validate_amount(float("nan"))
     with pytest.raises(ValueError, match="between ISO dates"):
         parse_date_range("2024-01-01 2024-12-31")
+    with pytest.raises(ValueError, match="exactly two ISO dates"):
+        parse_date_range(("2024-01-01", "2024-12-31", "2025-12-31"))
+    with pytest.raises(ValueError, match="ISO format"):
+        parse_date_range((date(2024, 1, 1), "2024-12-31"))
     with pytest.raises(ValueError, match="on or before"):
         parse_date_range("2024-12-31 to 2024-01-01")
 
@@ -98,6 +106,7 @@ def test_reporting_period_generation_and_label_inference() -> None:
     assert infer_reporting_period("2024").period_type == PeriodType.YEAR
     assert infer_reporting_period("2024Q2").start_date == date(2024, 4, 1)
     assert infer_reporting_period("2024-Q3").end_date == date(2024, 9, 30)
+    assert infer_reporting_period("2024-2").end_date == date(2024, 2, 29)
     assert infer_reporting_period("202402").end_date == date(2024, 2, 29)
     assert infer_reporting_period("2024-02").period_type == PeriodType.MONTH
     with pytest.raises(ValueError, match="Unsupported reporting period"):

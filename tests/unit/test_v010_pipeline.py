@@ -241,6 +241,23 @@ def test_mapper_infers_quarterly_and_monthly_reporting_periods() -> None:
     assert periods["202403"].end_date.isoformat() == "2024-03-31"
 
 
+def test_mapper_preserves_explicit_noninferable_period_labels() -> None:
+    """Explicit periods prevent eager inference failures for custom labels."""
+    explicit_period = sample_periods()[0].model_copy(update={"label": "FY24A"})
+    extracted = ExtractedData(
+        entity_name="Fixture Co",
+        periods=[explicit_period],
+        source_records=[
+            source_record_from_dict({"name": "Sales", "period": "FY24A", "amount": 1}, "qbo"),
+        ],
+        metadata={"source": "qbo"},
+    )
+
+    normalized = DataMapper().normalize(extracted)
+
+    assert [period.label for period in normalized.periods] == ["FY24A"]
+
+
 def test_model_builder_reports_balance_and_cash_flow_issues() -> None:
     """Model validation includes balance-sheet and cash-flow checks."""
     fixture = sample_qbo_fixture()

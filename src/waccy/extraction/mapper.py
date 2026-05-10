@@ -56,7 +56,12 @@ class DataMapper:
 
         periods_by_label = {period.label: period for period in extracted_data.periods}
         for record in records:
-            periods_by_label.setdefault(record.period_label, _period_from_label(record.period_label))
+            if record.period_label in periods_by_label:
+                continue
+            try:
+                periods_by_label[record.period_label] = _period_from_label(record.period_label)
+            except ValueError:
+                continue
 
         return NormalizedFinancialDataset(
             entity_name=extracted_data.entity_name,
