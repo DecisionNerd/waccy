@@ -1,0 +1,17 @@
+site_name: WACCY
+site_url: https://decisionnerd.github.io/waccy/
+repo_url: https://github.com/DecisionNerd/waccy
+repo_name: DecisionNerd/waccy
+docs_dir: docs
+site_dir: site
+strict: true
+
+nav:
+  - Mission: 0-MISSION.md
+  - Experience: 1-EXPERIENCE.md
+  - Requirements: 2-REQUIREMENTS.md
+  - Architecture: 3-ARCHITECTURE.md
+  - Testing: 4-TESTING.md
+
+theme:
+  name: mkdocs

@@ -220,6 +220,27 @@ def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> 
     assert not validated.is_valid
 
 
+def test_mapper_infers_quarterly_and_monthly_reporting_periods() -> None:
+    """Mapper-created periods preserve common monthly and quarterly labels."""
+    extracted = ExtractedData(
+        entity_name="Fixture Co",
+        source_records=[
+            source_record_from_dict({"name": "Sales", "period": "2024Q1", "amount": 1}, "qbo"),
+            source_record_from_dict({"name": "Sales", "period": "2024-02", "amount": 1}, "qbo"),
+            source_record_from_dict({"name": "Sales", "period": "202403", "amount": 1}, "qbo"),
+        ],
+        metadata={"source": "qbo"},
+    )
+
+    normalized = DataMapper().normalize(extracted)
+    periods = {period.label: period for period in normalized.periods}
+
+    assert periods["2024Q1"].start_date.isoformat() == "2024-01-01"
+    assert periods["2024Q1"].end_date.isoformat() == "2024-03-31"
+    assert periods["2024-02"].start_date.isoformat() == "2024-02-01"
+    assert periods["202403"].end_date.isoformat() == "2024-03-31"
+
+
 def test_model_builder_reports_balance_and_cash_flow_issues() -> None:
     """Model validation includes balance-sheet and cash-flow checks."""
     fixture = sample_qbo_fixture()

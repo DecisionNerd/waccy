@@ -38,7 +38,7 @@ waccy = "waccy.cli:main"
 Homepage = "https://github.com/DecisionNerd/waccy"
 Repository = "https://github.com/DecisionNerd/waccy"
 Issues = "https://github.com/DecisionNerd/waccy/issues"
-Documentation = "https://github.com/DecisionNerd/waccy#readme"
+Documentation = "https://decisionnerd.github.io/waccy/"
 
 [build-system]
 requires = ["hatchling"]

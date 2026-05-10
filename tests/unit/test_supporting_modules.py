@@ -17,6 +17,7 @@ from waccy.core.models import (
     MappedFinancialDataset,
     MappedFinancialRecord,
     MappingStatus,
+    PeriodType,
     ReportingPeriod,
     SourceRecord,
     SourceReference,
@@ -29,7 +30,14 @@ from waccy.extraction.base import Extractor
 from waccy.extraction.mapper import DataMapper, source_record_from_dict
 from waccy.extraction.registry import ExtractorRegistry
 from waccy.modeling import ModelBuilder, ModelTemplate
-from waccy.utils import format_currency, format_date, format_percentage, parse_date_range
+from waccy.utils import (
+    format_currency,
+    format_date,
+    format_percentage,
+    generate_reporting_periods,
+    infer_reporting_period,
+    parse_date_range,
+)
 from waccy.utils.dates import validate_date_range as validate_date_range_util
 from waccy.utils.validation import validate_amount
 
@@ -51,6 +59,18 @@ def test_utils_parse_format_and_validate_values() -> None:
         date(2024, 1, 1),
         date(2024, 12, 31),
     )
+    assert parse_date_range("2024-01-01 to 2024-12-31") == (
+        date(2024, 1, 1),
+        date(2024, 12, 31),
+    )
+    assert parse_date_range("2024-01-01, 2024-03-31") == (
+        date(2024, 1, 1),
+        date(2024, 3, 31),
+    )
+    assert parse_date_range("2024-01-01|2024-03-31") == (
+        date(2024, 1, 1),
+        date(2024, 3, 31),
+    )
     assert format_date(date(2024, 1, 2)) == "2024-01-02"
     assert validate_date_range_util(date(2024, 1, 1), date(2024, 1, 2))
     assert format_currency(Decimal("1234.5")) == "USD 1,234.50"
@@ -58,22 +78,80 @@ def test_utils_parse_format_and_validate_values() -> None:
     assert validate_amount(1.0)
     assert validate_amount(1)
     assert not validate_amount(float("nan"))
-    with pytest.raises(NotImplementedError):
-        parse_date_range("2024-01-01 to 2024-12-31")
+    with pytest.raises(ValueError, match="between ISO dates"):
+        parse_date_range("2024-01-01 2024-12-31")
+    with pytest.raises(ValueError, match="on or before"):
+        parse_date_range("2024-12-31 to 2024-01-01")
 
 
-def test_classification_placeholders_have_stable_contracts() -> None:
-    """Classification scaffold methods keep their current API behavior."""
+def test_reporting_period_generation_and_label_inference() -> None:
+    """Date utilities generate deterministic model periods."""
+    quarters = generate_reporting_periods("2024-02-01 to 2024-08-15", PeriodType.QUARTER)
+    months = generate_reporting_periods(("2024-01-15", "2024-03-10"), PeriodType.MONTH)
+    years = generate_reporting_periods("2023-04-01 to 2024-03-31", PeriodType.YEAR)
+
+    assert [period.label for period in quarters] == ["2024Q1", "2024Q2", "2024Q3"]
+    assert quarters[0].start_date == date(2024, 2, 1)
+    assert quarters[-1].end_date == date(2024, 8, 15)
+    assert [period.label for period in months] == ["2024-01", "2024-02", "2024-03"]
+    assert [period.label for period in years] == ["2023", "2024"]
+    assert infer_reporting_period("2024").period_type == PeriodType.YEAR
+    assert infer_reporting_period("2024Q2").start_date == date(2024, 4, 1)
+    assert infer_reporting_period("2024-Q3").end_date == date(2024, 9, 30)
+    assert infer_reporting_period("202402").end_date == date(2024, 2, 29)
+    assert infer_reporting_period("2024-02").period_type == PeriodType.MONTH
+    with pytest.raises(ValueError, match="Unsupported reporting period"):
+        infer_reporting_period("FY24")
+
+
+def test_classification_and_pattern_matching_are_deterministic() -> None:
+    """Classification uses ontology aliases, confidence scoring, and EDGAR patterns."""
     engine = ClassificationEngine(llm_provider="fixture")
     assert engine.llm_provider == "fixture"
-    engine.learn_from_edgar({"filing": "fixture"})
-    with pytest.raises(NotImplementedError):
-        engine.classify_account("Sales", [], {})
 
-    assert ConfidenceScorer().calculate_confidence("Sales", "revenue", [], {}) == 0.0
+    account, confidence = engine.classify_account("Sales", [], {"source_system": "qbo"})
+    assert account.id == "revenue"
+    assert confidence >= 0.8
+
+    result = engine.classify_with_diagnostics("Mystery Account", [], {"source_system": "qbo"})
+    assert result.status == MappingStatus.UNMAPPED
+    assert result.confidence == 0.0
+
+    scorer = ConfidenceScorer()
+    assert scorer.calculate_confidence("Sales", "revenue", [], {}) > 0.0
+    assert scorer.calculate_confidence("Unknown", "not-real", [], {}) == 0.0
+
     matcher = PatternMatcher()
-    assert matcher.extract_patterns({"filing": "fixture"}) == {}
-    assert matcher.match_pattern("Sales", []) is None
+    patterns = matcher.extract_patterns(
+        {
+            "records": [
+                {
+                    "concept": "us-gaap:Revenues",
+                    "statement": "income_statement",
+                }
+            ]
+        }
+    )
+    assert patterns["aliases"]
+    assert matcher.match_pattern("us-gaap:Revenues", [])["account_id"] == "revenue"
+
+    engine.learn_from_edgar(
+        {
+            "records": [
+                {
+                    "concept": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+                    "statement": "cash_flow_statement",
+                }
+            ]
+        }
+    )
+    pattern_result = engine.classify_with_diagnostics(
+        "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+        [],
+        {"source_system": "edgar"},
+    )
+    assert pattern_result.account_id == "capex"
+    assert "classified_by_edgar_pattern" in pattern_result.diagnostics
 
 
 def test_model_template_placeholder_contract() -> None:

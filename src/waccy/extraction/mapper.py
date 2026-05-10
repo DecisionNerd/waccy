@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import date
 from decimal import Decimal
 from typing import Any
 
@@ -21,15 +20,11 @@ from waccy.core.models import (
 )
 from waccy.core.ontology import StandardChartOfAccounts
 from waccy.core.validation import validate_mapped_dataset
+from waccy.utils.dates import infer_reporting_period
 
 
 def _period_from_label(label: str) -> ReportingPeriod:
-    year = int(label[:4]) if label[:4].isdigit() else date.today().year
-    return ReportingPeriod(
-        label=label,
-        start_date=date(year, 1, 1),
-        end_date=date(year, 12, 31),
-    )
+    return infer_reporting_period(label)
 
 
 class DataMapper:
