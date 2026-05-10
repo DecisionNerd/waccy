@@ -54,6 +54,18 @@ def validate_mapped_dataset(mapped_dataset: MappedFinancialDataset) -> Validated
                     account_id=record.account_id,
                 )
             )
+        if record.status in {MappingStatus.MAPPED, MappingStatus.OVERRIDDEN} and not record.account_id:
+            issues.append(
+                ValidationIssue(
+                    code="missing_mapped_account_id",
+                    message=(
+                        f"Record {record.source_record.source.source_id!r} is {record.status.value!r} "
+                        "but has no canonical account_id."
+                    ),
+                    severity=IssueSeverity.ERROR,
+                    period_label=record.source_record.period_label,
+                )
+            )
         if record.status == MappingStatus.UNMAPPED:
             issues.append(
                 ValidationIssue(

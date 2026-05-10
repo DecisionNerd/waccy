@@ -16,13 +16,16 @@ Unlike large enterprises with dedicated accounting teams, small businesses often
 
 ## Current Status
 
-WACCY is currently an early scaffold. The published packages expose the core interfaces, registry, data model shells, and first-party extension packages, but the end-to-end extraction and financial model workflow is not implemented yet.
+WACCY is an early package, but the v0.1.0 vertical slice now implements a fixture-first financial modeling path:
 
-The first useful vertical slice is tracked in [milestone v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1) and [issue #15](https://github.com/DecisionNerd/waccy/issues/15). That release is focused on generating a three-sheet workbook from QBO/QuickBooks and EDGAR fixture data:
+* QBO/QuickBooks-shaped fixture extraction through `QuickBooksExtractor`
+* EDGAR/XBRL-shaped fixture extraction through `EdgarExtractor`
+* normalized, mapped, and validated financial datasets
+* deterministic source-to-WACCY account mapping with override support
+* three-statement model construction with reconciliation checks
+* XLSX export with the three required workbook sheets
 
-* Income Statement
-* Balance Sheet
-* Cash Flow Statement
+Live QuickBooks and EDGAR API clients are not implemented yet. The first milestone remains focused on hardening the fixture-first path into the [v0.1.0 release](https://github.com/DecisionNerd/waccy/milestone/1), tracked by [issue #15](https://github.com/DecisionNerd/waccy/issues/15).
 
 ## Quick Start
 
@@ -47,7 +50,7 @@ uv pip install waccy-edgar
 
 ### What Works Today
 
-The current package can discover installed extractor entry points and expose the public API skeleton:
+The current package can discover installed extractor entry points and build source-agnostic three-statement outputs from fixture data:
 
 ```python
 from waccy.extraction import ExtractorRegistry
@@ -57,14 +60,21 @@ available_sources = registry.list_extractors()
 print(f"Available data sources: {available_sources}")
 ```
 
-The following APIs are intentionally present but still raise `NotImplementedError` or return placeholders:
+Implemented v0.1.0 components include:
 
-* QuickBooks extraction
-* EDGAR extraction
-* account mapping and classification
+* fixture-first QBO and EDGAR extraction
+* standard account ontology and deterministic aliases
+* mapping, validation, reconciliation, and quality diagnostics
 * three-statement model building
 * spreadsheet export
-* validation and quality reporting
+* local and CI quality gates with BDD outcome specs
+
+Still planned:
+
+* live QuickBooks OAuth/API extraction
+* live EDGAR fetching and richer filing parsing
+* LLM-assisted classification and confidence scoring beyond placeholders
+* advanced model types such as DCF, LBO, M&A, and specialized industry models
 
 ## Planned Capabilities
 
@@ -123,68 +133,30 @@ The following APIs are intentionally present but still raise `NotImplementedErro
 * **Balance Checks**: Built-in reconciliation tables and error flags
 * **Scenario Tooling**: Data tables for sensitivity analysis, scenario toggles, goal seek integration
 
-## Planned Workflow
+## Fixture-First Workflow
 
-The target v0.1.0 workflow looks like this, but it is not runnable in the current package:
+The v0.1.0 workflow starts with fixture-shaped records. Live API configuration can be added later without changing the downstream modeling contract.
 
 ```python
-from waccy.extraction import ExtractorRegistry
-from waccy.classification import ClassificationEngine
 from waccy.modeling import ModelBuilder
-from waccy.core.ontology import StandardChartOfAccounts
+from waccy_quickbooks.extractor import QuickBooksExtractor
 
-# 1. Extract data from QuickBooks Online (handles messy, incomplete records)
-registry = ExtractorRegistry()
-extractor = registry.get_extractor("quickbooks")()
-credentials = {
-    "client_id": "your_client_id",
-    "client_secret": "your_client_secret",
-    "access_token": "your_access_token"
+fixture = {
+    "entity_name": "Example Co",
+    "periods": [
+        {"label": "2024", "start_date": "2024-01-01", "end_date": "2024-12-31"}
+    ],
+    "records": [
+        {"name": "Sales", "period": "2024", "amount": 1000, "statement": "income_statement"},
+        {"name": "Cost of Goods Sold", "period": "2024", "amount": 400, "statement": "income_statement"},
+        {"name": "Checking", "period": "2024", "amount": 100, "statement": "balance_sheet"},
+    ],
 }
-extractor.authenticate(credentials)
 
-extracted_data = extractor.extract({
-    "company_id": "123456789",
-    "date_range": ("2022-01-01", "2024-12-31"),
-    "include_transactions": True
-})
-
-# 2. Classify and map to standard accounts (with LLM enhancement for ambiguity)
-ontology = StandardChartOfAccounts()
-classification_engine = ClassificationEngine()
-
-for account in extracted_data.accounts:
-    mapped_account, confidence = classification_engine.classify_account(
-        source_account_name=account.name,
-        transaction_patterns=account.transaction_history,
-        context={"company_type": "SaaS", "industry": "Software"}
-    )
-    print(f"Mapped '{account.name}' to '{mapped_account.name}' (confidence: {confidence:.2f})")
-
-# 3. Build 3-statement integrated model
+extracted_data = QuickBooksExtractor().extract({"fixture": fixture})
 builder = ModelBuilder()
-model = builder.build_three_statement_model(
-    extracted_data=extracted_data,
-    forecast_periods=24
-)
-
-# 4. Generate DCF valuation
-dcf_model = builder.build_dcf_model(
-    three_statement_model=model,
-    wacc=0.10,
-    terminal_growth_rate=0.03,
-    exit_multiple=12.0
-)
-
-# 5. Export to spreadsheet output
+model = builder.build_three_statement_model(extracted_data)
 builder.export_to_sheets(model, output_path="financial_model.xlsx")
-builder.export_to_sheets(dcf_model, output_path="dcf_valuation.xlsx")
-
-# 6. Generate quality report
-quality_report = extracted_data.generate_quality_report()
-print(f"Data completeness: {quality_report.completeness:.2%}")
-print(f"Average mapping confidence: {quality_report.avg_confidence:.2f}")
-print(f"Issues flagged: {len(quality_report.issues)}")
 ```
 
 ## Target Output
@@ -198,7 +170,7 @@ print(f"Issues flagged: {len(quality_report.issues)}")
 
 ### v0.1.0 Workbook Structure
 
-```
+```text
 Financial Model.xlsx
 ├── Income Statement
 ├── Balance Sheet
@@ -211,22 +183,28 @@ Financial Model.xlsx
 
 **Primary Data Source** - The accounting system most commonly used by small businesses.
 
-Planned for v0.1.0:
+Implemented for v0.1.0:
 
 * Fixture-first extraction path for chart of accounts and statement data
-* Real-client path documented behind explicit credentials/configuration
 * Account normalization and source provenance
 * Skeptical treatment of source classifications with validation
+
+Planned after v0.1.0:
+
+* Real-client path documented behind explicit credentials/configuration
 
 ### SEC EDGAR
 
 **Pattern Learning & Reference Data** - High-quality financial data for learning and benchmarking.
 
-Planned for v0.1.0:
+Implemented for v0.1.0:
 
 * Fixture-first extraction path for public company statement data
 * Deterministic XBRL/concept mapping to WACCY accounts
 * Period normalization and source provenance
+
+Planned after v0.1.0:
+
 * A clear decision on whether EDGAR pattern learning ships in v0.1.0 or is deferred
 
 ### Extension Packages
@@ -397,7 +375,7 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a wel
 
 * **Current published core**: `waccy 0.0.2`
 * **Current published first-party extensions**: `waccy-quickbooks 0.1.0`, `waccy-edgar 0.0.2`
-* **Current implementation**: early scaffold with public interfaces and extension discovery
+* **Current implementation**: fixture-first v0.1.0 three-statement pipeline with public interfaces and extension discovery
 * **Next milestone**: [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1), focused on QBO/EDGAR three-sheet financial model generation
 
 Planned phases:
@@ -410,7 +388,7 @@ Planned phases:
 
 **Python Version**: 3.13+  
 **Package Manager**: [uv](https://github.com/astral-sh/uv)  
-**CI/CD**: GitHub Actions (coming soon)
+**CI/CD**: GitHub Actions, Codecov, and CodeRabbit
 
 ## 📄 License
 

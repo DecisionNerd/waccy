@@ -8,6 +8,7 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any
 
+import pytest
 from openpyxl import load_workbook
 
 from tests.fixtures.sample_data import sample_edgar_fixture, sample_periods, sample_qbo_fixture
@@ -136,6 +137,23 @@ def test_qbo_fixture_extractor_produces_normalized_dataset() -> None:
     assert {record.source.source_system for record in normalized.records} == {"qbo"}
 
 
+def test_qbo_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
+    """The QBO extractor returns clear errors for invalid fixture shapes."""
+    extractor_class = _load_extension_class(
+        ROOT / "extensions" / "waccy-quickbooks" / "src" / "waccy_quickbooks" / "extractor.py",
+        "local_waccy_quickbooks_extractor_invalid",
+        "QuickBooksExtractor",
+    )
+    extractor = extractor_class()
+
+    with pytest.raises(ValueError, match="dictionary payload"):
+        extractor.extract({"fixture": "not-a-dict"})
+    with pytest.raises(ValueError, match="'records' list"):
+        extractor.extract({"fixture": {"records": "not-a-list"}})
+    with pytest.raises(ValueError, match="records must be dictionaries"):
+        extractor.extract({"fixture": {"records": ["not-a-dict"]}})
+
+
 def test_edgar_fixture_extractor_produces_normalized_dataset() -> None:
     """The EDGAR extractor accepts XBRL-like fixture/dict input and normalizes it."""
     extractor_class = _load_extension_class(
@@ -150,6 +168,23 @@ def test_edgar_fixture_extractor_produces_normalized_dataset() -> None:
     assert normalized.entity_name == "Fixture Co"
     assert len(normalized.periods) == 2
     assert normalized.records[0].source.source_system == "edgar"
+
+
+def test_edgar_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
+    """The EDGAR extractor returns clear errors for invalid fixture shapes."""
+    extractor_class = _load_extension_class(
+        ROOT / "extensions" / "waccy-edgar" / "src" / "waccy_edgar" / "extractor.py",
+        "local_waccy_edgar_extractor_invalid",
+        "EdgarExtractor",
+    )
+    extractor = extractor_class()
+
+    with pytest.raises(ValueError, match="dictionary payload"):
+        extractor.extract({"fixture": "not-a-dict"})
+    with pytest.raises(ValueError, match="'records' list"):
+        extractor.extract({"fixture": {"records": "not-a-list"}})
+    with pytest.raises(ValueError, match="records must be dictionaries"):
+        extractor.extract({"fixture": {"records": ["not-a-dict"]}})
 
 
 def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> None:

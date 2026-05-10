@@ -1,3 +1,5 @@
+# Pull Request
+
 ## Linked Issue
 
 Closes #
@@ -12,4 +14,5 @@ Closes #
 
 - [ ] `uv run ruff check`
 - [ ] `uv run mypy src/waccy`
+- [ ] `uv run pytest tests/bdd -q -m "bdd or outcome"`
 - [ ] `uv run pytest --cov=src/waccy --cov-report=term-missing --cov-report=xml --cov-fail-under=90`

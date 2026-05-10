@@ -15,6 +15,8 @@ from waccy.core.models import (
     ExtractedData,
     IssueSeverity,
     MappedFinancialDataset,
+    MappedFinancialRecord,
+    MappingStatus,
     ReportingPeriod,
     SourceRecord,
     SourceReference,
@@ -117,7 +119,7 @@ def test_quality_report_covers_empty_and_partial_legacy_transactions() -> None:
     assert empty_report["avg_confidence"] == 1.0
     assert empty_report["issues"] == ["No source records or transactions were extracted."]
 
-    extracted = sample_extracted_data()
+    extracted = sample_extracted_data().model_copy(deep=True)
     extracted.transactions[0].account_id = ""
     report = extracted.generate_quality_report()
 
@@ -161,6 +163,32 @@ def test_validation_branches_for_period_ranges_and_empty_dataset() -> None:
     assert not validated.is_valid
 
 
+def test_validation_reports_mapped_records_without_account_ids() -> None:
+    """Validation rejects mapped statuses that lack canonical account IDs."""
+    source = SourceRecord(
+        source_account_id="sales",
+        source_account_name="Sales",
+        amount=Decimal("1"),
+        period_label="2024",
+        source=SourceReference(source_system="qbo", source_id="sales", source_label="Sales"),
+    )
+    mapped = MappedFinancialDataset(
+        entity_name="Fixture",
+        periods=[sample_periods()[1]],
+        records=[
+            MappedFinancialRecord(
+                source_record=source,
+                status=MappingStatus.MAPPED,
+                confidence=0.95,
+            )
+        ],
+    )
+    validated = DataMapper().validate(mapped)
+
+    assert "missing_mapped_account_id" in {issue.code for issue in validated.issues}
+    assert not validated.is_valid
+
+
 def test_model_builder_accepts_validated_and_mapped_inputs(tmp_path: Path) -> None:
     """ModelBuilder handles all public input layers and export helper."""
     fixture = sample_qbo_fixture()
@@ -186,9 +214,26 @@ def test_model_builder_accepts_validated_and_mapped_inputs(tmp_path: Path) -> No
 
 
 def test_model_builder_reports_missing_required_statement_line() -> None:
-    """Missing computed statement lines fail loudly for developer mistakes."""
+    """Missing computed statement lines fail loudly through public model building."""
+    fixture = sample_qbo_fixture()
+    extracted = ExtractedData(
+        entity_name="Fixture Co",
+        periods=sample_periods(),
+        source_records=[source_record_from_dict(record, "qbo") for record in fixture["records"]],
+        metadata={"source": "qbo"},
+    )
+
+    class BrokenModelBuilder(ModelBuilder):
+        def _build_income_statement_lines(
+            self,
+            records: list[MappedFinancialRecord],
+            period_labels: list[str],
+        ) -> list:
+            del records, period_labels
+            return []
+
     with pytest.raises(ValueError, match="Missing statement line"):
-        ModelBuilder()._find_line([], "Net Income")
+        BrokenModelBuilder().build_three_statement_model(extracted)
 
 
 def test_validated_dataset_is_invalid_when_error_issue_exists() -> None:

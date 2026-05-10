@@ -54,7 +54,6 @@ dev = [
     "pytest-cov>=6.0.0",
     "ruff>=0.8.0",
     "mypy>=1.13.0",
-    "pytest-bdd>=8.1.0",
 ]
 docs = [
     "mkdocs>=1.6.1",
