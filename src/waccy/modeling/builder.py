@@ -357,7 +357,11 @@ class ModelBuilder:
             if not isinstance(source_issue, dict):
                 continue
             code = str(source_issue.get("code", "source_data_issue"))
-            severity = IssueSeverity(str(source_issue.get("severity", "error")))
+            try:
+                severity = IssueSeverity(str(source_issue.get("severity", "error")))
+            except ValueError:
+                severity = IssueSeverity.ERROR
+                code = "invalid_source_issue_severity"
             issues.append(
                 ValidationIssue(
                     code=code,

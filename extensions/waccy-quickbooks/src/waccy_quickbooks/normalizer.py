@@ -30,6 +30,7 @@ class QuickBooksReportNormalizer:
         records: list[dict[str, Any]] = []
         periods: dict[str, dict[str, str]] = {}
         source_issues: list[dict[str, Any]] = []
+        issue_keys: set[tuple[str, str, str]] = set()
         report_record_counts: dict[str, int] = {}
 
         for period_label, reports in reports_by_period.items():
@@ -58,13 +59,15 @@ class QuickBooksReportNormalizer:
                 period = self._period_from_report(period_label, report)
                 periods.setdefault(period["label"], period)
                 if self._has_no_report_data(report):
-                    source_issues.append(
+                    self._append_issue(
+                        source_issues,
+                        issue_keys,
                         self._issue(
                             "qbo_report_no_data",
                             f"QBO report {report_name!r} has NoReportData=true for {period['label']}.",
                             report_name,
                             period["label"],
-                        )
+                        ),
                     )
 
                 before_count = len(records)
@@ -82,7 +85,9 @@ class QuickBooksReportNormalizer:
             for required_report in REQUIRED_REPORTS:
                 count = report_record_counts.get(f"{period_label}:{required_report}", 0)
                 if count == 0:
-                    source_issues.append(
+                    self._append_issue(
+                        source_issues,
+                        issue_keys,
                         self._issue(
                             "missing_required_source_statement",
                             (
@@ -91,7 +96,7 @@ class QuickBooksReportNormalizer:
                             ),
                             required_report,
                             period_label,
-                        )
+                        ),
                     )
 
         return {
@@ -350,8 +355,12 @@ class QuickBooksReportNormalizer:
     def _decimal(value: Any) -> Decimal | None:
         if value in {None, ""}:
             return None
+        normalized = str(value).strip().replace(",", "")
+        is_parenthesized_negative = normalized.startswith("(") and normalized.endswith(")")
+        if is_parenthesized_negative:
+            normalized = f"-{normalized[1:-1]}"
         try:
-            return Decimal(str(value).replace(",", ""))
+            return Decimal(normalized)
         except InvalidOperation:
             return None
 
@@ -376,3 +385,19 @@ class QuickBooksReportNormalizer:
             "report_name": report_name,
             "period_label": period_label,
         }
+
+    @staticmethod
+    def _append_issue(
+        issues: list[dict[str, Any]],
+        issue_keys: set[tuple[str, str, str]],
+        issue: dict[str, Any],
+    ) -> None:
+        key = (
+            str(issue.get("code", "")),
+            str(issue.get("report_name", "")),
+            str(issue.get("period_label", "")),
+        )
+        if key in issue_keys:
+            return
+        issue_keys.add(key)
+        issues.append(issue)

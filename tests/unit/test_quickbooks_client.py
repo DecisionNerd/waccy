@@ -5,9 +5,10 @@ from __future__ import annotations
 import json
 import sys
 from datetime import UTC, date, datetime, timedelta
+from decimal import Decimal
 from pathlib import Path
 from typing import TYPE_CHECKING
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 
 import pytest
 
@@ -131,6 +132,29 @@ def test_api_client_reports_http_errors() -> None:
         client.get_company_info()
 
 
+def test_api_client_rejects_invalid_account_page_size() -> None:
+    client = QuickBooksApiClient(
+        QuickBooksToken(access_token="access", refresh_token="refresh", realm_id="123")
+    )
+
+    with pytest.raises(ValueError, match="page_size"):
+        client.get_accounts(page_size=0)
+
+
+def test_api_client_reports_url_errors() -> None:
+    def fake_transport(request: Request, timeout: float) -> bytes:
+        del request, timeout
+        raise URLError("network unavailable")
+
+    client = QuickBooksApiClient(
+        QuickBooksToken(access_token="access", refresh_token="refresh", realm_id="123"),
+        transport=fake_transport,
+    )
+
+    with pytest.raises(QuickBooksApiError, match="network unavailable"):
+        client.get_company_info()
+
+
 def test_report_normalizer_converts_nested_qbo_reports_to_fixture() -> None:
     raw_fixture = _release_raw_fixture()
 
@@ -172,6 +196,10 @@ def test_report_normalizer_reports_no_data_and_missing_statements() -> None:
 
     assert {"qbo_report_no_data", "missing_required_source_statement"}.issubset(issue_codes)
     assert fixture["records"] == []
+
+
+def test_report_normalizer_parses_parenthesized_negative_values() -> None:
+    assert QuickBooksReportNormalizer._decimal("(1,234.56)") == Decimal("-1234.56")
 
 
 def _json(payload: dict[str, object]) -> bytes:

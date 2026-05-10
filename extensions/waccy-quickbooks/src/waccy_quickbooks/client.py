@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable, Iterable
 from typing import TYPE_CHECKING, Any
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -77,6 +77,8 @@ class QuickBooksApiClient:
 
     def get_accounts(self, *, page_size: int = 1000) -> list[dict[str, Any]]:
         """Return all chart-of-account rows visible to the token."""
+        if page_size <= 0:
+            raise ValueError("QBO account query page_size must be a positive integer.")
         accounts: list[dict[str, Any]] = []
         start_position = 1
         while True:
@@ -161,6 +163,8 @@ class QuickBooksApiClient:
         except HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
             raise QuickBooksApiError(f"QBO request failed with HTTP {exc.code}: {detail}") from exc
+        except URLError as exc:
+            raise QuickBooksApiError(f"QBO request failed: {exc.reason}") from exc
         try:
             payload = json.loads(raw_response.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:

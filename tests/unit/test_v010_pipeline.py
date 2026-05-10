@@ -33,9 +33,13 @@ from waccy.modeling.exporters import PandasExporter, SheetExporter
 
 ROOT = Path(__file__).resolve().parents[2]
 QUICKBOOKS_SRC = ROOT / "extensions" / "waccy-quickbooks" / "src"
-sys.path.insert(0, str(QUICKBOOKS_SRC))
+if QUICKBOOKS_SRC.exists():
+    sys.path.insert(0, str(QUICKBOOKS_SRC))
 
-from waccy_quickbooks import QuickBooksReportNormalizer  # noqa: E402
+try:
+    from waccy_quickbooks import QuickBooksReportNormalizer
+except ModuleNotFoundError:
+    QuickBooksReportNormalizer = None  # type: ignore[assignment]
 
 
 def test_core_dataset_models_round_trip() -> None:
@@ -359,6 +363,8 @@ def test_pandas_export_returns_statement_dataframes() -> None:
 
 def test_qbo_raw_report_fixture_builds_release_valid_outputs(tmp_path: Path) -> None:
     """A sanitized QBO raw report fixture reaches XLSX and pandas outputs."""
+    if QuickBooksReportNormalizer is None:
+        pytest.skip("waccy-quickbooks extension is not importable.")
     raw_fixture = json.loads((ROOT / "tests" / "fixtures" / "qbo_release_smoke_raw.json").read_text())
     fixture = QuickBooksReportNormalizer().to_fixture(raw_fixture)
     extractor_class = _load_extension_class(
@@ -386,6 +392,8 @@ def test_qbo_raw_report_fixture_builds_release_valid_outputs(tmp_path: Path) -> 
 
 def test_qbo_source_completeness_issues_are_model_errors() -> None:
     """QBO NoReportData diagnostics become explicit model validation errors."""
+    if QuickBooksReportNormalizer is None:
+        pytest.skip("waccy-quickbooks extension is not importable.")
     raw_fixture = json.loads((ROOT / "tests" / "fixtures" / "qbo_release_smoke_raw.json").read_text())
     raw_fixture["reports"] = {"2024": {"BalanceSheet": raw_fixture["reports"]["2024"]["BalanceSheet"]}}
     fixture = QuickBooksReportNormalizer().to_fixture(raw_fixture)

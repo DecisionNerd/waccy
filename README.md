@@ -27,7 +27,7 @@ WACCY is an early package, but the v0.1.0 vertical slice now implements a fixtur
 * XLSX export with the three required workbook sheets
 * pandas DataFrame export for follow-on modeling outside WACCY
 
-The QuickBooks helper pulls raw QBO company info, chart of accounts, and reports; deterministic live-report normalization into WACCY source records is still tracked separately. Live EDGAR fetching and richer filing parsing remain planned. The first milestone remains focused on hardening the QBO/EDGAR path into the [v0.1.0 release](https://github.com/DecisionNerd/waccy/milestone/1), tracked by [issue #15](https://github.com/DecisionNerd/waccy/issues/15).
+The QuickBooks helper pulls raw QBO company info, chart of accounts, and reports, then normalizes those reports into WACCY source records. Live EDGAR fetching and richer filing parsing remain planned. The first milestone remains focused on hardening the QBO/EDGAR path into the [v0.1.0 release](https://github.com/DecisionNerd/waccy/milestone/1), tracked by [issue #15](https://github.com/DecisionNerd/waccy/issues/15).
 
 ## Quick Start
 
@@ -75,7 +75,7 @@ Implemented v0.1.0 components include:
 
 Still planned:
 
-* deterministic QBO live-report normalization into WACCY source records
+* full live QuickBooks product workflow beyond report pulling and normalization
 * live EDGAR fetching and richer filing parsing
 * LLM-assisted classification and confidence scoring beyond placeholders
 * advanced model types such as DCF, LBO, M&A, and specialized industry models
