@@ -65,8 +65,6 @@ def infer_reporting_period(label: str) -> ReportingPeriod:
     if month_match:
         year = int(month_match.group(1))
         month = int(month_match.group(2))
-        if not 1 <= month <= 12:
-            raise ValueError(f"Unsupported reporting period month in label {label!r}.")
         return ReportingPeriod(
             label=clean_label,
             start_date=date(year, month, 1),
