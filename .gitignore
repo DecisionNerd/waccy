@@ -40,6 +40,7 @@ env/
 .coverage
 coverage.xml
 htmlcov/
+site/
 .tox/
 .hypothesis/
 

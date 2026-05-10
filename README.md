@@ -201,11 +201,12 @@ Implemented for v0.1.0:
 
 * Fixture-first extraction path for public company statement data
 * Deterministic XBRL/concept mapping to WACCY accounts
+* Deterministic EDGAR pattern extraction for fixture concepts and statement hints
 * Period normalization and source provenance
 
 Planned after v0.1.0:
 
-* A clear decision on whether EDGAR pattern learning ships in v0.1.0 or is deferred
+* Live EDGAR filing fetch and full public-company fact ingestion
 
 ### Extension Packages
 
@@ -306,10 +307,13 @@ uv run mypy src/waccy
 
 ## 📚 Documentation
 
+Published docs: <https://decisionnerd.github.io/waccy/>
+
 * **[Mission Statement](docs/0-MISSION.md)** - Project goals, philosophy, and roadmap
 * **[Experience](docs/1-EXPERIENCE.md)** - Target user workflows and release experience
 * **[Requirements](docs/2-REQUIREMENTS.md)** - Financial modeling requirements and capabilities
 * **[Architecture](docs/3-ARCHITECTURE.md)** - Technical architecture and design principles
+* **[Testing](docs/4-TESTING.md)** - Quality gates, BDD outcomes, and coverage expectations
 
 ## 🏛️ Design Principles
 
@@ -376,12 +380,12 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a wel
 * **Current published core**: `waccy 0.0.2`
 * **Current published first-party extensions**: `waccy-quickbooks 0.1.0`, `waccy-edgar 0.0.2`
 * **Current implementation**: fixture-first v0.1.0 three-statement pipeline with public interfaces and extension discovery
-* **Next milestone**: [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1), focused on QBO/EDGAR three-sheet financial model generation
+* **Current milestone**: [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1), focused on QBO/EDGAR three-sheet financial model generation and docs publishing
 
 Planned phases:
 
 * **Phase 1**: Core foundation and three-statement models
-* **Phase 2**: Public market data and pattern learning
+* **Phase 2**: Public market data and richer pattern learning
 * **Phase 3**: Advanced valuation models
 * **Phase 4**: Specialized model types
 * **Phase 5**: Advanced analysis and decision support

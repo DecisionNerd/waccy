@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import date
 from decimal import Decimal
 from typing import Any
 
@@ -21,15 +20,11 @@ from waccy.core.models import (
 )
 from waccy.core.ontology import StandardChartOfAccounts
 from waccy.core.validation import validate_mapped_dataset
+from waccy.utils.dates import infer_reporting_period
 
 
 def _period_from_label(label: str) -> ReportingPeriod:
-    year = int(label[:4]) if label[:4].isdigit() else date.today().year
-    return ReportingPeriod(
-        label=label,
-        start_date=date(year, 1, 1),
-        end_date=date(year, 12, 31),
-    )
+    return infer_reporting_period(label)
 
 
 class DataMapper:
@@ -60,8 +55,28 @@ class DataMapper:
             ]
 
         periods_by_label = {period.label: period for period in extracted_data.periods}
+        inferred_period_labels: dict[str, str] = {}
         for record in records:
-            periods_by_label.setdefault(record.period_label, _period_from_label(record.period_label))
+            if record.period_label in periods_by_label:
+                continue
+            try:
+                period = _period_from_label(record.period_label)
+            except ValueError:
+                continue
+            periods_by_label.setdefault(period.label, period)
+            inferred_period_labels[record.period_label] = period.label
+
+        if inferred_period_labels:
+            records = [
+                record.model_copy(
+                    update={
+                        "period_label": inferred_period_labels.get(
+                            record.period_label, record.period_label
+                        )
+                    }
+                )
+                for record in records
+            ]
 
         return NormalizedFinancialDataset(
             entity_name=extracted_data.entity_name,
@@ -180,7 +195,9 @@ class DataMapper:
         override: str | MappingOverride,
     ) -> MappedFinancialRecord:
         override_model = (
-            override if isinstance(override, MappingOverride) else MappingOverride(account_id=override)
+            override
+            if isinstance(override, MappingOverride)
+            else MappingOverride(account_id=override)
         )
         account = self.ontology.get_account(override_model.account_id)
         diagnostics = []
@@ -205,8 +222,12 @@ class DataMapper:
 def source_record_from_dict(data: dict[str, Any], source_system: str) -> SourceRecord:
     """Create a source record from a fixture dictionary."""
     return SourceRecord(
-        source_account_id=str(data.get("source_account_id") or data.get("account_id") or data["name"]),
-        source_account_name=str(data.get("source_account_name") or data.get("name") or data["account_id"]),
+        source_account_id=str(
+            data.get("source_account_id") or data.get("account_id") or data["name"]
+        ),
+        source_account_name=str(
+            data.get("source_account_name") or data.get("name") or data["account_id"]
+        ),
         amount=Decimal(str(data["amount"])),
         period_label=str(data["period"]),
         statement=data.get("statement"),
@@ -214,8 +235,12 @@ def source_record_from_dict(data: dict[str, Any], source_system: str) -> SourceR
         unit=str(data.get("unit", "USD")),
         source=SourceReference(
             source_system=source_system,
-            source_id=str(data.get("source_id") or data.get("id") or data.get("account_id") or data["name"]),
-            source_label=str(data.get("source_label") or data.get("name") or data.get("account_id")),
+            source_id=str(
+                data.get("source_id") or data.get("id") or data.get("account_id") or data["name"]
+            ),
+            source_label=str(
+                data.get("source_label") or data.get("name") or data.get("account_id")
+            ),
             metadata=dict(data.get("metadata", {})),
         ),
         metadata={key: value for key, value in data.items() if key not in {"amount"}},
