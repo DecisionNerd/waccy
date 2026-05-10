@@ -19,7 +19,7 @@ test:
 	uv run pytest
 
 test-cov:
-	uv run pytest --cov=src/waccy --cov-report=term-missing --cov-report=xml --cov-fail-under=80
+	uv run pytest --cov=src/waccy --cov-report=term-missing --cov-report=xml --cov-fail-under=90
 
 bdd:
 	uv run pytest tests/bdd -q -m "bdd or outcome"

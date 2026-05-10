@@ -12,4 +12,4 @@ Closes #
 
 - [ ] `uv run ruff check`
 - [ ] `uv run mypy src/waccy`
-- [ ] `uv run pytest --cov=src/waccy --cov-report=term-missing --cov-report=xml --cov-fail-under=80`
+- [ ] `uv run pytest --cov=src/waccy --cov-report=term-missing --cov-report=xml --cov-fail-under=90`
