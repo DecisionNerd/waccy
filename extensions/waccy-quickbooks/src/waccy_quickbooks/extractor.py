@@ -33,7 +33,12 @@ class QuickBooksExtractor(Extractor):
 
     def extract(self, config: dict[str, Any]) -> ExtractedData:
         """Extract data from a QuickBooks-shaped fixture or dictionary."""
-        fixture = config.get("fixture") or config.get("data") or config
+        if "fixture" in config:
+            fixture = config["fixture"]
+        elif "data" in config:
+            fixture = config["data"]
+        else:
+            fixture = config
         if not isinstance(fixture, dict):
             raise ValueError("QuickBooks fixture extraction requires a dictionary payload.")
 
@@ -46,6 +51,8 @@ class QuickBooksExtractor(Extractor):
         raw_periods = fixture.get("periods", [])
         if not isinstance(raw_periods, list):
             raise ValueError("QuickBooks fixture periods must be a list.")
+        if not all(isinstance(period, dict) for period in raw_periods):
+            raise ValueError("QuickBooks fixture periods must be dictionaries.")
 
         periods = [_period_from_dict(period) for period in raw_periods]
         records = [source_record_from_dict(record, self.data_source) for record in raw_records]

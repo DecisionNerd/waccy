@@ -30,7 +30,12 @@ class EdgarExtractor(Extractor):
 
     def extract(self, config: dict[str, Any]) -> ExtractedData:
         """Extract data from an EDGAR-shaped fixture or dictionary."""
-        fixture = config.get("fixture") or config.get("data") or config
+        if "fixture" in config:
+            fixture = config["fixture"]
+        elif "data" in config:
+            fixture = config["data"]
+        else:
+            fixture = config
         if not isinstance(fixture, dict):
             raise ValueError("EDGAR fixture extraction requires a dictionary payload.")
 

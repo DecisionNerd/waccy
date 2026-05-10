@@ -149,9 +149,13 @@ def test_qbo_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
     with pytest.raises(ValueError, match="dictionary payload"):
         extractor.extract({"fixture": "not-a-dict"})
     with pytest.raises(ValueError, match="'records' list"):
+        extractor.extract({"fixture": {}, "records": []})
+    with pytest.raises(ValueError, match="'records' list"):
         extractor.extract({"fixture": {"records": "not-a-list"}})
     with pytest.raises(ValueError, match="records must be dictionaries"):
         extractor.extract({"fixture": {"records": ["not-a-dict"]}})
+    with pytest.raises(ValueError, match="periods must be dictionaries"):
+        extractor.extract({"fixture": {"records": [], "periods": ["not-a-dict"]}})
     with pytest.raises(ValueError, match="accounts must be a list"):
         extractor.extract({"fixture": {"records": [], "accounts": "not-a-list"}})
     with pytest.raises(ValueError, match="accounts must be dictionaries"):
@@ -185,6 +189,8 @@ def test_edgar_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
 
     with pytest.raises(ValueError, match="dictionary payload"):
         extractor.extract({"fixture": "not-a-dict"})
+    with pytest.raises(ValueError, match="'records' list"):
+        extractor.extract({"fixture": {}, "records": []})
     with pytest.raises(ValueError, match="'records' list"):
         extractor.extract({"fixture": {"records": "not-a-list"}})
     with pytest.raises(ValueError, match="records must be dictionaries"):
@@ -277,14 +283,19 @@ def _source_record(account_id: str, account_name: str) -> SourceRecord:
 
 
 def _extracted(fixture: dict[str, object], source_system: str) -> ExtractedData:
+    raw_records = fixture["records"]
+    if not isinstance(raw_records, list):
+        raise AssertionError(f"Fixture {fixture['entity_name']!r} records must be a list.")
+    for record in raw_records:
+        if not isinstance(record, dict):
+            raise AssertionError(
+                f"Fixture {fixture['entity_name']!r} records must be dictionaries: {record!r}"
+            )
+
     return ExtractedData(
         entity_name=str(fixture["entity_name"]),
         periods=sample_periods(),
-        source_records=[
-            source_record_from_dict(record, source_system)
-            for record in fixture["records"]
-            if isinstance(record, dict)
-        ],
+        source_records=[source_record_from_dict(record, source_system) for record in raw_records],
         metadata={"source": source_system},
     )
 
