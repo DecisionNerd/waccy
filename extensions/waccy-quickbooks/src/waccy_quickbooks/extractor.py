@@ -49,11 +49,16 @@ class QuickBooksExtractor(Extractor):
 
         periods = [_period_from_dict(period) for period in raw_periods]
         records = [source_record_from_dict(record, self.data_source) for record in raw_records]
+        raw_accounts = fixture.get("accounts", [])
+        if not isinstance(raw_accounts, list):
+            raise ValueError("QuickBooks fixture accounts must be a list.")
+        if not all(isinstance(account, dict) for account in raw_accounts):
+            raise ValueError("QuickBooks fixture accounts must be dictionaries.")
         return ExtractedData(
             entity_name=str(fixture.get("entity_name", config.get("company_id", "QuickBooks Entity"))),
             periods=periods,
             source_records=records,
-            accounts=list(fixture.get("accounts", [])),
+            accounts=raw_accounts,
             metadata={
                 "source": self.data_source,
                 "mode": "fixture",

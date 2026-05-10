@@ -152,6 +152,10 @@ def test_qbo_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
         extractor.extract({"fixture": {"records": "not-a-list"}})
     with pytest.raises(ValueError, match="records must be dictionaries"):
         extractor.extract({"fixture": {"records": ["not-a-dict"]}})
+    with pytest.raises(ValueError, match="accounts must be a list"):
+        extractor.extract({"fixture": {"records": [], "accounts": "not-a-list"}})
+    with pytest.raises(ValueError, match="accounts must be dictionaries"):
+        extractor.extract({"fixture": {"records": [], "accounts": ["not-a-dict"]}})
 
 
 def test_edgar_fixture_extractor_produces_normalized_dataset() -> None:
@@ -185,6 +189,8 @@ def test_edgar_fixture_extractor_rejects_invalid_fixture_shapes() -> None:
         extractor.extract({"fixture": {"records": "not-a-list"}})
     with pytest.raises(ValueError, match="records must be dictionaries"):
         extractor.extract({"fixture": {"records": ["not-a-dict"]}})
+    with pytest.raises(ValueError, match="periods must be dictionaries"):
+        extractor.extract({"fixture": {"records": [], "periods": ["not-a-dict"]}})
 
 
 def test_validation_reports_unmapped_missing_periods_and_duplicate_periods() -> None:
@@ -245,17 +251,19 @@ def test_xlsx_export_writes_three_sheet_workbook(tmp_path: Path) -> None:
 
     SheetExporter().export(model, str(output_path))
     workbook = load_workbook(output_path)
-
-    assert workbook.sheetnames == ["Income Statement", "Balance Sheet", "Cash Flow Statement"]
-    income_statement = workbook["Income Statement"]
-    balance_sheet = workbook["Balance Sheet"]
-    cash_flow_statement = workbook["Cash Flow Statement"]
-    assert income_statement["B1"].value == "2023"
-    assert income_statement["C11"].value == 316
-    assert balance_sheet["A15"].value == "Balance Check"
-    assert balance_sheet["C15"].value == 0
-    assert cash_flow_statement["A8"].value == "Cash Flow Tie-Out"
-    assert cash_flow_statement["C8"].value == 0
+    try:
+        assert workbook.sheetnames == ["Income Statement", "Balance Sheet", "Cash Flow Statement"]
+        income_statement = workbook["Income Statement"]
+        balance_sheet = workbook["Balance Sheet"]
+        cash_flow_statement = workbook["Cash Flow Statement"]
+        assert income_statement["B1"].value == "2023"
+        assert income_statement["C11"].value == 316
+        assert balance_sheet["A15"].value == "Balance Check"
+        assert balance_sheet["C15"].value == 0
+        assert cash_flow_statement["A8"].value == "Cash Flow Tie-Out"
+        assert cash_flow_statement["C8"].value == 0
+    finally:
+        workbook.close()
 
 
 def _source_record(account_id: str, account_name: str) -> SourceRecord:
@@ -284,6 +292,8 @@ def _extracted(fixture: dict[str, object], source_system: str) -> ExtractedData:
 def _line_value(lines: list[object], label: str, period: str) -> Decimal:
     for line in lines:
         if line.label == label:
+            if period not in line.values:
+                raise AssertionError(f"Line {label!r} is missing period {period!r}")
             return line.values[period]
     raise AssertionError(f"Missing line {label!r}")
 

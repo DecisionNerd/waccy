@@ -43,6 +43,8 @@ class EdgarExtractor(Extractor):
         raw_periods = fixture.get("periods", [])
         if not isinstance(raw_periods, list):
             raise ValueError("EDGAR fixture periods must be a list.")
+        if not all(isinstance(period, dict) for period in raw_periods):
+            raise ValueError("EDGAR fixture periods must be dictionaries.")
 
         periods = [_period_from_dict(period) for period in raw_periods]
         records = [source_record_from_dict(record, self.data_source) for record in raw_records]

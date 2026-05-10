@@ -184,8 +184,10 @@ def test_validation_reports_mapped_records_without_account_ids() -> None:
         ],
     )
     validated = DataMapper().validate(mapped)
+    issue_codes = {issue.code for issue in validated.issues}
 
-    assert "missing_mapped_account_id" in {issue.code for issue in validated.issues}
+    assert "missing_mapped_account_id" in issue_codes
+    assert "mapping_overridden" not in issue_codes
     assert not validated.is_valid
 
 

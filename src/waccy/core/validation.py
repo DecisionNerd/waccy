@@ -84,7 +84,7 @@ def validate_mapped_dataset(mapped_dataset: MappedFinancialDataset) -> Validated
                     period_label=record.source_record.period_label,
                 )
             )
-        elif record.status == MappingStatus.OVERRIDDEN:
+        elif record.status == MappingStatus.OVERRIDDEN and record.account_id:
             issues.append(
                 ValidationIssue(
                     code="mapping_overridden",
