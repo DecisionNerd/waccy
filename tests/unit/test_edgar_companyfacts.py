@@ -6,6 +6,8 @@ import sys
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from waccy.core.models import IssueSeverity
 from waccy.extraction.mapper import DataMapper
 from waccy.modeling.builder import ModelBuilder
@@ -41,12 +43,8 @@ def test_companyfacts_normalizer_selects_annual_10k_fiscal_periods() -> None:
 def test_companyfacts_normalizer_rejects_invalid_period_count() -> None:
     """Period selection is explicit instead of relying on surprising slices."""
     for periods in (0, -1, 1.5, "2"):
-        try:
+        with pytest.raises(ValueError, match="positive integer"):
             EdgarCompanyFactsNormalizer().to_fixture(_companyfacts_fixture(), periods=periods)  # type: ignore[arg-type]
-        except ValueError as exc:
-            assert "positive integer" in str(exc)
-        else:
-            raise AssertionError(f"Expected invalid periods value to fail: {periods!r}")
 
 
 def test_companyfacts_normalizer_uses_fallback_concepts_for_missing_years() -> None:
