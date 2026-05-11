@@ -285,6 +285,26 @@ waccy/
 
 See [extensions/README.md](extensions/README.md) for details on working with extensions.
 
+### Trusted Publishing
+
+Package publishing uses GitHub Actions and PyPI Trusted Publishers instead of
+long-lived PyPI API tokens. The workflow is `.github/workflows/publish.yml` and
+uses the GitHub environment `pypi`.
+
+Configure each PyPI project with the same trusted publisher:
+
+| PyPI project | Owner | Repository | Workflow | Environment |
+| --- | --- | --- | --- | --- |
+| `waccy` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
+| `waccy-edgar` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
+| `waccy-quickbooks` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
+
+For existing projects, add the publisher from the project's PyPI
+**Publishing** settings. For a new project, add a pending publisher from the
+account-level PyPI **Publishing** page before the first upload. Keep the
+GitHub `pypi` environment limited to `main`; add required reviewers there when
+the repo needs an explicit human approval gate.
+
 ## 🧪 Testing
 
 ```bash
