@@ -1,6 +1,6 @@
 [project]
 name = "waccy-quickbooks"
-version = "0.1.0"
+version = "0.1.1"
 description = "WACCY extension for QuickBooks Online integration"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -18,7 +18,7 @@ classifiers = [
 ]
 dependencies = [
     "intuit-oauth>=1.2.6",
-    "waccy>=0.0.2",
+    "waccy>=0.1.0",
 ]
 
 [project.optional-dependencies]
@@ -27,6 +27,9 @@ dev = [
     "ruff>=0.8.0",
     "mypy>=1.13.0",
 ]
+
+[tool.uv.sources]
+waccy = { path = "../..", editable = true }
 
 [project.entry-points."waccy.extractors"]
 quickbooks = "waccy_quickbooks.extractor:QuickBooksExtractor"

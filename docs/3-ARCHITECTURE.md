@@ -11,11 +11,11 @@ WACCY is designed as a core platform with a modular extension architecture. The 
 
 ## Current Implementation Status
 
-This document describes both the intended architecture and the current scaffold. As of the published package set:
+This document describes both the intended architecture and the current scaffold. As of the v0.1.0 release candidate package set:
 
-- `waccy` is `0.0.2`
-- `waccy-quickbooks` is `0.1.0`
-- `waccy-edgar` is `0.0.2`
+- `waccy` is `0.1.0`
+- `waccy-quickbooks` is `0.1.1`
+- `waccy-edgar` is `0.1.0`
 
 The repository currently contains the core interfaces, public package exports, extension discovery, placeholder extractors, and build/publish tooling. The end-to-end workflow is tracked for [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1): QBO/QuickBooks and EDGAR inputs, canonical mapping, a three-statement model object, and XLSX export.
 
@@ -232,7 +232,7 @@ Future extension packages may add clients, parsers, mappers, and tests as implem
 ```toml
 [project]
 name = "waccy"
-version = "0.0.2"
+version = "0.1.0"
 description = "Intelligent financial modeling platform for small businesses"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -262,8 +262,8 @@ dependencies = [
 
 [project.optional-dependencies]
 # Core extensions (maintained by WACCY team)
-quickbooks = ["waccy-quickbooks>=0.0.1"]
-edgar = ["waccy-edgar>=0.0.1"]
+quickbooks = ["waccy-quickbooks>=0.1.1"]
+edgar = ["waccy-edgar>=0.1.0"]
 # Community extensions listed in docs but not as dependencies
 
 [project.scripts]
@@ -346,7 +346,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "MIT" }
 dependencies = [
-    "waccy>=0.0.2",  # Core platform dependency
+    "waccy>=0.1.0",  # Core platform dependency
     # Extension-specific dependencies
 ]
 
@@ -613,7 +613,7 @@ uv init --name waccy_{name} --package
 
 2. **Add core dependency**:
 ```toml
-dependencies = ["waccy>=0.0.2"]
+dependencies = ["waccy>=0.1.0"]
 ```
 
 3. **Implement Extractor**:

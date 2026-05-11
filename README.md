@@ -381,10 +381,10 @@ Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a wel
 
 ## Project Status
 
-* **Current published core**: `waccy 0.0.2`
-* **Current published first-party extensions**: `waccy-quickbooks 0.1.0`, `waccy-edgar 0.0.2`
-* **Current implementation**: fixture-first v0.1.0 three-statement pipeline with public interfaces and extension discovery
-* **Current milestone**: [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1), focused on QBO/EDGAR three-sheet financial model generation and docs publishing
+* **Release candidate core**: `waccy 0.1.0`
+* **Release candidate first-party extensions**: `waccy-quickbooks 0.1.1`, `waccy-edgar 0.1.0`
+* **Current implementation**: fixture-first v0.1.0 three-statement pipeline with QBO report normalization, EDGAR companyfacts normalization, XLSX export, and pandas handoff
+* **Current milestone**: [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1), with all tracked release-validity issues closed
 
 Planned phases:
 
