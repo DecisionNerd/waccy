@@ -26,9 +26,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# Note: During development in monorepo, install extensions with:
-#   uv pip install -e extensions/waccy-quickbooks -e extensions/waccy-edgar
-# When published to PyPI, these reference published packages
+# Note: In this monorepo, [tool.uv.sources] resolves waccy-edgar and
+# waccy-quickbooks to local editable paths when installing extras:
+#   uv pip install -e ".[quickbooks,edgar]"
+# Manual extension installs remain useful outside the monorepo, without the
+# sources entries, or when debugging package metadata resolution.
+# Published wheels reference the package versions below from PyPI.
 quickbooks = ["waccy-quickbooks>=0.1.1"]
 edgar = ["waccy-edgar>=0.1.0"]
 
