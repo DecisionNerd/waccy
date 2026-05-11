@@ -77,7 +77,7 @@ class StandardChartOfAccounts:
             ("depreciation_addback", "Depreciation Add-back", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "operating", 4100, ["depreciation addback", "depreciation and amortization", "us-gaap:depreciationdepletionandamortization", "us-gaap:depreciationdepletionandamortizationexpense"]),
             ("working_capital_movement", "Working Capital Movement", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "operating", 4200, ["change in working capital", "changes in operating assets and liabilities", "us-gaap:increasedecreaseinoperatingassetsandliabilitiesnetofacquisitions", "us-gaap:netcashprovidedbyusedinoperatingactivities"]),
             ("capex", "Capital Expenditures", AccountType.CASH_FLOW, "cash_flow_statement", "debit", "investing", 5000, ["capex", "capital expenditures", "purchase of property and equipment", "us-gaap:paymentstoacquirepropertyplantandequipment"]),
-            ("financing_movement", "Financing Movement", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "financing", 6000, ["financing activities", "debt proceeds", "debt repayment", "net change in cash", "us-gaap:proceedsfromissuanceofdebt", "us-gaap:proceedsfromissuanceoflongtermdebt", "us-gaap:repaymentsofdebt"]),
+            ("financing_movement", "Financing Movement", AccountType.CASH_FLOW, "cash_flow_statement", "credit", "financing", 6000, ["financing activities", "debt proceeds", "debt repayment", "us-gaap:proceedsfromissuanceofdebt", "us-gaap:proceedsfromissuanceoflongtermdebt", "us-gaap:repaymentsofdebt"]),
         ]
         for account_id, name, account_type, statement, normal_balance, cf_section, order, aliases in account_specs:
             self._add_account(

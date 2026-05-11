@@ -328,8 +328,10 @@ class ModelBuilder:
         issues: list[ValidationIssue] = []
         balance_check = self._find_line(balance_lines, "Balance Check")
         cash_flow_tie_out = self._find_line(cash_flow_lines, "Cash Flow Tie-Out")
-        has_partial_edgar_extraction = bool(metadata.get("edgar_source_issues"))
         for index, period in enumerate(period_labels):
+            has_partial_edgar_extraction = self._has_partial_edgar_extraction_for_period(
+                metadata, period
+            )
             if balance_check.values[period] != ZERO:
                 issues.append(
                     ValidationIssue(
@@ -358,6 +360,33 @@ class ModelBuilder:
                     )
                 )
         return issues
+
+    def _has_partial_edgar_extraction_for_period(
+        self,
+        metadata: dict[str, Any],
+        period: str,
+    ) -> bool:
+        source_issues = metadata.get("edgar_source_issues", [])
+        if not isinstance(source_issues, list):
+            return False
+        partial_issue_codes = {"edgar_missing_expected_concept", "edgar_partial_extraction"}
+        partial_issue_types = {"partial_extraction", "balance_sheet_partial"}
+        for source_issue in source_issues:
+            if not isinstance(source_issue, dict):
+                continue
+            code = str(source_issue.get("code", ""))
+            issue_type = str(source_issue.get("issue_type", ""))
+            if code not in partial_issue_codes and issue_type not in partial_issue_types:
+                continue
+            period_label = source_issue.get("period_label")
+            if period_label is not None:
+                if str(period_label) == period:
+                    return True
+                continue
+            period_labels = source_issue.get("period_labels", [])
+            if isinstance(period_labels, list) and period in {str(label) for label in period_labels}:
+                return True
+        return False
 
     def _source_completeness_issues(self, metadata: dict[str, Any]) -> list[ValidationIssue]:
         source_issues = []

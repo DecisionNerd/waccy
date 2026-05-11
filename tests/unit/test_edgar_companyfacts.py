@@ -38,6 +38,45 @@ def test_companyfacts_normalizer_selects_annual_10k_fiscal_periods() -> None:
     assert cash_record["metadata"]["end"] == "2025-06-30"
 
 
+def test_companyfacts_normalizer_rejects_invalid_period_count() -> None:
+    """Period selection is explicit instead of relying on surprising slices."""
+    for periods in (0, -1, 1.5, "2"):
+        try:
+            EdgarCompanyFactsNormalizer().to_fixture(_companyfacts_fixture(), periods=periods)  # type: ignore[arg-type]
+        except ValueError as exc:
+            assert "positive integer" in str(exc)
+        else:
+            raise AssertionError(f"Expected invalid periods value to fail: {periods!r}")
+
+
+def test_companyfacts_normalizer_uses_fallback_concepts_for_missing_years() -> None:
+    """Later concept aliases can fill fiscal years missing from preferred concepts."""
+    companyfacts = _companyfacts_fixture()
+    facts = companyfacts["facts"]["us-gaap"]  # type: ignore[index]
+    revenue_facts = facts["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]  # type: ignore[index]
+    facts["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"] = [  # type: ignore[index]
+        fact for fact in revenue_facts if fact["fy"] == 2025
+    ]
+    facts["Revenues"] = {"label": "Revenues", "units": {"USD": [_facts([900, 999], instant=False)[0]]}}
+
+    fixture = EdgarCompanyFactsNormalizer().to_fixture(companyfacts, periods=2)
+    revenue_records = [
+        record for record in fixture["records"] if record["metadata"]["canonical_account_hint"] == "revenue"
+    ]
+
+    assert {
+        (record["period"], record["source_account_name"], record["amount"])
+        for record in revenue_records
+    } == {
+        ("FY2024", "us-gaap:Revenues", "900"),
+        (
+            "FY2025",
+            "us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax",
+            "1200",
+        ),
+    }
+
+
 def test_companyfacts_normalizer_builds_model_with_aliases_and_diagnostics() -> None:
     """Normalized EDGAR companyfacts can map and build an inspectable model."""
     fixture = EdgarCompanyFactsNormalizer().to_fixture(_companyfacts_fixture(), periods=2)
@@ -56,6 +95,23 @@ def test_companyfacts_normalizer_builds_model_with_aliases_and_diagnostics() -> 
         line for line in model.income_statement.lines if line.label == "Net Income"
     )
     assert net_income.values["FY2025"] == Decimal("316")
+
+
+def test_edgar_partial_extraction_downgrade_is_period_specific() -> None:
+    """EDGAR source issues only downgrade balance checks for targeted periods."""
+    fixture = EdgarCompanyFactsNormalizer().to_fixture(_companyfacts_fixture(), periods=2)
+    for issue in fixture["metadata"]["edgar_source_issues"]:
+        issue["period_labels"] = ["FY2025"]
+
+    model = ModelBuilder().build_three_statement_model(EdgarExtractor().extract({"fixture": fixture}))
+    balance_issues = {
+        issue.period_label: issue.severity
+        for issue in model.validation_issues
+        if issue.code == "balance_sheet_imbalance"
+    }
+
+    assert balance_issues["FY2024"] == IssueSeverity.ERROR
+    assert balance_issues["FY2025"] == IssueSeverity.WARNING
 
 
 def test_edgar_live_smoke_aliases_map_with_statement_context() -> None:

@@ -87,11 +87,14 @@ class EdgarCompanyFactsNormalizer:
         taxonomy: str = "us-gaap",
     ) -> dict[str, Any]:
         """Return an ``EdgarExtractor`` fixture from a companyfacts payload."""
+        if not isinstance(periods, int) or periods <= 0:
+            raise ValueError("EDGAR companyfacts periods must be a positive integer.")
         facts = companyfacts.get("facts", {}).get(taxonomy)
         if not isinstance(facts, dict):
             raise ValueError(f"Companyfacts payload is missing facts.{taxonomy}.")
 
         target_years = self._target_fiscal_years(facts, periods=periods)
+        target_period_labels = [f"FY{year}" for year in sorted(target_years)]
         selected: list[dict[str, Any]] = []
         source_issues: list[dict[str, Any]] = []
         for canonical_account, (statement, concepts) in CONCEPT_SPECS.items():
@@ -105,7 +108,9 @@ class EdgarCompanyFactsNormalizer:
                         ),
                         "severity": "warning",
                         "source": "edgar",
+                        "issue_type": "partial_extraction",
                         "account_id": canonical_account,
+                        "period_labels": target_period_labels,
                     }
                 )
                 continue
@@ -140,6 +145,7 @@ class EdgarCompanyFactsNormalizer:
         *,
         target_years: set[int],
     ) -> list[tuple[str, dict[str, Any]]] | None:
+        selected_by_year: dict[int, tuple[str, dict[str, Any]]] = {}
         for concept in concepts:
             concept_facts = facts.get(concept, {}).get("units", {}).get("USD", [])
             if not isinstance(concept_facts, list):
@@ -156,9 +162,12 @@ class EdgarCompanyFactsNormalizer:
                 and fact.get("val") is not None
             ]
             selected = self._latest_by_fiscal_year(annual_facts)
-            if selected:
-                return [(concept, fact) for fact in selected]
-        return None
+            for fact in selected:
+                fiscal_year = int(fact["fy"])
+                selected_by_year.setdefault(fiscal_year, (concept, fact))
+        if not selected_by_year:
+            return None
+        return [selected_by_year[year] for year in sorted(selected_by_year)]
 
     def _target_fiscal_years(self, facts: dict[str, Any], *, periods: int) -> set[int]:
         fiscal_years: set[int] = set()
@@ -176,7 +185,9 @@ class EdgarCompanyFactsNormalizer:
                         and fact.get("fy") is not None
                     ):
                         fiscal_years.add(int(fact["fy"]))
-        return set(sorted(fiscal_years)[-periods:])
+        years = sorted(fiscal_years)
+        last_n = min(len(years), periods)
+        return set(years[-last_n:])
 
     def _latest_by_fiscal_year(self, facts: list[dict[str, Any]]) -> list[dict[str, Any]]:
         by_year: dict[int, dict[str, Any]] = {}
