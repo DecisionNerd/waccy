@@ -84,11 +84,11 @@ def test_companyfacts_normalizer_builds_model_with_aliases_and_diagnostics() -> 
     assert "unmapped_account" not in issue_codes
     assert "edgar_missing_expected_concept" in issue_codes
     assert any(issue.severity == IssueSeverity.WARNING for issue in model.validation_issues)
-    assert all(
-        issue.severity == IssueSeverity.WARNING
-        for issue in model.validation_issues
-        if issue.code == "balance_sheet_imbalance"
-    )
+    balance_issues = [
+        issue for issue in model.validation_issues if issue.code == "balance_sheet_imbalance"
+    ]
+    assert balance_issues
+    assert all(issue.severity == IssueSeverity.WARNING for issue in balance_issues)
     net_income = next(
         line for line in model.income_statement.lines if line.label == "Net Income"
     )
