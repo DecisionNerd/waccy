@@ -286,6 +286,39 @@ def test_validation_reports_mapped_records_without_account_ids() -> None:
     assert not validated.is_valid
 
 
+def test_validation_treats_unmapped_source_checks_as_informational() -> None:
+    """Source check rows can remain unmapped without blocking release validation."""
+    source = SourceRecord(
+        source_account_id="Net Change In Cash",
+        source_account_name="Net Change In Cash",
+        amount=Decimal("1"),
+        period_label="2024",
+        source=SourceReference(
+            source_system="qbo",
+            source_id="Net Change In Cash",
+            source_label="Net Change In Cash",
+            metadata={"is_summary_check": True},
+        ),
+    )
+    mapped = MappedFinancialDataset(
+        entity_name="Fixture",
+        periods=[sample_periods()[1]],
+        records=[
+            MappedFinancialRecord(
+                source_record=source,
+                status=MappingStatus.UNMAPPED,
+                confidence=0.0,
+            )
+        ],
+    )
+    validated = DataMapper().validate(mapped)
+
+    assert [(issue.code, issue.severity) for issue in validated.issues] == [
+        ("unmapped_source_check", IssueSeverity.INFO)
+    ]
+    assert validated.is_valid
+
+
 def test_model_builder_accepts_validated_and_mapped_inputs(tmp_path: Path) -> None:
     """ModelBuilder handles all public input layers and export helper."""
     fixture = sample_qbo_fixture()
@@ -308,6 +341,31 @@ def test_model_builder_accepts_validated_and_mapped_inputs(tmp_path: Path) -> No
     assert output_path.exists()
     with pytest.raises(NotImplementedError):
         builder.build_dcf_model(mapped_model, 0.1, 0.03, 10.0)
+
+
+def test_model_builder_scopes_edgar_partial_extraction_by_period() -> None:
+    """Partial EDGAR diagnostics only apply when they target the period."""
+    builder = ModelBuilder()
+
+    assert not builder._has_partial_edgar_extraction_for_period({}, "FY2024")
+    assert not builder._has_partial_edgar_extraction_for_period(
+        {"edgar_source_issues": "not-a-list"}, "FY2024"
+    )
+    assert not builder._has_partial_edgar_extraction_for_period(
+        {"edgar_source_issues": ["not-a-dict", {"code": "other"}]}, "FY2024"
+    )
+    assert not builder._has_partial_edgar_extraction_for_period(
+        {"edgar_source_issues": [{"code": "edgar_missing_expected_concept", "period_label": "FY2023"}]},
+        "FY2024",
+    )
+    assert builder._has_partial_edgar_extraction_for_period(
+        {"edgar_source_issues": [{"code": "edgar_missing_expected_concept", "period_label": "FY2024"}]},
+        "FY2024",
+    )
+    assert builder._has_partial_edgar_extraction_for_period(
+        {"edgar_source_issues": [{"issue_type": "balance_sheet_partial", "period_labels": ["FY2024"]}]},
+        "FY2024",
+    )
 
 
 def test_model_builder_reports_missing_required_statement_line() -> None:

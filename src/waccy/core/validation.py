@@ -67,6 +67,18 @@ def validate_mapped_dataset(mapped_dataset: MappedFinancialDataset) -> Validated
                 )
             )
         if record.status == MappingStatus.UNMAPPED:
+            if record.source_record.source.metadata.get("is_summary_check"):
+                issues.append(
+                    ValidationIssue(
+                        code="unmapped_source_check",
+                        message=(
+                            f"Unmapped source check {record.source_record.source_account_name!r}."
+                        ),
+                        severity=IssueSeverity.INFO,
+                        period_label=record.source_record.period_label,
+                    )
+                )
+                continue
             issues.append(
                 ValidationIssue(
                     code="unmapped_account",
