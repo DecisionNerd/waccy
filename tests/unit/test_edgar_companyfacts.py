@@ -98,6 +98,7 @@ def test_companyfacts_normalizer_builds_model_with_aliases_and_diagnostics() -> 
 def test_edgar_partial_extraction_downgrade_is_period_specific() -> None:
     """EDGAR source issues only downgrade balance checks for targeted periods."""
     fixture = EdgarCompanyFactsNormalizer().to_fixture(_companyfacts_fixture(), periods=2)
+    assert fixture["metadata"]["edgar_source_issues"], "edgar_source_issues fixture missing"
     for issue in fixture["metadata"]["edgar_source_issues"]:
         issue["period_labels"] = ["FY2025"]
 
