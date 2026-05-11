@@ -1,6 +1,6 @@
 [project]
 name = "waccy-edgar"
-version = "0.0.2"
+version = "0.1.0"
 description = "WACCY extension for SEC EDGAR filing parsing"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -17,7 +17,7 @@ classifiers = [
     "Topic :: Office/Business :: Financial",
 ]
 dependencies = [
-    "waccy>=0.0.2",
+    "waccy>=0.1.0",
     # Add EDGAR parsing dependencies when implemented
     # "edgar-parser>=1.0.0",
 ]
@@ -28,6 +28,9 @@ dev = [
     "ruff>=0.8.0",
     "mypy>=1.13.0",
 ]
+
+[tool.uv.sources]
+waccy = { path = "../..", editable = true }
 
 [project.entry-points."waccy.extractors"]
 edgar = "waccy_edgar.extractor:EdgarExtractor"

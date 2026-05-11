@@ -69,7 +69,7 @@ python scripts/publish-extension.py waccy-quickbooks --token pypi-<your-token>
    ```
 5. Add dependency on `waccy` in `pyproject.toml`:
    ```toml
-   dependencies = ["waccy>=0.0.2"]
+   dependencies = ["waccy>=0.1.0"]
    ```
 
 ## Extension Package Requirements

@@ -13,7 +13,7 @@ from waccy_quickbooks.models import (
 from waccy_quickbooks.normalizer import QuickBooksReportNormalizer
 from waccy_quickbooks.token_cache import FileTokenCache
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "FileTokenCache",

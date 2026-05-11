@@ -1,6 +1,6 @@
 """WACCY - Intelligent Financial Modeling Platform for Small Businesses."""
 
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 
 # Core exports
 # Classification exports
