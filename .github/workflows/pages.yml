@@ -29,6 +29,10 @@ jobs:
   build:
     name: Build Docs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout
@@ -54,6 +58,8 @@ jobs:
       - name: Configure Pages
         if: github.event_name == 'push'
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+        with:
+          enablement: true
 
       - name: Upload Pages artifact
         if: github.event_name == 'push'
