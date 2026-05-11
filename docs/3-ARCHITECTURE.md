@@ -642,8 +642,8 @@ mydatasource = "waccy_mydatasource.extractor:MyDataSourceExtractor"
 
 5. **Publish to PyPI**:
 ```bash
-uv build
-uv publish
+uv build --no-sources
+uv publish --trusted-publishing always
 ```
 
 ## Development Workflow
@@ -684,13 +684,35 @@ uv pip install -e .
 
 ### Building and Publishing
 
+Local builds use uv directly and should disable workspace sources before
+release packaging:
+
 ```bash
 # Build package
-uv build
+uv build --no-sources
 
-# Publish to PyPI (requires credentials)
-uv publish
+# Check upload metadata locally without uploading
+uv publish --dry-run
 ```
+
+Release publishing runs through `.github/workflows/publish.yml` using PyPI
+Trusted Publishers and the GitHub environment `pypi`; no long-lived PyPI token
+is required in GitHub secrets. Configure each PyPI project with:
+
+| PyPI project | Owner | Repository | Workflow | Environment |
+| --- | --- | --- | --- | --- |
+| `waccy` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
+| `waccy-edgar` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
+| `waccy-quickbooks` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
+
+For projects that already exist on PyPI, add the publisher under the project's
+**Publishing** settings. For a first upload of a new project, create a pending
+publisher from the account-level **Publishing** page. The same publisher can be
+registered for multiple PyPI projects in this monorepo.
+
+The GitHub `pypi` environment should be limited to deployments from `main`.
+Add required reviewers to that environment if the release process needs an
+explicit manual approval before upload.
 
 ## Dependency Management
 

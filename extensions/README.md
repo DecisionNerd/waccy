@@ -38,14 +38,25 @@ python scripts/build-extension.py waccy-quickbooks --clean
 
 ### Publishing Extensions
 
-Extensions are published separately to PyPI:
+Extensions are published separately to PyPI through the repository
+`.github/workflows/publish.yml` workflow and PyPI Trusted Publishers. Each
+extension project should trust:
+
+- Owner: `DecisionNerd`
+- Repository: `waccy`
+- Workflow: `publish.yml`
+- Environment: `pypi`
+
+Local publish scripts remain useful for dry-runs and emergency manual releases
+with explicit credentials, but the normal release path should not require a PyPI
+token in GitHub secrets:
 
 ```bash
-# Publish to TestPyPI first
-python scripts/publish-extension.py waccy-quickbooks --testpypi
+# Build locally
+python scripts/build-extension.py waccy-quickbooks --clean
 
-# Publish to PyPI
-python scripts/publish-extension.py waccy-quickbooks --token pypi-<your-token>
+# Check upload metadata locally without uploading
+python scripts/publish-extension.py waccy-quickbooks --dry-run
 ```
 
 ## Creating a New Extension
