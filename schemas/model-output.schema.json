@@ -231,6 +231,7 @@
       "type": "array"
     },
     "schema_version": {
+      "const": "1.0.0",
       "default": "1.0.0",
       "title": "Schema Version",
       "type": "string"
@@ -244,11 +245,12 @@
     }
   },
   "required": [
-    "entity_name",
-    "periods",
-    "income_statement",
     "balance_sheet",
-    "cash_flow_statement"
+    "cash_flow_statement",
+    "entity_name",
+    "income_statement",
+    "periods",
+    "schema_version"
   ],
   "title": "ThreeStatementModel",
   "type": "object",

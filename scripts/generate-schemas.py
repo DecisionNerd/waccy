@@ -47,11 +47,34 @@ SCHEMAS: dict[str, type[BaseModel]] = {
 
 def _schema_for(model: type[BaseModel], filename: str) -> dict[str, Any]:
     schema = model.model_json_schema()
+    _enforce_schema_version_contract(schema)
     schema["$id"] = f"https://decisionnerd.github.io/waccy/schemas/{filename}"
     schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
     schema["x-waccy-schema-version"] = CONTRACT_SCHEMA_VERSION
     schema["x-waccy-generated-from"] = "waccy.core.models"
     return schema
+
+
+def _enforce_schema_version_contract(schema: dict[str, Any]) -> None:
+    """Require schema_version consts on generated contract objects that define it."""
+    properties = schema.get("properties")
+    if isinstance(properties, dict) and "schema_version" in properties:
+        schema_version = properties["schema_version"]
+        if isinstance(schema_version, dict):
+            schema_version["const"] = CONTRACT_SCHEMA_VERSION
+            schema_version["default"] = CONTRACT_SCHEMA_VERSION
+        required = schema.setdefault("required", [])
+        if isinstance(required, list) and "schema_version" not in required:
+            required.append("schema_version")
+            required.sort()
+
+    for value in schema.values():
+        if isinstance(value, dict):
+            _enforce_schema_version_contract(value)
+        elif isinstance(value, list):
+            for item in value:
+                if isinstance(item, dict):
+                    _enforce_schema_version_contract(item)
 
 
 def render_schemas() -> dict[str, str]:

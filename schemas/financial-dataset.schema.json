@@ -37,6 +37,7 @@
           "type": "array"
         },
         "schema_version": {
+          "const": "1.0.0",
           "default": "1.0.0",
           "title": "Schema Version",
           "type": "string"
@@ -45,7 +46,8 @@
       "required": [
         "entity_name",
         "periods",
-        "records"
+        "records",
+        "schema_version"
       ],
       "title": "MappedFinancialDataset",
       "type": "object"
@@ -174,6 +176,7 @@
           "type": "array"
         },
         "schema_version": {
+          "const": "1.0.0",
           "default": "1.0.0",
           "title": "Schema Version",
           "type": "string"
@@ -182,7 +185,8 @@
       "required": [
         "entity_name",
         "periods",
-        "records"
+        "records",
+        "schema_version"
       ],
       "title": "NormalizedFinancialDataset",
       "type": "object"
@@ -345,13 +349,15 @@
           "$ref": "#/$defs/MappedFinancialDataset"
         },
         "schema_version": {
+          "const": "1.0.0",
           "default": "1.0.0",
           "title": "Schema Version",
           "type": "string"
         }
       },
       "required": [
-        "mapped_dataset"
+        "mapped_dataset",
+        "schema_version"
       ],
       "title": "ValidatedFinancialDataset",
       "type": "object"

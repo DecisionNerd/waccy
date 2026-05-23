@@ -67,6 +67,26 @@ def test_committed_schema_artifacts_include_expected_contracts() -> None:
         assert expectation["defs"].issubset(schema.get("$defs", {}))
 
 
+def test_contract_schema_version_is_required_and_const() -> None:
+    """Generated schemas enforce payload-level schema_version compatibility."""
+    financial_dataset = json.loads((SCHEMA_DIR / "financial-dataset.schema.json").read_text())
+    model_output = json.loads((SCHEMA_DIR / "model-output.schema.json").read_text())
+    diagnostics = json.loads((SCHEMA_DIR / "diagnostics.schema.json").read_text())
+
+    for name in (
+        "NormalizedFinancialDataset",
+        "MappedFinancialDataset",
+        "ValidatedFinancialDataset",
+    ):
+        definition = financial_dataset["$defs"][name]
+        assert "schema_version" in definition["required"]
+        assert definition["properties"]["schema_version"]["const"] == CONTRACT_SCHEMA_VERSION
+
+    assert "schema_version" in model_output["required"]
+    assert model_output["properties"]["schema_version"]["const"] == CONTRACT_SCHEMA_VERSION
+    assert "schema_version" not in diagnostics.get("properties", {})
+
+
 def test_schema_generator_matches_committed_artifacts() -> None:
     """Generated Pydantic schemas match the committed JSON artifacts."""
     generator = _load_schema_generator()
