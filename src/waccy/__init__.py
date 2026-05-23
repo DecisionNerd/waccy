@@ -6,6 +6,7 @@ __version__ = "0.1.0"
 # Classification exports
 from waccy.classification import ClassificationEngine
 from waccy.core import (
+    CONTRACT_SCHEMA_VERSION,
     AccountCategory,
     AccountType,
     ExtractedData,
@@ -21,6 +22,7 @@ from waccy.extraction import Extractor, ExtractorRegistry
 from waccy.modeling import ModelBuilder
 
 __all__ = [
+    "CONTRACT_SCHEMA_VERSION",
     "AccountCategory",
     "AccountType",
     "ClassificationEngine",

@@ -126,7 +126,8 @@ Requirements:
 - reporting periods
 - normalized records with source provenance
 - amounts, units, currency, and statement hints
-- JSON schema or equivalent machine-readable contract
+- JSON Schema generated from the Python/Pydantic reference models for the first
+  polyglot version
 - stable versioning so Python and Node clients can detect compatibility
 
 ### Mapped Financial Dataset
@@ -288,6 +289,7 @@ Requirements:
 - package versions for Python and Node clients
 - crate versions for Rust packages
 - schema versions for financial datasets
+- root dataset and model outputs include a `schema_version` field
 - ontology versions
 - migration notes when contracts change
 - compatibility tests across Python, Node, and Rust surfaces
@@ -298,7 +300,8 @@ Requirements:
 
 - freeze and version the financial dataset schema
 - define Rust core crate boundaries
-- generate or share schemas with Python and Node clients
+- generate schemas from the Python/Pydantic reference models for Node and Rust
+  consumers
 - preserve current Python v0.1.0 behavior during migration
 - add cross-language fixture conformance tests
 

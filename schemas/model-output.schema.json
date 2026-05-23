@@ -1,0 +1,257 @@
+{
+  "$defs": {
+    "FinancialStatement": {
+      "description": "A financial statement composed of ordered line items.",
+      "properties": {
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/StatementLine"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "name": {
+          "enum": [
+            "Income Statement",
+            "Balance Sheet",
+            "Cash Flow Statement"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "periods": {
+          "items": {
+            "$ref": "#/$defs/ReportingPeriod"
+          },
+          "title": "Periods",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "periods",
+        "lines"
+      ],
+      "title": "FinancialStatement",
+      "type": "object"
+    },
+    "IssueSeverity": {
+      "description": "Validation issue severity.",
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "IssueSeverity",
+      "type": "string"
+    },
+    "PeriodType": {
+      "description": "Supported reporting period granularities.",
+      "enum": [
+        "month",
+        "quarter",
+        "year"
+      ],
+      "title": "PeriodType",
+      "type": "string"
+    },
+    "ReportingPeriod": {
+      "description": "A reporting period used as a model column.",
+      "properties": {
+        "end_date": {
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "period_type": {
+          "$ref": "#/$defs/PeriodType",
+          "default": "year"
+        },
+        "start_date": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "start_date",
+        "end_date"
+      ],
+      "title": "ReportingPeriod",
+      "type": "object"
+    },
+    "StatementLine": {
+      "description": "A line item in a financial statement.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "is_check": {
+          "default": false,
+          "title": "Is Check",
+          "type": "boolean"
+        },
+        "is_subtotal": {
+          "default": false,
+          "title": "Is Subtotal",
+          "type": "boolean"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "source_account_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Account Ids",
+          "type": "array"
+        },
+        "values": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              }
+            ]
+          },
+          "title": "Values",
+          "type": "object"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "StatementLine",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "description": "A validation or reconciliation issue.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "period_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period Label"
+        },
+        "severity": {
+          "$ref": "#/$defs/IssueSeverity",
+          "default": "error"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    }
+  },
+  "$id": "https://decisionnerd.github.io/waccy/schemas/model-output.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Source-agnostic three-statement model output.",
+  "properties": {
+    "balance_sheet": {
+      "$ref": "#/$defs/FinancialStatement"
+    },
+    "cash_flow_statement": {
+      "$ref": "#/$defs/FinancialStatement"
+    },
+    "entity_name": {
+      "title": "Entity Name",
+      "type": "string"
+    },
+    "income_statement": {
+      "$ref": "#/$defs/FinancialStatement"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "periods": {
+      "items": {
+        "$ref": "#/$defs/ReportingPeriod"
+      },
+      "title": "Periods",
+      "type": "array"
+    },
+    "schema_version": {
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "validation_issues": {
+      "items": {
+        "$ref": "#/$defs/ValidationIssue"
+      },
+      "title": "Validation Issues",
+      "type": "array"
+    }
+  },
+  "required": [
+    "entity_name",
+    "periods",
+    "income_statement",
+    "balance_sheet",
+    "cash_flow_statement"
+  ],
+  "title": "ThreeStatementModel",
+  "type": "object",
+  "x-waccy-generated-from": "waccy.core.models",
+  "x-waccy-schema-version": "1.0.0"
+}

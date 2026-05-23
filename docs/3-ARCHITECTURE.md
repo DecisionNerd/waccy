@@ -39,9 +39,15 @@ The current Python implementation is the reference behavior for the first
 vertical slice: QBO and EDGAR inputs, canonical mapping, validation,
 three-statement model output, XLSX export, and pandas handoff.
 
-The next architecture should treat that Python implementation as a working
+For the first polyglot version, the Python/Pydantic data models are also the
+schema authority. Checked-in JSON Schema artifacts are generated from those
+models so Node, Rust, hosted services, and source adapters can align on the same
+contract without reimplementing the shape by hand.
+
+The next architecture should treat that Python implementation as the working
 reference, not as the final core boundary. Rust should become the canonical
-engine as parity is established.
+engine only after parity against the Pydantic schemas and v0.1.0 behavior is
+established.
 
 ## Architectural Principles
 
@@ -148,6 +154,10 @@ waccy/
 This is a target shape, not an immediate requirement to move every file. The
 first migration should avoid churn until Rust and Node boundaries are clear.
 
+The initial `schemas/` artifacts are generated from Pydantic. They are committed
+so non-Python consumers can depend on stable files, and drift checks should fail
+when the Python contract changes without regenerating schemas.
+
 ## Rust Backend
 
 Rust should become the canonical engine for financial correctness and
@@ -195,6 +205,10 @@ Rust should accept and emit versioned structures:
 Serialization should be stable enough for Python and Node wrappers to rely on.
 JSON Schema is the most practical contract format for cross-language alignment;
 Arrow or binary formats can be added for large datasets later.
+
+During Phase One, Rust consumes the Pydantic-generated schemas as fixtures and
+compatibility targets. Rust-generated schemas can replace Pydantic as the
+authority only after the Rust core proves parity and the migration is documented.
 
 ## Python API
 
@@ -414,7 +428,7 @@ sequences.
   hosted service first?
 - Should source adapters remain in Python packages or move toward language-
   specific SDKs?
-- Should schemas be generated from Rust types or maintained as independent JSON
-  Schema files?
+- After Rust parity, should schemas continue to be generated from Pydantic,
+  switch to Rust-generated artifacts, or move to an independent schema package?
 - What package names should be reserved for npm and crates.io?
 - How much of XLSX export should stay in Python versus move to Rust or Node?

@@ -1,6 +1,7 @@
 """Core platform components: ontology, models, and validation."""
 
 from waccy.core.models import (
+    CONTRACT_SCHEMA_VERSION,
     ExtractedData,
     ExtractedTransaction,
     FinancialStatement,
@@ -24,6 +25,7 @@ from waccy.core.ontology import AccountCategory, AccountType, StandardChartOfAcc
 from waccy.core.validation import validate_extracted_data, validate_mapped_dataset
 
 __all__ = [
+    "CONTRACT_SCHEMA_VERSION",
     "AccountCategory",
     "AccountType",
     "ExtractedData",

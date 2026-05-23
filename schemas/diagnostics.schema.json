@@ -1,0 +1,104 @@
+{
+  "$defs": {
+    "IssueSeverity": {
+      "description": "Validation issue severity.",
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "IssueSeverity",
+      "type": "string"
+    },
+    "MappingDiagnostic": {
+      "description": "Explanation for a mapping decision or issue.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "MappingDiagnostic",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "description": "A validation or reconciliation issue.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "period_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period Label"
+        },
+        "severity": {
+          "$ref": "#/$defs/IssueSeverity",
+          "default": "error"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    }
+  },
+  "$id": "https://decisionnerd.github.io/waccy/schemas/diagnostics.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Grouped schema roots for mapping and validation diagnostics.",
+  "properties": {
+    "mapping_diagnostic": {
+      "$ref": "#/$defs/MappingDiagnostic"
+    },
+    "validation_issue": {
+      "$ref": "#/$defs/ValidationIssue"
+    }
+  },
+  "required": [
+    "mapping_diagnostic",
+    "validation_issue"
+  ],
+  "title": "DiagnosticContracts",
+  "type": "object",
+  "x-waccy-generated-from": "waccy.core.models",
+  "x-waccy-schema-version": "1.0.0"
+}
