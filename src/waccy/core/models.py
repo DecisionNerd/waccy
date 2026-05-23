@@ -9,6 +9,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+CONTRACT_SCHEMA_VERSION = "1.0.0"
+
 
 class PeriodType(str, Enum):
     """Supported reporting period granularities."""
@@ -70,6 +72,7 @@ class SourceRecord(BaseModel):
 class NormalizedFinancialDataset(BaseModel):
     """Source-agnostic records with source-native account/concept identity preserved."""
 
+    schema_version: str = CONTRACT_SCHEMA_VERSION
     entity_name: str
     periods: list[ReportingPeriod]
     records: list[SourceRecord]
@@ -105,6 +108,7 @@ class MappedFinancialRecord(BaseModel):
 class MappedFinancialDataset(BaseModel):
     """Normalized financial data after source-to-standard account mapping."""
 
+    schema_version: str = CONTRACT_SCHEMA_VERSION
     entity_name: str
     periods: list[ReportingPeriod]
     records: list[MappedFinancialRecord]
@@ -125,6 +129,7 @@ class ValidationIssue(BaseModel):
 class ValidatedFinancialDataset(BaseModel):
     """Mapped financial data plus validation diagnostics."""
 
+    schema_version: str = CONTRACT_SCHEMA_VERSION
     mapped_dataset: MappedFinancialDataset
     issues: list[ValidationIssue] = Field(default_factory=list)
 
@@ -200,6 +205,7 @@ class FinancialStatement(BaseModel):
 class ThreeStatementModel(BaseModel):
     """Source-agnostic three-statement model output."""
 
+    schema_version: str = CONTRACT_SCHEMA_VERSION
     entity_name: str
     periods: list[ReportingPeriod]
     income_statement: FinancialStatement

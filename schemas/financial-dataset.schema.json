@@ -1,0 +1,441 @@
+{
+  "$defs": {
+    "IssueSeverity": {
+      "description": "Validation issue severity.",
+      "enum": [
+        "info",
+        "warning",
+        "error"
+      ],
+      "title": "IssueSeverity",
+      "type": "string"
+    },
+    "MappedFinancialDataset": {
+      "description": "Normalized financial data after source-to-standard account mapping.",
+      "properties": {
+        "entity_name": {
+          "title": "Entity Name",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "periods": {
+          "items": {
+            "$ref": "#/$defs/ReportingPeriod"
+          },
+          "title": "Periods",
+          "type": "array"
+        },
+        "records": {
+          "items": {
+            "$ref": "#/$defs/MappedFinancialRecord"
+          },
+          "title": "Records",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_name",
+        "periods",
+        "records",
+        "schema_version"
+      ],
+      "title": "MappedFinancialDataset",
+      "type": "object"
+    },
+    "MappedFinancialRecord": {
+      "description": "A normalized record mapped to the WACCY ontology.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "account_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Name"
+        },
+        "confidence": {
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "diagnostics": {
+          "items": {
+            "$ref": "#/$defs/MappingDiagnostic"
+          },
+          "title": "Diagnostics",
+          "type": "array"
+        },
+        "override_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Override Note"
+        },
+        "source_record": {
+          "$ref": "#/$defs/SourceRecord"
+        },
+        "status": {
+          "$ref": "#/$defs/MappingStatus"
+        }
+      },
+      "required": [
+        "source_record",
+        "status",
+        "confidence"
+      ],
+      "title": "MappedFinancialRecord",
+      "type": "object"
+    },
+    "MappingDiagnostic": {
+      "description": "Explanation for a mapping decision or issue.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "MappingDiagnostic",
+      "type": "object"
+    },
+    "MappingStatus": {
+      "description": "Review state for a source-to-standard account mapping.",
+      "enum": [
+        "mapped",
+        "ambiguous",
+        "overridden",
+        "unmapped"
+      ],
+      "title": "MappingStatus",
+      "type": "string"
+    },
+    "NormalizedFinancialDataset": {
+      "description": "Source-agnostic records with source-native account/concept identity preserved.",
+      "properties": {
+        "entity_name": {
+          "title": "Entity Name",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "periods": {
+          "items": {
+            "$ref": "#/$defs/ReportingPeriod"
+          },
+          "title": "Periods",
+          "type": "array"
+        },
+        "records": {
+          "items": {
+            "$ref": "#/$defs/SourceRecord"
+          },
+          "title": "Records",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_name",
+        "periods",
+        "records",
+        "schema_version"
+      ],
+      "title": "NormalizedFinancialDataset",
+      "type": "object"
+    },
+    "PeriodType": {
+      "description": "Supported reporting period granularities.",
+      "enum": [
+        "month",
+        "quarter",
+        "year"
+      ],
+      "title": "PeriodType",
+      "type": "string"
+    },
+    "ReportingPeriod": {
+      "description": "A reporting period used as a model column.",
+      "properties": {
+        "end_date": {
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "period_type": {
+          "$ref": "#/$defs/PeriodType",
+          "default": "year"
+        },
+        "start_date": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "start_date",
+        "end_date"
+      ],
+      "title": "ReportingPeriod",
+      "type": "object"
+    },
+    "SourceRecord": {
+      "description": "A source-shaped financial record before WACCY account mapping.",
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+              "type": "string"
+            }
+          ],
+          "title": "Amount"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "period_label": {
+          "title": "Period Label",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceReference"
+        },
+        "source_account_id": {
+          "title": "Source Account Id",
+          "type": "string"
+        },
+        "source_account_name": {
+          "title": "Source Account Name",
+          "type": "string"
+        },
+        "source_account_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Account Type"
+        },
+        "statement": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statement"
+        },
+        "unit": {
+          "default": "USD",
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_account_id",
+        "source_account_name",
+        "amount",
+        "period_label",
+        "source"
+      ],
+      "title": "SourceRecord",
+      "type": "object"
+    },
+    "SourceReference": {
+      "description": "Pointer back to a source system record.",
+      "properties": {
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_label": {
+          "default": "",
+          "title": "Source Label",
+          "type": "string"
+        },
+        "source_system": {
+          "title": "Source System",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_system",
+        "source_id"
+      ],
+      "title": "SourceReference",
+      "type": "object"
+    },
+    "ValidatedFinancialDataset": {
+      "description": "Mapped financial data plus validation diagnostics.",
+      "properties": {
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "mapped_dataset": {
+          "$ref": "#/$defs/MappedFinancialDataset"
+        },
+        "schema_version": {
+          "const": "1.0.0",
+          "default": "1.0.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mapped_dataset",
+        "schema_version"
+      ],
+      "title": "ValidatedFinancialDataset",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "description": "A validation or reconciliation issue.",
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "period_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period Label"
+        },
+        "severity": {
+          "$ref": "#/$defs/IssueSeverity",
+          "default": "error"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    }
+  },
+  "$id": "https://decisionnerd.github.io/waccy/schemas/financial-dataset.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Grouped schema roots for dataset contract consumers.",
+  "properties": {
+    "mapped_financial_dataset": {
+      "$ref": "#/$defs/MappedFinancialDataset"
+    },
+    "normalized_financial_dataset": {
+      "$ref": "#/$defs/NormalizedFinancialDataset"
+    },
+    "validated_financial_dataset": {
+      "$ref": "#/$defs/ValidatedFinancialDataset"
+    }
+  },
+  "required": [
+    "normalized_financial_dataset",
+    "mapped_financial_dataset",
+    "validated_financial_dataset"
+  ],
+  "title": "FinancialDatasetContracts",
+  "type": "object",
+  "x-waccy-generated-from": "waccy.core.models",
+  "x-waccy-schema-version": "1.0.0"
+}

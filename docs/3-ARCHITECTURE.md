@@ -2,26 +2,72 @@
 
 ## Overview
 
-WACCY is designed as a core platform with a modular extension architecture. The core platform (`waccy`) provides the foundation—standardized data ontology, model generation frameworks, and extension interfaces—while extension packages (`waccy-*`) implement specific data source integrations and specialized functionality. This architecture enables:
+WACCY is moving toward a polyglot architecture:
 
-- **Focused Core**: A simple, maintainable core platform with essential functionality
-- **Modular Extensions**: Community-developed and third-party extension packages
-- **Clean Separation**: Core platform logic independent of data source implementations
-- **Easy Distribution**: Both core and extensions publishable to PyPI independently
+- **Rust backend**: canonical deterministic engine for schemas, ontology,
+  mapping, validation, and model construction.
+- **Python API**: analyst and data-science surface, pandas/XLSX integration, and
+  compatibility path for the existing Python package.
+- **Node API**: TypeScript surface for web apps, SaaS products, agent tools, and
+  server-side JavaScript workflows.
+
+The architectural goal is one financial modeling contract with multiple
+language-native entry points.
+
+```text
+Python API         Node API          Hosted/API clients
+    \                |                 /
+     \               |                /
+      -> shared schema and transport ->
+                    |
+              Rust backend
+                    |
+      ontology, mapping, validation, models
+                    |
+       exports, diagnostics, model outputs
+```
 
 ## Current Implementation Status
 
-This document describes both the intended architecture and the current scaffold. As of the v0.1.0 release candidate package set:
+The published v0.1.0 release is Python-first:
 
 - `waccy` is `0.1.0`
-- `waccy-quickbooks` is `0.1.1`
 - `waccy-edgar` is `0.1.0`
+- `waccy-quickbooks` is `0.1.1`
 
-The repository currently contains the core interfaces, public package exports, extension discovery, placeholder extractors, and build/publish tooling. The end-to-end workflow is tracked for [v0.1.0](https://github.com/DecisionNerd/waccy/milestone/1): QBO/QuickBooks and EDGAR inputs, canonical mapping, a three-statement model object, and XLSX export.
+The current Python implementation is the reference behavior for the first
+vertical slice: QBO and EDGAR inputs, canonical mapping, validation,
+three-statement model output, XLSX export, and pandas handoff.
+
+For the first polyglot version, the Python/Pydantic data models are also the
+schema authority. Checked-in JSON Schema artifacts are generated from those
+models so Node, Rust, hosted services, and source adapters can align on the same
+contract without reimplementing the shape by hand.
+
+The next architecture should treat that Python implementation as the working
+reference, not as the final core boundary. Rust should become the canonical
+engine only after parity against the Pydantic schemas and v0.1.0 behavior is
+established.
+
+## Architectural Principles
+
+- **One contract, many APIs**: Python and Node should expose the same financial
+  dataset and model concepts.
+- **Rust owns deterministic logic**: schema validation, ontology mapping,
+  reconciliation, and model assembly should converge in Rust.
+- **Source adapters stay pragmatic**: QBO, EDGAR, and future source clients can
+  live in the language with the best ecosystem, as long as they emit the shared
+  normalized dataset.
+- **No duplicated financial rules**: Python and Node wrappers should not drift
+  into separate financial engines.
+- **API-first diagnostics**: validation and mapping issues should be structured
+  enough for CLIs, notebooks, web UIs, and hosted APIs.
+- **Migration without breakage**: current Python users should keep a coherent
+  path while internals move toward Rust.
 
 ## Layered Data Contract
 
-WACCY should keep extraction, normalization, modeling, metrics, and export as separate layers. The v0.1.0 implementation should make these contracts explicit so future model types can reuse the same normalized financial data.
+The durable WACCY pipeline remains:
 
 ```text
 source extractor
@@ -30,800 +76,359 @@ source extractor
   -> mapped financial dataset
   -> validated financial dataset
   -> model and metric builders
-  -> exporters
+  -> exporters and API responses
 ```
 
 ### Source Extractor
 
-An extractor is source-specific. It knows how to read QBO, EDGAR, or another system and return source records with provenance. It should not know how to build a three-statement model.
+Extractors are source-specific. They read QBO, EDGAR, or another source and
+return source records with provenance. Extractors should not build financial
+models.
 
 ### Raw Extracted Data
 
-Raw extracted data preserves source-native concepts: account names, account IDs, statement labels, transaction IDs, dates, periods, units, and source metadata. This layer is useful for auditability and debugging.
+Raw extracted data preserves source-native concepts: account names, account IDs,
+statement labels, transaction IDs, dates, periods, units, and metadata. This is
+the audit and debugging layer.
 
 ### Normalized Financial Dataset
 
-The normalized financial dataset is the reusable contract between extraction and downstream analysis. It should represent source records in a consistent shape: periods, entities, accounts or concepts, amounts, units, source system, and provenance. It is still allowed to contain source-native account IDs and concepts.
-
-This layer is what lets WACCY support future metric extraction and model types without rewriting extractors.
+The normalized dataset is the cross-language contract between extraction and
+downstream analysis. It should be serializable and versioned so Python, Node, and
+Rust all agree on its shape.
 
 ### Mapped Financial Dataset
 
-The mapped dataset connects normalized records to the WACCY ontology. It adds canonical account IDs, confidence, review status, ambiguity diagnostics, and optional user overrides.
+The mapped dataset connects normalized records to the WACCY ontology. It adds
+canonical account IDs, confidence, review status, ambiguity diagnostics, and
+optional user overrides.
 
 ### Validated Financial Dataset
 
-The validated dataset adds quality and reconciliation results: missing periods, unmapped accounts, balance checks, cash-flow tie-outs, and other diagnostics. Model and metric builders should consume this layer rather than raw source data.
+The validated dataset adds quality and reconciliation results. Model and metric
+builders should consume this layer rather than raw source data.
 
 ### Model And Metric Builders
 
-Builders should be source-agnostic. A three-statement model builder, DCF builder, SaaS metric extractor, covenant calculator, or comparables spreader should consume the validated dataset and ontology metadata rather than source-specific QBO or EDGAR structures.
+Builders are source-agnostic. Three-statement, DCF, comparables, SaaS metrics,
+covenants, and LBO builders should consume validated datasets and ontology
+metadata.
 
-### Exporters
+### Exporters And API Responses
 
-Exporters render model or metric outputs into files or external systems. v0.1.0 targets XLSX workbook export; other output targets can be added later without changing extractor contracts.
+Exporters render model or metric outputs into files or external systems. The
+same output object should support XLSX, pandas, JSON, and future API formats
+where practical.
 
-## Data Source Strategy
+## Target Repository Shape
 
-WACCY keeps the core platform focused while allowing data sources to be added through extension packages. The first-party source strategy centers on QBO/QuickBooks and SEC EDGAR because they solve different parts of the small-business modeling problem.
+The current repository is Python-first. A Rust and Node architecture should grow
+into a monorepo shape like this:
+
+```text
+waccy/
+├── crates/
+│   ├── waccy-core/              # Rust schemas, ontology, validation, models
+│   ├── waccy-ffi/               # Optional FFI boundary for Python/Node
+│   └── waccy-service/           # Optional HTTP/job service
+├── python/
+│   ├── waccy/                   # Python API package
+│   ├── waccy-edgar/             # Python EDGAR adapter, if retained
+│   └── waccy-quickbooks/        # Python QBO adapter, if retained
+├── packages/
+│   └── waccy/                   # Node/TypeScript API package
+├── schemas/
+│   ├── financial-dataset.json   # Shared schema contract
+│   ├── model-output.json
+│   └── diagnostics.json
+├── docs/
+├── tests/
+│   ├── fixtures/
+│   ├── conformance/
+│   ├── python/
+│   ├── node/
+│   └── rust/
+└── examples/
+```
+
+This is a target shape, not an immediate requirement to move every file. The
+first migration should avoid churn until Rust and Node boundaries are clear.
+
+The initial `schemas/` artifacts are generated from Pydantic. They are committed
+so non-Python consumers can depend on stable files, and drift checks should fail
+when the Python contract changes without regenerating schemas.
+
+## Rust Backend
+
+Rust should become the canonical engine for financial correctness and
+performance-sensitive computation.
+
+### Crate Responsibilities
+
+`waccy-core` should own:
+
+- shared data model types
+- ontology structures
+- period and date logic
+- deterministic mapping support
+- validation and reconciliation
+- model assembly
+- serialization and diagnostics
+
+`waccy-ffi` may own:
+
+- Python binding functions
+- Node native binding functions
+- WebAssembly bindings if browser or edge use becomes important
+
+`waccy-service` may own:
+
+- HTTP/JSON API
+- async job execution
+- artifact storage hooks
+- service diagnostics
+
+These crates should be separated only when the boundary has a reason. The first
+Rust milestone can start with a single `waccy-core` crate.
+
+### Rust Data Boundary
+
+Rust should accept and emit versioned structures:
+
+- `NormalizedFinancialDataset`
+- `MappedFinancialDataset`
+- `ValidatedFinancialDataset`
+- `ThreeStatementModel`
+- `ValidationIssue`
+- `ModelDiagnostic`
+
+Serialization should be stable enough for Python and Node wrappers to rely on.
+JSON Schema is the most practical contract format for cross-language alignment;
+Arrow or binary formats can be added for large datasets later.
+
+During Phase One, Rust consumes the Pydantic-generated schemas as fixtures and
+compatibility targets. Rust-generated schemas can replace Pydantic as the
+authority only after the Rust core proves parity and the migration is documented.
+
+## Python API
+
+The Python API should remain comfortable for analysts and data engineers.
+
+Responsibilities:
+
+- package ergonomics and public imports
+- pandas DataFrame export
+- XLSX export
+- notebook-friendly workflows
+- compatibility adapters for the existing `waccy` API
+- optional Python source clients where Python ecosystems are strongest
+
+As Rust parity grows, Python should delegate deterministic logic to Rust via
+bindings or service calls. Python should not maintain a separate model engine
+once Rust reaches parity.
+
+## Node API
+
+The Node API should expose WACCY to TypeScript and web product teams.
+
+Responsibilities:
+
+- npm package distribution
+- TypeScript types generated from shared schemas
+- JSON-first validation and model-building APIs
+- async-friendly calls for larger jobs
+- server-side integration with web apps and agent tools
+- optional client helpers for hosted WACCY services
+
+The Node package can be implemented through native bindings, WebAssembly, or a
+thin service client. The decision should be driven by deployment needs:
+
+- **Native binding**: best for server-side speed and direct embedding.
+- **WebAssembly**: best for portability and edge/browser possibilities.
+- **HTTP client**: best for hosted service and job orchestration.
+
+## Hosted Service Option
+
+A hosted service is not required for every deployment, but the architecture
+should allow it.
+
+Service responsibilities:
+
+- receive normalized datasets or source payloads
+- run validation and model jobs
+- store artifacts and diagnostics
+- return model outputs and export links
+- support long-running jobs for large filings or portfolios
+
+The hosted API should use the same schemas as the local Python and Node APIs.
+
+## Source Adapter Strategy
+
+Source adapters should stay outside the Rust core unless there is a clear reason
+to move them.
 
 ### QBO / QuickBooks
 
-QBO is the primary small-business accounting source. The integration should extract chart of accounts, financial statements, general ledger or transaction-level detail, and metadata needed to preserve source provenance.
-
-Architecturally, QBO data should not be trusted blindly. Source account names and account types are useful signals, but WACCY should still map them through the standard ontology and report confidence or ambiguity.
-
-The v0.1.0 QBO path keeps live API access and raw report normalization in `waccy-quickbooks`. Raw QBO `CompanyInfo`, `Account`, `ProfitAndLoss`, `BalanceSheet`, and `CashFlow` payloads are normalized into WACCY fixture-shaped source records before the core mapper, validator, model builder, XLSX exporter, or pandas handoff sees them.
+QBO remains a first-party adapter. The current Python `waccy-quickbooks` package
+can continue to own OAuth, report pulling, token cache behavior, and raw report
+normalization. Its long-term responsibility is to emit the shared normalized
+dataset.
 
 ### SEC EDGAR
 
-EDGAR serves two architectural roles:
+EDGAR remains a first-party adapter and public-company corpus. The current
+Python `waccy-edgar` package can continue to own company-facts normalization and
+filing-specific extraction until Rust or a service boundary has a strong reason
+to absorb pieces of it.
 
-- a structured public-company source for comparable financial statement data
-- a reference corpus for professional classification, terminology, and financial-statement patterns
+### Future Sources
 
-For v0.1.0, deterministic EDGAR/XBRL concept mapping is enough to support the vertical slice. Pattern learning can be added later without blocking the first model-generation path.
+Future adapters can be written in Python, Node, Rust, or another language if
+they emit the shared contract. The core should not depend on source-specific
+payload structures.
 
-### Modular Extensions
+## Ontology Architecture
 
-All other source systems should be added as modular packages that implement the same extractor contract. Examples include:
+The ontology should be stored and versioned as shared data, then loaded by Rust
+and surfaced through Python and Node.
 
-- Google Drive, Gmail, PDFs, and spreadsheets
-- banking and payment systems
-- CRM and sales systems
-- HR and payroll systems
-- ERP and inventory systems
-- market data APIs
-- other accounting systems such as Xero, Sage, and NetSuite
-
-The core platform should remain source-agnostic after extraction. All sources must normalize into the shared financial dataset contract and then map into the WACCY ontology before model construction or metric extraction.
-
-## Parsing And Classification Philosophy
-
-WACCY should use deterministic logic wherever source structures are known:
-
-- structured APIs for QBO and other accounting systems
-- XBRL/company-facts structures for EDGAR
-- explicit mappings for known account names, account types, and concepts
-- formulaic financial statement construction and reconciliation
-
-LLMs can assist where ambiguity is unavoidable:
-
-- ambiguous account names
-- incomplete context
-- document interpretation
-- classification suggestions
-- relationship inference between source records
-
-LLMs should not be the authority for financial calculations. They may propose classifications or explanations, but deterministic validation and reconciliation must remain the guardrails.
-
-## Standard Ontology Architecture
-
-The standard chart of accounts is the canonical layer between source data and model output. It should include:
+Requirements:
 
 - canonical account IDs and names
 - account type and hierarchy
 - statement placement
 - normal balance and sign convention
 - cash-flow section and treatment
-- source aliases for QBO accounts and EDGAR/XBRL concepts
-- metadata for confidence, review status, and auditability
-
-The ontology enables:
-
-- consistent model construction across sources
-- cross-company comparison
-- mapping quality measurement
-- downstream model extensibility
-- user review of ambiguous or unmapped accounts
-
-Industry-specific templates can extend the ontology, but they should map back to standard parent accounts so customization does not destroy comparability.
-
-## Project Structure
-
-### Core Package (`waccy`)
-
-The core package follows a standard Python package structure optimized for `uv`:
-
-```
-waccy/
-├── pyproject.toml          # Core dependencies and package metadata
-├── uv.lock                 # Lock file for reproducible builds
-├── README.md
-├── LICENSE
-├── CODE_OF_CONDUCT.md
-├── docs/
-│   ├── 0-MISSION.md
-│   ├── 1-EXPERIENCE.md
-│   ├── 2-REQUIREMENTS.md
-│   ├── 3-ARCHITECTURE.md
-│   ├── assets/
-│   ├── examples/
-│   └── references/
-├── src/
-│   └── waccy/
-│       ├── __init__.py
-│       ├── core/
-│       │   ├── __init__.py
-│       │   ├── ontology.py          # Standardized chart of accounts
-│       │   ├── models.py             # Core data models (Pydantic)
-│       │   └── validation.py         # Data validation (Pandera)
-│       ├── extraction/
-│       │   ├── __init__.py
-│       │   ├── base.py               # Abstract base classes for extractors
-│       │   ├── registry.py           # Extension registry and discovery
-│       │   └── mapper.py             # Mapping to standard ontology
-│       ├── modeling/
-│       │   ├── __init__.py
-│       │   ├── builder.py            # Model construction logic
-│       │   ├── templates.py          # Model templates
-│       │   └── exporters.py          # Spreadsheet export
-│       ├── classification/
-│       │   ├── __init__.py
-│       │   ├── engine.py             # LLM-enhanced classification
-│       │   ├── patterns.py           # Pattern matching from EDGAR
-│       │   └── confidence.py         # Confidence scoring
-│       └── utils/
-│           ├── __init__.py
-│           ├── dates.py
-│           ├── formatting.py
-│           └── validation.py
-├── tests/
-│   ├── __init__.py
-│   ├── unit/
-│   ├── integration/
-│   └── fixtures/
-└── scripts/
-    └── publish.py                   # PyPI publishing helper
-```
-
-### Extension Packages (`waccy-*`)
-
-Extension packages follow a consistent naming convention and structure:
-
-```
-waccy-quickbooks/
-├── pyproject.toml
-├── README.md
-├── src/
-│   └── waccy_quickbooks/
-│       ├── __init__.py
-│       ├── extractor.py             # Implements waccy.extraction.base.Extractor
-│       └── ...
-└── dist/
-
-waccy-edgar/
-├── pyproject.toml
-├── README.md
-├── src/
-│   └── waccy_edgar/
-│       ├── __init__.py
-│       ├── extractor.py             # Implements waccy.extraction.base.Extractor
-│       └── ...
-└── dist/
-```
-
-Future extension packages may add clients, parsers, mappers, and tests as implementation grows. Those files should be added when the corresponding integration work lands.
-
-## Package Configuration
-
-### Core Package (`waccy`) pyproject.toml
-
-```toml
-[project]
-name = "waccy"
-version = "0.1.0"
-description = "Intelligent financial modeling platform for small businesses"
-readme = "README.md"
-requires-python = ">=3.13"
-license = { text = "MIT" }
-authors = [
-    { name = "WACCY Contributors" }
-]
-keywords = ["finance", "financial-modeling", "accounting", "valuation"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Financial and Insurance Industry",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Office/Business :: Financial",
-]
-
-dependencies = [
-    "numpy>=2.3.5",
-    "pandas>=3.0.2",
-    "pandera>=0.27.0",
-    "polars>=1.36.1",
-    "pydantic>=2.12.5",
-    # LLM providers (modular, user installs what they need)
-    # "openai>=1.0.0",  # Optional
-    # "anthropic>=0.34.0",  # Optional
-]
-
-[project.optional-dependencies]
-# Core extensions (maintained by WACCY team)
-quickbooks = ["waccy-quickbooks>=0.1.1"]
-edgar = ["waccy-edgar>=0.1.0"]
-# Community extensions listed in docs but not as dependencies
-
-[project.scripts]
-waccy = "waccy.cli:main"
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.uv]
-dev-dependencies = [
-    "pytest>=9.0.2",
-    "pytest-cov>=6.0.0",
-    "ruff>=0.8.0",
-    "mypy>=1.13.0",
-]
-
-[tool.ruff]
-line-length = 100
-target-version = "py313"
-select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
-    "ARG", # flake8-unused-arguments
-    "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
-    "PTH", # flake8-use-pathlib
-    "ERA", # eradicate
-    "PL",  # Pylint
-    "PERF", # Perflint
-    "RET", # flake8-return
-    "RUF", # Ruff-specific rules
-]
-ignore = [
-    "E501",  # line too long (handled by formatter)
-    "PLR0913", # too many arguments (sometimes necessary)
-    "PLR2004", # magic value (sometimes acceptable)
-]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-
-[tool.ruff.lint.isort]
-known-first-party = ["waccy"]
-
-[tool.mypy]
-python_version = "3.13"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-strict_equality = true
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
-```
-
-### Extension Package pyproject.toml Template
-
-```toml
-[project]
-name = "waccy-{name}"
-version = "0.0.1"
-description = "WACCY extension for {description}"
-readme = "README.md"
-requires-python = ">=3.13"
-license = { text = "MIT" }
-dependencies = [
-    "waccy>=0.1.0",  # Core platform dependency
-    # Extension-specific dependencies
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=9.0.2",
-    "ruff>=0.8.0",
-    "mypy>=1.13.0",
-]
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-# Same ruff/mypy config as core
-[tool.ruff]
-# ... (same as core)
-
-[tool.mypy]
-# ... (same as core)
-```
-
-## Core Architecture Components
-
-### 1. Extension Registry and Discovery
-
-Extensions are discovered through Python entry points, allowing dynamic loading without requiring core platform modifications.
-
-**`src/waccy/extraction/registry.py`**:
-
-```python
-from typing import Protocol, Type, Optional
-from importlib.metadata import entry_points
-
-class ExtractorProtocol(Protocol):
-    """Protocol that all extractors must implement"""
-    name: str
-    data_source: str
-    
-    def extract(self, config: dict) -> "ExtractedData":
-        ...
-
-class ExtractorRegistry:
-    """Registry for discovering and managing data source extractors"""
-    
-    def __init__(self):
-        self._extractors: dict[str, Type[ExtractorProtocol]] = {}
-        self._load_extensions()
-    
-    def _load_extensions(self):
-        """Discover extensions via entry points"""
-        discovered = entry_points(group="waccy.extractors")
-        for ep in discovered:
-            try:
-                extractor_class = ep.load()
-            except (ImportError, ModuleNotFoundError):
-                continue
-            instance = extractor_class()
-            self._extractors[instance.data_source] = extractor_class
-    
-    def get_extractor(self, data_source: str) -> Optional[Type[ExtractorProtocol]]:
-        """Get extractor class for a data source"""
-        return self._extractors.get(data_source)
-    
-    def list_extractors(self) -> list[str]:
-        """List all available data sources"""
-        return list(self._extractors.keys())
-```
-
-**Extension entry point registration** (in extension's `pyproject.toml`):
-
-```toml
-[project.entry-points."waccy.extractors"]
-quickbooks = "waccy_quickbooks.extractor:QuickBooksExtractor"
-```
-
-### 2. Standardized Ontology
-
-The core ontology defines the standard chart of accounts and account hierarchies.
-
-**`src/waccy/core/ontology.py`**:
-
-```python
-from enum import Enum
-from typing import Literal
-from pydantic import BaseModel
-
-class AccountType(str, Enum):
-    """Top-level account categories"""
-    ASSET = "asset"
-    LIABILITY = "liability"
-    EQUITY = "equity"
-    REVENUE = "revenue"
-    EXPENSE = "expense"
-
-class AccountCategory(BaseModel):
-    """Standard account category"""
-    id: str
-    name: str
-    type: AccountType
-    parent_id: Optional[str] = None
-    level: int
-    description: str
-
-class StandardChartOfAccounts:
-    """WACCY standardized chart of accounts"""
-    
-    def __init__(self):
-        self.accounts: dict[str, AccountCategory] = {}
-        self._initialize_standard_accounts()
-    
-    def _initialize_standard_accounts(self):
-        """Initialize the standard chart of accounts"""
-        # Income statement accounts
-        # Balance sheet accounts
-        # Cash flow accounts
-        # Supporting schedules
-        ...
-    
-    def map_account(self, source_account: str, source_system: str) -> Optional[AccountCategory]:
-        """Map a source account to standard account"""
-        ...
-```
-
-### 3. Base Extractor Interface
-
-All extensions must implement the base extractor interface.
-
-**`src/waccy/extraction/base.py`**:
-
-```python
-from abc import ABC, abstractmethod
-from typing import Protocol
-from pydantic import BaseModel
-
-class ExtractedTransaction(BaseModel):
-    """Standard transaction format"""
-    date: date
-    account_id: str  # Mapped to WACCY standard
-    amount: Decimal
-    description: str
-    source_id: str
-    confidence: float  # Mapping confidence score
-
-class ExtractedData(BaseModel):
-    """Standard extracted data format"""
-    transactions: list[ExtractedTransaction]
-    accounts: list[AccountCategory]
-    metadata: dict[str, Any]
-    quality_score: float
-
-class Extractor(ABC):
-    """Abstract base class for all data source extractors"""
-    
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """Extractor name"""
-        ...
-    
-    @property
-    @abstractmethod
-    def data_source(self) -> str:
-        """Data source identifier (e.g., 'quickbooks', 'edgar')"""
-        ...
-    
-    @abstractmethod
-    def authenticate(self, credentials: dict) -> bool:
-        """Authenticate with the data source"""
-        ...
-    
-    @abstractmethod
-    def extract(self, config: dict) -> ExtractedData:
-        """Extract data from the source"""
-        ...
-    
-    def validate(self, data: ExtractedData) -> bool:
-        """Validate extracted data"""
-        # Default implementation using Pandera
-        ...
-```
-
-### 4. Classification Engine
-
-LLM-enhanced classification for ambiguous account mappings.
-
-**`src/waccy/classification/engine.py`**:
-
-```python
-from typing import Optional
-from waccy.core.ontology import StandardChartOfAccounts
-
-class ClassificationEngine:
-    """LLM-powered classification for ambiguous accounts"""
-    
-    def __init__(self, llm_provider: Optional[str] = None):
-        self.ontology = StandardChartOfAccounts()
-        self.llm_provider = llm_provider
-    
-    def classify_account(
-        self, 
-        source_account_name: str,
-        transaction_patterns: list[dict],
-        context: dict
-    ) -> tuple[AccountCategory, float]:
-        """Classify an ambiguous account with confidence score"""
-        # 1. Try deterministic mapping first
-        # 2. If ambiguous, use LLM with pattern analysis
-        # 3. Validate against learned patterns from EDGAR
-        ...
-    
-    def learn_from_edgar(self, filing_data: dict):
-        """Extract classification patterns from EDGAR filings"""
-        ...
-```
-
-### 5. Model Builder
-
-Core model construction logic that works with standardized data.
-
-**`src/waccy/modeling/builder.py`**:
-
-```python
-from waccy.extraction.base import ExtractedData
-from waccy.core.ontology import StandardChartOfAccounts
-
-class ModelBuilder:
-    """Build financial models from extracted data"""
-    
-    def __init__(self):
-        self.ontology = StandardChartOfAccounts()
-    
-    def build_three_statement_model(
-        self, 
-        extracted_data: ExtractedData,
-        forecast_periods: int = 12
-    ) -> "ThreeStatementModel":
-        """Build integrated 3-statement model"""
-        # 1. Normalize extracted data to standard accounts
-        # 2. Build historical statements
-        # 3. Apply forecasting logic
-        # 4. Ensure balance checks
-        raise NotImplementedError("3-statement model not yet implemented")
-    
-    def export_to_sheets(
-        self, 
-        model: "ThreeStatementModel",
-        output_path: str
-    ):
-        """Export model to spreadsheet output."""
-        ...
-```
-
-## Extension Development Guide
-
-### Creating a New Extension
-
-1. **Create package structure**:
-```bash
-mkdir waccy-{name}
-cd waccy-{name}
-uv init --name waccy_{name} --package
-```
-
-2. **Add core dependency**:
-```toml
-dependencies = ["waccy>=0.1.0"]
-```
-
-3. **Implement Extractor**:
-```python
-# src/waccy_{name}/extractor.py
-from waccy.extraction.base import Extractor, ExtractedData
-
-class MyDataSourceExtractor(Extractor):
-    name = "My Data Source"
-    data_source = "mydatasource"
-    
-    def authenticate(self, credentials: dict) -> bool:
-        # Implement authentication
-        ...
-    
-    def extract(self, config: dict) -> ExtractedData:
-        # Extract and return standardized data
-        ...
-```
-
-4. **Register entry point**:
-```toml
-[project.entry-points."waccy.extractors"]
-mydatasource = "waccy_mydatasource.extractor:MyDataSourceExtractor"
-```
-
-5. **Publish to PyPI**:
-```bash
-uv build --no-sources
-uv publish --trusted-publishing always
-```
-
-## Development Workflow
-
-### Local Development Setup
-
-```bash
-# Clone core repository
-git clone https://github.com/waccy/waccy.git
-cd waccy
-
-# Install with uv
-uv sync
-
-# Install extension in development mode
-cd ../waccy-quickbooks
-uv sync
-uv pip install -e .
-```
-
-### Code Quality
-
-- **Ruff**: Fast linting and formatting
-  ```bash
-  ruff check .
-  ruff format .
-  ```
-
-- **Type Checking**: MyPy for static analysis
-  ```bash
-  uv run mypy src/
-  ```
-
-- **Testing**: Pytest for unit and integration tests
-  ```bash
-  uv run pytest
-  ```
-
-### Building and Publishing
-
-Local builds use uv directly and should disable workspace sources before
-release packaging:
-
-```bash
-# Build package
-uv build --no-sources
-
-# Check upload metadata locally without uploading
-uv publish --dry-run
-```
-
-Release publishing runs through `.github/workflows/publish.yml` using PyPI
-Trusted Publishers and the GitHub environment `pypi`; no long-lived PyPI token
-is required in GitHub secrets. Configure each PyPI project with:
-
-| PyPI project | Owner | Repository | Workflow | Environment |
-| --- | --- | --- | --- | --- |
-| `waccy` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
-| `waccy-edgar` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
-| `waccy-quickbooks` | `DecisionNerd` | `waccy` | `publish.yml` | `pypi` |
-
-For projects that already exist on PyPI, add the publisher under the project's
-**Publishing** settings. For a first upload of a new project, create a pending
-publisher from the account-level **Publishing** page. The same publisher can be
-registered for multiple PyPI projects in this monorepo.
-
-The GitHub `pypi` environment should be limited to deployments from `main`.
-Add required reviewers to that environment if the release process needs an
-explicit manual approval before upload.
-
-## Dependency Management
-
-### Core Dependencies
-
-Core platform maintains minimal dependencies:
-- **pydantic**: Data validation and models
-- **pandas**: DataFrame handoff for downstream modeling outside WACCY
-- **polars**: Efficient internal data manipulation where columnar performance matters
-- **pandera**: Data validation schemas
-- **numpy**: Numerical computations
-
-### Extension Dependencies
-
-Extensions manage their own dependencies:
-- Each extension's `pyproject.toml` declares dependencies
-- Core platform dependency (`waccy>=X.Y.Z`) is required
-- Extensions should minimize dependencies to reduce conflicts
-
-### Optional Dependencies
-
-LLM providers are optional and user-installed:
-- Users install `openai`, `anthropic`, etc. as needed
-- Core platform detects available providers at runtime
-- Extensions can specify preferred LLM providers
-
-## Testing Strategy
-
-### Core Platform Tests
-
-```
-tests/
-├── unit/
-│   ├── test_ontology.py
-│   ├── test_classification.py
-│   └── test_modeling.py
-├── integration/
-│   ├── test_extraction_flow.py
-│   └── test_model_generation.py
-└── fixtures/
-    └── sample_data.json
-```
-
-### Extension Tests
-
-Extensions include their own test suites:
-- Unit tests for extraction logic
-- Mock API responses for integration tests
-- Validation against core platform interfaces
-
-## Versioning Strategy
-
-- **Core Platform**: Semantic versioning (MAJOR.MINOR.PATCH)
-  - MAJOR: Breaking changes to extension interface or ontology
-  - MINOR: New features, backward-compatible
-  - PATCH: Bug fixes
-
-- **Extensions**: Independent versioning
-  - Can update independently of core
-  - Must declare minimum core version requirement
-
-## Distribution and Installation
-
-### Core Installation
-
-```bash
-# Install core platform
-uv pip install waccy
-
-# Install with core extensions
-uv pip install "waccy[quickbooks,edgar]"
-```
-
-### Extension Installation
-
-```bash
-# Install individual extensions
-uv pip install waccy-quickbooks
-uv pip install waccy-edgar
-
-# Extensions automatically register with core platform
-```
-
-### Development Installation
-
-```bash
-# Editable install for development
-uv pip install -e .
-
-# With dev dependencies
-uv sync --dev
-```
-
-## Security Considerations
-
-- **Credentials**: Never store credentials in code or config files
-- **Environment Variables**: Use environment variables or secure credential stores
-- **API Keys**: Extensions should support standard credential management
-- **Data Privacy**: Local-first processing where possible, clear data handling policies
-
-## Performance Considerations
-
-- **Polars over Pandas**: Core platform uses Polars for better performance
-- **Lazy Evaluation**: Use lazy dataframes where possible
-- **Caching**: Cache API responses and parsed data
-- **Parallel Processing**: Support parallel extraction for multiple sources
-
-## Future Architecture Considerations
-
-- **Plugin System**: More sophisticated plugin architecture for model types
-- **Workflow Engine**: Orchestrate multi-step data extraction and modeling
-- **API Server**: Optional API server for remote access
-- **Database Backend**: Optional database for data persistence
-- **GraphQL Interface**: Query interface for flexible data access
+- source aliases
+- industry extensions
+- ontology version
+
+The ontology should be testable independently from source adapters and model
+builders.
+
+## Model Builder Architecture
+
+Model builders should be organized around validated data, not source systems.
+
+Initial builder:
+
+- three-statement model
+
+Future builders:
+
+- DCF
+- comparables
+- M&A/pro forma
+- LBO
+- credit/covenant
+- SaaS metrics
+- FP&A forecast
+
+Each builder should define:
+
+- input accounts or metrics required by the builder
+- optional input accounts
+- output lines
+- subtotal and check logic
+- diagnostics
+- export representation
+
+## Testing Architecture
+
+Cross-language conformance is the key testing requirement.
+
+Test layers:
+
+- Rust unit tests for deterministic financial logic
+- Python API tests for compatibility and pandas/XLSX workflows
+- Node API tests for TypeScript contracts and JSON workflows
+- shared fixture conformance tests across Python, Node, and Rust
+- outcome tests for QBO and EDGAR release fixtures
+- package build and smoke tests for every published artifact
+
+Conformance fixtures should describe expected normalized, mapped, validated, and
+model-output results. Each language surface should prove it can produce or
+consume those fixtures.
+
+## Packaging And Release Architecture
+
+Current published packages:
+
+- PyPI: `waccy`
+- PyPI: `waccy-edgar`
+- PyPI: `waccy-quickbooks`
+
+Future packages:
+
+- crates.io: `waccy-core` or equivalent Rust crates
+- npm: `@waccy/waccy` or equivalent TypeScript package
+
+Release requirements:
+
+- package artifacts build from source without local workspace leakage
+- PyPI publishing uses trusted publishers
+- npm publishing should use provenance and trusted CI publishing where possible
+- Rust crates should use reproducible cargo builds
+- schema versions should be included in release notes
+- GitHub releases should summarize all language package versions
+
+## Migration Path
+
+This migration path follows the canonical roadmap in
+[2-REQUIREMENTS.md](2-REQUIREMENTS.md#roadmap-requirements). Architecture work
+should use these phase names so planning does not split into competing
+sequences.
+
+### Phase One: Multi-Language Contract Foundation
+
+- define shared schemas for datasets, diagnostics, and model outputs
+- align current Python models to the schema
+- add conformance fixtures
+- document compatibility expectations
+- decide which current Python APIs are compatibility commitments
+
+### Phase Two: Rust Core Parity
+
+- create `waccy-core`
+- port ontology and period/date primitives
+- port validation primitives
+- expose JSON serialization
+- prove parity on small fixtures
+- evaluate Python native binding vs service call
+- evaluate Node native binding vs WebAssembly vs service client
+- choose based on deployment and maintenance costs
+- port three-statement builder
+- port diagnostics and reconciliation
+- compare outputs against Python v0.1.0 fixtures
+- keep Python API stable
+
+### Phase Three: Service And Node API
+
+- publish TypeScript package
+- support validation and model-building calls
+- include generated types and examples
+- add Node conformance tests
+- define hosted service boundaries if local bindings are not enough
+
+### Phase Four: Advanced Models
+
+- add DCF and advanced model families on top of the validated dataset contract
+- keep Python and Node API parity where appropriate
+
+### Phase Five: Decision Support
+
+- add scenario management and sensitivity analysis
+- add model comparison workflows
+- add document and source synthesis workflows
+- expose confidence-aware review APIs for product UIs
+
+## Open Architecture Decisions
+
+- Should Python and Node call Rust through native bindings, WebAssembly, or a
+  hosted service first?
+- Should source adapters remain in Python packages or move toward language-
+  specific SDKs?
+- After Rust parity, should schemas continue to be generated from Pydantic,
+  switch to Rust-generated artifacts, or move to an independent schema package?
+- What package names should be reserved for npm and crates.io?
+- How much of XLSX export should stay in Python versus move to Rust or Node?
