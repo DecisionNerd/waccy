@@ -75,6 +75,39 @@ def test_conformance_fixture_generator_matches_committed_artifacts() -> None:
         assert (CONFORMANCE_DIR / relative_path).read_text() == content
 
 
+def test_conformance_generator_rejects_invalid_sources_and_fixture_shapes() -> None:
+    """Generator helpers raise clear errors for malformed conformance inputs."""
+    generator = _load_conformance_generator()
+
+    try:
+        generator.build_case("missing")
+    except ValueError as exc:
+        assert "Unknown conformance source 'missing'" in str(exc)
+    else:
+        raise AssertionError("Expected unknown source to raise ValueError.")
+
+    try:
+        generator._extracted("fixture", {"entity_name": "Fixture Co"})
+    except ValueError as exc:
+        assert "missing 'records'" in str(exc)
+    else:
+        raise AssertionError("Expected missing records to raise ValueError.")
+
+    try:
+        generator._extracted("fixture", {"entity_name": "Fixture Co", "records": {}})
+    except ValueError as exc:
+        assert "records must be a list" in str(exc)
+    else:
+        raise AssertionError("Expected non-list records to raise ValueError.")
+
+    try:
+        generator._extracted("fixture", {"entity_name": 123, "records": []})
+    except ValueError as exc:
+        assert "entity_name must be a string" in str(exc)
+    else:
+        raise AssertionError("Expected non-string entity_name to raise ValueError.")
+
+
 def test_conformance_diagnostics_are_machine_readable() -> None:
     """Diagnostics summaries expose stable issue fields for non-Python consumers."""
     for source in SOURCES:
@@ -103,6 +136,11 @@ def test_conformance_model_outputs_preserve_representative_values() -> None:
         assert _line_value(model.income_statement.lines, "Revenue", "2024") == Decimal("1200")
         assert _line_value(model.income_statement.lines, "Net Income", "2024") == Decimal("316")
         assert _line_value(model.balance_sheet.lines, "Balance Check", "2024") == Decimal("0")
+        # The first fixture period has no opening cash period, so the tie-out reflects
+        # the beginning cash balance embedded in the initial balance sheet.
+        assert _line_value(model.cash_flow_statement.lines, "Cash Flow Tie-Out", "2023") == Decimal(
+            "-264"
+        )
         assert _line_value(model.cash_flow_statement.lines, "Cash Flow Tie-Out", "2024") == Decimal(
             "0"
         )

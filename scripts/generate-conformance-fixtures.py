@@ -64,16 +64,23 @@ def _source_json(source_fixture: dict[str, Any]) -> str:
 
 
 def _extracted(source: str, source_fixture: dict[str, Any]) -> ExtractedData:
+    if "records" not in source_fixture:
+        raise ValueError(f"Conformance source fixture {source!r} is missing 'records'.")
+    if "entity_name" not in source_fixture:
+        raise ValueError(f"Conformance source fixture {source!r} is missing 'entity_name'.")
     raw_records = source_fixture["records"]
     if not isinstance(raw_records, list):
         raise ValueError(f"Conformance source fixture {source!r} records must be a list.")
+    entity_name = source_fixture["entity_name"]
+    if not isinstance(entity_name, str):
+        raise ValueError(f"Conformance source fixture {source!r} entity_name must be a string.")
     records = []
     for record in raw_records:
         if not isinstance(record, dict):
             raise ValueError(f"Conformance source fixture {source!r} records must be objects.")
         records.append(source_record_from_dict(record, source))
     return ExtractedData(
-        entity_name=str(source_fixture["entity_name"]),
+        entity_name=entity_name,
         source_records=records,
         metadata={"source": source},
     )
@@ -100,6 +107,9 @@ def _diagnostics_json(
 
 def build_case(source: str) -> dict[str, str]:
     """Return deterministic JSON artifacts for one conformance source."""
+    if source not in SOURCE_FIXTURES:
+        valid = ", ".join(sorted(SOURCE_FIXTURES))
+        raise ValueError(f"Unknown conformance source {source!r}. Valid sources: {valid}.")
     source_fixture = SOURCE_FIXTURES[source]()
     mapper = DataMapper()
     extracted = _extracted(source, source_fixture)
