@@ -1,0 +1,305 @@
+{
+  "entity_name": "Fixture Co",
+  "periods": [
+    {
+      "end_date": "2023-12-31",
+      "label": "2023",
+      "start_date": "2023-01-01"
+    },
+    {
+      "end_date": "2024-12-31",
+      "label": "2024",
+      "start_date": "2024-01-01"
+    }
+  ],
+  "records": [
+    {
+      "amount": 1000,
+      "name": "Sales",
+      "period": "2023",
+      "source_account_id": "Sales",
+      "source_account_name": "Sales",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 400,
+      "name": "Cost of Goods Sold",
+      "period": "2023",
+      "source_account_id": "Cost of Goods Sold",
+      "source_account_name": "Cost of Goods Sold",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 200,
+      "name": "Operating Expenses",
+      "period": "2023",
+      "source_account_id": "Operating Expenses",
+      "source_account_name": "Operating Expenses",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 50,
+      "name": "Depreciation",
+      "period": "2023",
+      "source_account_id": "Depreciation",
+      "source_account_name": "Depreciation",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 20,
+      "name": "Interest Expense",
+      "period": "2023",
+      "source_account_id": "Interest Expense",
+      "source_account_name": "Interest Expense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 66,
+      "name": "Income Tax Expense",
+      "period": "2023",
+      "source_account_id": "Income Tax Expense",
+      "source_account_name": "Income Tax Expense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 1200,
+      "name": "Sales",
+      "period": "2024",
+      "source_account_id": "Sales",
+      "source_account_name": "Sales",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 480,
+      "name": "Cost of Goods Sold",
+      "period": "2024",
+      "source_account_id": "Cost of Goods Sold",
+      "source_account_name": "Cost of Goods Sold",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 240,
+      "name": "Operating Expenses",
+      "period": "2024",
+      "source_account_id": "Operating Expenses",
+      "source_account_name": "Operating Expenses",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 60,
+      "name": "Depreciation",
+      "period": "2024",
+      "source_account_id": "Depreciation",
+      "source_account_name": "Depreciation",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 25,
+      "name": "Interest Expense",
+      "period": "2024",
+      "source_account_id": "Interest Expense",
+      "source_account_name": "Interest Expense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 79,
+      "name": "Income Tax Expense",
+      "period": "2024",
+      "source_account_id": "Income Tax Expense",
+      "source_account_name": "Income Tax Expense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 100,
+      "name": "Checking",
+      "period": "2023",
+      "source_account_id": "Checking",
+      "source_account_name": "Checking",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 150,
+      "name": "Accounts Receivable",
+      "period": "2023",
+      "source_account_id": "Accounts Receivable",
+      "source_account_name": "Accounts Receivable",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 100,
+      "name": "Inventory",
+      "period": "2023",
+      "source_account_id": "Inventory",
+      "source_account_name": "Inventory",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 500,
+      "name": "Fixed Assets",
+      "period": "2023",
+      "source_account_id": "Fixed Assets",
+      "source_account_name": "Fixed Assets",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 50,
+      "name": "Accumulated Depreciation",
+      "period": "2023",
+      "source_account_id": "Accumulated Depreciation",
+      "source_account_name": "Accumulated Depreciation",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 120,
+      "name": "Accounts Payable",
+      "period": "2023",
+      "source_account_id": "Accounts Payable",
+      "source_account_name": "Accounts Payable",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 80,
+      "name": "Accrued Expenses",
+      "period": "2023",
+      "source_account_id": "Accrued Expenses",
+      "source_account_name": "Accrued Expenses",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 300,
+      "name": "Notes Payable",
+      "period": "2023",
+      "source_account_id": "Notes Payable",
+      "source_account_name": "Notes Payable",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 36,
+      "name": "Owners Equity",
+      "period": "2023",
+      "source_account_id": "Owners Equity",
+      "source_account_name": "Owners Equity",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 264,
+      "name": "Retained Earnings",
+      "period": "2023",
+      "source_account_id": "Retained Earnings",
+      "source_account_name": "Retained Earnings",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 380,
+      "name": "Checking",
+      "period": "2024",
+      "source_account_id": "Checking",
+      "source_account_name": "Checking",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 180,
+      "name": "Accounts Receivable",
+      "period": "2024",
+      "source_account_id": "Accounts Receivable",
+      "source_account_name": "Accounts Receivable",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 120,
+      "name": "Inventory",
+      "period": "2024",
+      "source_account_id": "Inventory",
+      "source_account_name": "Inventory",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 600,
+      "name": "Fixed Assets",
+      "period": "2024",
+      "source_account_id": "Fixed Assets",
+      "source_account_name": "Fixed Assets",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 110,
+      "name": "Accumulated Depreciation",
+      "period": "2024",
+      "source_account_id": "Accumulated Depreciation",
+      "source_account_name": "Accumulated Depreciation",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 140,
+      "name": "Accounts Payable",
+      "period": "2024",
+      "source_account_id": "Accounts Payable",
+      "source_account_name": "Accounts Payable",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 90,
+      "name": "Accrued Expenses",
+      "period": "2024",
+      "source_account_id": "Accrued Expenses",
+      "source_account_name": "Accrued Expenses",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 354,
+      "name": "Notes Payable",
+      "period": "2024",
+      "source_account_id": "Notes Payable",
+      "source_account_name": "Notes Payable",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 270,
+      "name": "Owners Equity",
+      "period": "2024",
+      "source_account_id": "Owners Equity",
+      "source_account_name": "Owners Equity",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 316,
+      "name": "Retained Earnings",
+      "period": "2024",
+      "source_account_id": "Retained Earnings",
+      "source_account_name": "Retained Earnings",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 60,
+      "name": "Depreciation Addback",
+      "period": "2024",
+      "source_account_id": "Depreciation Addback",
+      "source_account_name": "Depreciation Addback",
+      "statement": "cash_flow_statement"
+    },
+    {
+      "amount": -50,
+      "name": "Change in Working Capital",
+      "period": "2024",
+      "source_account_id": "Change in Working Capital",
+      "source_account_name": "Change in Working Capital",
+      "statement": "cash_flow_statement"
+    },
+    {
+      "amount": -100,
+      "name": "Capital Expenditures",
+      "period": "2024",
+      "source_account_id": "Capital Expenditures",
+      "source_account_name": "Capital Expenditures",
+      "statement": "cash_flow_statement"
+    },
+    {
+      "amount": 54,
+      "name": "Debt Proceeds",
+      "period": "2024",
+      "source_account_id": "Debt Proceeds",
+      "source_account_name": "Debt Proceeds",
+      "statement": "cash_flow_statement"
+    }
+  ]
+}

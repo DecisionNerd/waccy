@@ -348,7 +348,8 @@ Test layers:
 
 Conformance fixtures should describe expected normalized, mapped, validated, and
 model-output results. Each language surface should prove it can produce or
-consume those fixtures.
+consume those fixtures. The fixture layout and regeneration commands are
+documented in [4-TESTING.md](4-TESTING.md#cross-language-conformance-fixtures).
 
 ## Packaging And Release Architecture
 
