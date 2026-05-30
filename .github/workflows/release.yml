@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write   # npm provenance
+
+jobs:
+  release:
+    name: Build and release
+    runs-on: macos-14          # arm64, primary install target
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build release binaries
+        run: cargo build --release --locked --bin waccy --bin waccy-mcp
+
+      - name: Create source tarball
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          TARBALL_NAME="waccy-${VERSION#v}.tar.gz"
+          git archive \
+            --format=tar.gz \
+            --prefix="waccy-${VERSION#v}/" \
+            HEAD \
+            -o "$TARBALL_NAME"
+          echo "TARBALL=${TARBALL_NAME}" >> "$GITHUB_ENV"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "VERSION_BARE=${VERSION#v}" >> "$GITHUB_ENV"
+
+      - name: Compute SHA256
+        run: |
+          SHA=$(shasum -a 256 "$TARBALL" | awk '{print $1}')
+          echo "SHA256=${SHA}" >> "$GITHUB_ENV"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$VERSION" \
+            --title "$VERSION" \
+            --generate-notes \
+            "$TARBALL" \
+            "target/release/waccy" \
+            "target/release/waccy-mcp"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Build and publish Node addon
+        working-directory: crates/waccy-node
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm install --save-dev @napi-rs/cli
+          npx napi build --platform --release
+          npm publish --access public --provenance
+
+      - name: Update Homebrew formula
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          TARBALL_URL="https://github.com/DecisionNerd/waccy/releases/download/${VERSION}/${TARBALL}"
+
+          git clone "https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/DecisionNerd/homebrew-tap.git" tap-repo
+          cd tap-repo
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          BRANCH="update-waccy-${VERSION_BARE}"
+          git push origin --delete "$BRANCH" 2>/dev/null || true
+          git checkout -b "$BRANCH"
+
+          sed -i '' \
+            -e "s|url \".*\"|url \"${TARBALL_URL}\"|" \
+            -e "s|sha256 \".*\"|sha256 \"${SHA256}\"|" \
+            Formula/waccy.rb
+
+          git add Formula/waccy.rb
+          git commit -m "waccy ${VERSION_BARE}"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --repo DecisionNerd/homebrew-tap \
+            --title "Update waccy to ${VERSION_BARE}" \
+            --body "Automated formula update for release ${VERSION}." \
+            --base main \
+            --head "$BRANCH"

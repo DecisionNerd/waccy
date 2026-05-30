@@ -1,90 +1,88 @@
 name: CI
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
 
-permissions:
-  contents: read
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  quality:
-    name: Quality Gates
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
+  test:
+    name: Test
+    runs-on: macos-14
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          python-version: "3.13"
+          components: rustfmt, clippy
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
 
-      - name: Install dependencies
-        run: uv sync --frozen --dev
+      - name: Check formatting
+        run: cargo fmt --all -- --check
 
-      - name: Ruff
-        run: uv run ruff check
+      - name: Clippy
+        run: cargo clippy --all-targets -- -D warnings
 
-      - name: Mypy
-        run: uv run mypy src/waccy
+      - name: Run tests
+        run: cargo test --all
 
-      - name: Tests with coverage
-        run: >
-          uv run pytest
-          --cov=src/waccy
-          --cov-report=term-missing
-          --cov-report=xml
-          --cov-fail-under=90
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5
-        with:
-          use_oidc: true
-          files: ./coverage.xml
-          flags: python
-          name: waccy-python
-          fail_ci_if_error: true
-
-  outcome-specs:
-    name: BDD Outcome Specs
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+  python:
+    name: Python wheel build check
+    runs-on: macos-14
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install maturin
+        run: uv tool install maturin
+
+      - name: Build wheel
+        working-directory: crates/waccy-python
+        run: maturin build --release
+
+  node:
+    name: Node addon build check
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          python-version: "3.13"
+          node-version: '20'
 
-      - name: Set up uv
-        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
-        with:
-          enable-cache: true
-          cache-dependency-glob: uv.lock
+      - name: Install napi-rs cli
+        working-directory: crates/waccy-node
+        run: npm install --save-dev @napi-rs/cli
 
-      - name: Install dependencies
-        run: uv sync --frozen --dev
-
-      - name: Outcome specs
-        run: uv run pytest tests/bdd -q -m "bdd or outcome"
+      - name: Build addon
+        working-directory: crates/waccy-node
+        run: npx napi build --platform --release

@@ -1,0 +1,35 @@
+[workspace]
+members = [
+    "crates/waccy-core",
+    "crates/waccy-cli",
+    "crates/waccy-mcp",
+    "crates/waccy-python",
+    "crates/waccy-node",
+    "tests",
+]
+# Exclude Python and Node bindings from default builds.
+# Python: use `maturin develop` instead.
+# Node:   use `napi build` inside crates/waccy-node instead.
+default-members = [
+    "crates/waccy-core",
+    "crates/waccy-cli",
+    "crates/waccy-mcp",
+    "tests",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["David Spencer <1526975+DecisionNerd@users.noreply.github.com>"]
+license = "MIT"
+repository = "https://github.com/DecisionNerd/waccy"
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tracing = "0.1"
+chrono = { version = "=0.4.41", features = ["serde"] }
+polars = { version = "0.53", features = ["lazy", "parquet", "sql", "serde"] }

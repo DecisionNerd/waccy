@@ -1,0 +1,9 @@
+[package]
+name = "waccy-tests"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dev-dependencies]
+waccy-core = { path = "../crates/waccy-core" }
+tokio = { version = "1", features = ["full"] }

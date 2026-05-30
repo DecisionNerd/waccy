@@ -1,0 +1,20 @@
+[package]
+name = "waccy-node"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+waccy-core = { path = "../waccy-core" }
+napi = { version = "3", features = ["async", "napi4", "serde-json"] }
+napi-derive = "3"
+tokio = { version = "1", features = ["rt-multi-thread"] }
+serde_json.workspace = true
+thiserror.workspace = true
+dirs-next = "2"
+
+[build-dependencies]
+napi-build = "2"

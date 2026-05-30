@@ -1,0 +1,47 @@
+{
+  "name": "@waccy/core",
+  "version": "0.1.0",
+  "description": "Intelligent financial modelling for small businesses — native Node.js addon",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DecisionNerd/waccy"
+  },
+  "license": "MIT",
+  "keywords": [
+    "finance",
+    "financial-modeling",
+    "quickbooks",
+    "edgar",
+    "napi"
+  ],
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "waccy.*.node"
+  ],
+  "napi": {
+    "name": "waccy",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "x86_64-apple-darwin",
+        "aarch64-apple-darwin"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "version": "napi version"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.0.0"
+  }
+}

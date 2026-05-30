@@ -1,0 +1,19 @@
+[package]
+name = "waccy-mcp"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "waccy-mcp"
+path = "src/main.rs"
+
+[dependencies]
+waccy-core = { path = "../waccy-core" }
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+dirs-next = "2"

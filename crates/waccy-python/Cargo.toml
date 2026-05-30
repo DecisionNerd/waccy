@@ -1,0 +1,17 @@
+[package]
+name = "waccy-python"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[lib]
+name = "waccy"
+crate-type = ["cdylib"]
+
+[dependencies]
+waccy-core = { path = "../waccy-core" }
+pyo3 = { version = "0.27", features = ["extension-module", "abi3-py311"] }
+pyo3-polars = { version = "0.26", default-features = false }
+polars.workspace = true
+serde_json = "1"
+dirs-next = "2"

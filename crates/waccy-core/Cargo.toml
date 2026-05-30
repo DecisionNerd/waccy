@@ -1,0 +1,27 @@
+[package]
+name = "waccy-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+# Query / analysis layer (includes Arrow + Parquet via Polars)
+polars.workspace = true
+polars-sql = "0.53"
+
+# Serialisation
+serde.workspace = true
+serde_json = "1"
+toml = "0.8"
+
+# Error handling
+thiserror.workspace = true
+
+# Logging
+tracing.workspace = true
+
+# Date / time
+chrono.workspace = true
+
+# Home directory
+dirs-next = "2"

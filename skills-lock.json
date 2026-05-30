@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "name": "waccy-install",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/waccy-install/SKILL.md"
+    },
+    {
+      "name": "waccy-status",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/waccy-status/SKILL.md"
+    },
+    {
+      "name": "extract",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/extract/SKILL.md"
+    },
+    {
+      "name": "model",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/model/SKILL.md"
+    },
+    {
+      "name": "query",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/query/SKILL.md"
+    },
+    {
+      "name": "income-statement",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/income-statement/SKILL.md"
+    },
+    {
+      "name": "balance-sheet",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/balance-sheet/SKILL.md"
+    },
+    {
+      "name": "cash-flow",
+      "source": "DecisionNerd/waccy",
+      "path": ".agents/skills/cash-flow/SKILL.md"
+    }
+  ]
+}
