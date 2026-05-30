@@ -1,4 +1,4 @@
-use crate::error::WaccyError;
+use crate::{error::WaccyError, models::FinancialStatement};
 use polars::polars_utils::pl_path::PlRefPath;
 use polars::prelude::*;
 use polars_sql::SQLContext;
@@ -78,6 +78,48 @@ pub fn dataframe_to_json_rows(
     }
 
     rows
+}
+
+/// Convert a `FinancialStatement` to a tidy long-format `DataFrame`.
+///
+/// Schema: `label | account_id | period_label | amount | is_subtotal | is_check | source_account_ids`
+///
+/// Each row is one (line, period) pair. This is the natural Polars shape for
+/// pivoting, plotting, and further analysis.
+pub fn statement_to_dataframe(stmt: &FinancialStatement) -> Result<DataFrame, WaccyError> {
+    let mut labels: Vec<Option<String>> = Vec::new();
+    let mut account_ids: Vec<Option<String>> = Vec::new();
+    let mut period_labels: Vec<String> = Vec::new();
+    let mut amounts: Vec<f64> = Vec::new();
+    let mut is_subtotal: Vec<bool> = Vec::new();
+    let mut is_check: Vec<bool> = Vec::new();
+    let mut source_ids: Vec<String> = Vec::new();
+
+    let periods: Vec<&str> = stmt.periods.iter().map(|p| p.label.as_str()).collect();
+
+    for line in &stmt.lines {
+        for &period in &periods {
+            labels.push(Some(line.label.clone()));
+            account_ids.push(line.account_id.clone());
+            period_labels.push(period.to_string());
+            amounts.push(*line.values.get(period).unwrap_or(&0.0));
+            is_subtotal.push(line.is_subtotal);
+            is_check.push(line.is_check);
+            source_ids.push(line.source_account_ids.join(","));
+        }
+    }
+
+    let df = DataFrame::new_infer_height(vec![
+        Column::new("label".into(), labels),
+        Column::new("account_id".into(), account_ids),
+        Column::new("period_label".into(), period_labels),
+        Column::new("amount".into(), amounts),
+        Column::new("is_subtotal".into(), is_subtotal),
+        Column::new("is_check".into(), is_check),
+        Column::new("source_account_ids".into(), source_ids),
+    ])?;
+
+    Ok(df)
 }
 
 fn anyvalue_to_json(v: AnyValue<'_>) -> serde_json::Value {
