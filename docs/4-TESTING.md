@@ -85,6 +85,44 @@ source extractor
 
 Tests should preserve that contract.
 
+## Cross-Language Conformance Fixtures
+
+Cross-language conformance fixtures live under:
+
+```text
+tests/conformance/
+```
+
+Each source case, starting with `qbo` and `edgar`, contains:
+
+- `source-fixture.json`: source-shaped input records
+- `expected-normalized.json`: expected `NormalizedFinancialDataset`
+- `expected-mapped.json`: expected `MappedFinancialDataset`
+- `expected-validated.json`: expected `ValidatedFinancialDataset`
+- `expected-model.json`: expected `ThreeStatementModel`
+- `expected-diagnostics.json`: machine-readable expected issue summary
+
+The Python/Pydantic implementation is the reference for the first polyglot
+version. Node and Rust tests should consume these committed JSON artifacts and
+compare their outputs against the same expected files rather than recreating
+separate language-specific expectations.
+
+Regenerate fixtures after an intentional contract or model-output change:
+
+```bash
+uv run python scripts/generate-conformance-fixtures.py
+```
+
+Check for accidental drift:
+
+```bash
+uv run python scripts/generate-conformance-fixtures.py --check
+```
+
+Conformance fixture changes should be reviewed carefully. A fixture update means
+the expected cross-language contract changed, not merely that a unit test needed
+new data.
+
 ## BDD Outcome Specs
 
 BDD specs live under:

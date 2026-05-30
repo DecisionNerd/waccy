@@ -1,0 +1,306 @@
+{
+  "cik": "0000000000",
+  "entity_name": "Fixture Co",
+  "periods": [
+    {
+      "end_date": "2023-12-31",
+      "label": "2023",
+      "start_date": "2023-01-01"
+    },
+    {
+      "end_date": "2024-12-31",
+      "label": "2024",
+      "start_date": "2024-01-01"
+    }
+  ],
+  "records": [
+    {
+      "amount": 1000,
+      "name": "us-gaap:Revenues",
+      "period": "2023",
+      "source_account_id": "us-gaap:Revenues",
+      "source_account_name": "us-gaap:Revenues",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 400,
+      "name": "us-gaap:CostOfRevenue",
+      "period": "2023",
+      "source_account_id": "us-gaap:CostOfRevenue",
+      "source_account_name": "us-gaap:CostOfRevenue",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 200,
+      "name": "us-gaap:SellingGeneralAndAdministrativeExpense",
+      "period": "2023",
+      "source_account_id": "us-gaap:SellingGeneralAndAdministrativeExpense",
+      "source_account_name": "us-gaap:SellingGeneralAndAdministrativeExpense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 50,
+      "name": "us-gaap:DepreciationDepletionAndAmortization",
+      "period": "2023",
+      "source_account_id": "us-gaap:DepreciationDepletionAndAmortization",
+      "source_account_name": "us-gaap:DepreciationDepletionAndAmortization",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 20,
+      "name": "us-gaap:InterestExpense",
+      "period": "2023",
+      "source_account_id": "us-gaap:InterestExpense",
+      "source_account_name": "us-gaap:InterestExpense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 66,
+      "name": "us-gaap:IncomeTaxExpenseBenefit",
+      "period": "2023",
+      "source_account_id": "us-gaap:IncomeTaxExpenseBenefit",
+      "source_account_name": "us-gaap:IncomeTaxExpenseBenefit",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 1200,
+      "name": "us-gaap:Revenues",
+      "period": "2024",
+      "source_account_id": "us-gaap:Revenues",
+      "source_account_name": "us-gaap:Revenues",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 480,
+      "name": "us-gaap:CostOfRevenue",
+      "period": "2024",
+      "source_account_id": "us-gaap:CostOfRevenue",
+      "source_account_name": "us-gaap:CostOfRevenue",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 240,
+      "name": "us-gaap:SellingGeneralAndAdministrativeExpense",
+      "period": "2024",
+      "source_account_id": "us-gaap:SellingGeneralAndAdministrativeExpense",
+      "source_account_name": "us-gaap:SellingGeneralAndAdministrativeExpense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 60,
+      "name": "us-gaap:DepreciationDepletionAndAmortization",
+      "period": "2024",
+      "source_account_id": "us-gaap:DepreciationDepletionAndAmortization",
+      "source_account_name": "us-gaap:DepreciationDepletionAndAmortization",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 25,
+      "name": "us-gaap:InterestExpense",
+      "period": "2024",
+      "source_account_id": "us-gaap:InterestExpense",
+      "source_account_name": "us-gaap:InterestExpense",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 79,
+      "name": "us-gaap:IncomeTaxExpenseBenefit",
+      "period": "2024",
+      "source_account_id": "us-gaap:IncomeTaxExpenseBenefit",
+      "source_account_name": "us-gaap:IncomeTaxExpenseBenefit",
+      "statement": "income_statement"
+    },
+    {
+      "amount": 100,
+      "name": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+      "period": "2023",
+      "source_account_id": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+      "source_account_name": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 150,
+      "name": "us-gaap:AccountsReceivableNetCurrent",
+      "period": "2023",
+      "source_account_id": "us-gaap:AccountsReceivableNetCurrent",
+      "source_account_name": "us-gaap:AccountsReceivableNetCurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 100,
+      "name": "us-gaap:InventoryNet",
+      "period": "2023",
+      "source_account_id": "us-gaap:InventoryNet",
+      "source_account_name": "us-gaap:InventoryNet",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 500,
+      "name": "us-gaap:PropertyPlantAndEquipmentNet",
+      "period": "2023",
+      "source_account_id": "us-gaap:PropertyPlantAndEquipmentNet",
+      "source_account_name": "us-gaap:PropertyPlantAndEquipmentNet",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 50,
+      "name": "us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+      "period": "2023",
+      "source_account_id": "us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+      "source_account_name": "us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 120,
+      "name": "us-gaap:AccountsPayableCurrent",
+      "period": "2023",
+      "source_account_id": "us-gaap:AccountsPayableCurrent",
+      "source_account_name": "us-gaap:AccountsPayableCurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 80,
+      "name": "us-gaap:AccruedLiabilitiesCurrent",
+      "period": "2023",
+      "source_account_id": "us-gaap:AccruedLiabilitiesCurrent",
+      "source_account_name": "us-gaap:AccruedLiabilitiesCurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 300,
+      "name": "us-gaap:LongTermDebtNoncurrent",
+      "period": "2023",
+      "source_account_id": "us-gaap:LongTermDebtNoncurrent",
+      "source_account_name": "us-gaap:LongTermDebtNoncurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 36,
+      "name": "us-gaap:StockholdersEquity",
+      "period": "2023",
+      "source_account_id": "us-gaap:StockholdersEquity",
+      "source_account_name": "us-gaap:StockholdersEquity",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 264,
+      "name": "us-gaap:RetainedEarningsAccumulatedDeficit",
+      "period": "2023",
+      "source_account_id": "us-gaap:RetainedEarningsAccumulatedDeficit",
+      "source_account_name": "us-gaap:RetainedEarningsAccumulatedDeficit",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 380,
+      "name": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+      "period": "2024",
+      "source_account_id": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+      "source_account_name": "us-gaap:CashAndCashEquivalentsAtCarryingValue",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 180,
+      "name": "us-gaap:AccountsReceivableNetCurrent",
+      "period": "2024",
+      "source_account_id": "us-gaap:AccountsReceivableNetCurrent",
+      "source_account_name": "us-gaap:AccountsReceivableNetCurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 120,
+      "name": "us-gaap:InventoryNet",
+      "period": "2024",
+      "source_account_id": "us-gaap:InventoryNet",
+      "source_account_name": "us-gaap:InventoryNet",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 600,
+      "name": "us-gaap:PropertyPlantAndEquipmentNet",
+      "period": "2024",
+      "source_account_id": "us-gaap:PropertyPlantAndEquipmentNet",
+      "source_account_name": "us-gaap:PropertyPlantAndEquipmentNet",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 110,
+      "name": "us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+      "period": "2024",
+      "source_account_id": "us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+      "source_account_name": "us-gaap:AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 140,
+      "name": "us-gaap:AccountsPayableCurrent",
+      "period": "2024",
+      "source_account_id": "us-gaap:AccountsPayableCurrent",
+      "source_account_name": "us-gaap:AccountsPayableCurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 90,
+      "name": "us-gaap:AccruedLiabilitiesCurrent",
+      "period": "2024",
+      "source_account_id": "us-gaap:AccruedLiabilitiesCurrent",
+      "source_account_name": "us-gaap:AccruedLiabilitiesCurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 354,
+      "name": "us-gaap:LongTermDebtNoncurrent",
+      "period": "2024",
+      "source_account_id": "us-gaap:LongTermDebtNoncurrent",
+      "source_account_name": "us-gaap:LongTermDebtNoncurrent",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 270,
+      "name": "us-gaap:StockholdersEquity",
+      "period": "2024",
+      "source_account_id": "us-gaap:StockholdersEquity",
+      "source_account_name": "us-gaap:StockholdersEquity",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 316,
+      "name": "us-gaap:RetainedEarningsAccumulatedDeficit",
+      "period": "2024",
+      "source_account_id": "us-gaap:RetainedEarningsAccumulatedDeficit",
+      "source_account_name": "us-gaap:RetainedEarningsAccumulatedDeficit",
+      "statement": "balance_sheet"
+    },
+    {
+      "amount": 60,
+      "name": "Depreciation And Amortization",
+      "period": "2024",
+      "source_account_id": "Depreciation And Amortization",
+      "source_account_name": "Depreciation And Amortization",
+      "statement": "cash_flow_statement"
+    },
+    {
+      "amount": -50,
+      "name": "Changes In Operating Assets And Liabilities",
+      "period": "2024",
+      "source_account_id": "Changes In Operating Assets And Liabilities",
+      "source_account_name": "Changes In Operating Assets And Liabilities",
+      "statement": "cash_flow_statement"
+    },
+    {
+      "amount": -100,
+      "name": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+      "period": "2024",
+      "source_account_id": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+      "source_account_name": "us-gaap:PaymentsToAcquirePropertyPlantAndEquipment",
+      "statement": "cash_flow_statement"
+    },
+    {
+      "amount": 54,
+      "name": "us-gaap:ProceedsFromIssuanceOfLongTermDebt",
+      "period": "2024",
+      "source_account_id": "us-gaap:ProceedsFromIssuanceOfLongTermDebt",
+      "source_account_name": "us-gaap:ProceedsFromIssuanceOfLongTermDebt",
+      "statement": "cash_flow_statement"
+    }
+  ]
+}

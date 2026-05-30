@@ -1,0 +1,491 @@
+{
+  "balance_sheet": {
+    "lines": [
+      {
+        "account_id": "cash",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Cash",
+        "metadata": {},
+        "source_account_ids": [
+          "Checking"
+        ],
+        "values": {
+          "2023": "100",
+          "2024": "380"
+        }
+      },
+      {
+        "account_id": "accounts_receivable",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Accounts Receivable",
+        "metadata": {},
+        "source_account_ids": [
+          "Accounts Receivable"
+        ],
+        "values": {
+          "2023": "150",
+          "2024": "180"
+        }
+      },
+      {
+        "account_id": "inventory",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Inventory",
+        "metadata": {},
+        "source_account_ids": [
+          "Inventory"
+        ],
+        "values": {
+          "2023": "100",
+          "2024": "120"
+        }
+      },
+      {
+        "account_id": "ppe",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Property, Plant & Equipment",
+        "metadata": {},
+        "source_account_ids": [
+          "Fixed Assets"
+        ],
+        "values": {
+          "2023": "500",
+          "2024": "600"
+        }
+      },
+      {
+        "account_id": "accumulated_depreciation",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Accumulated Depreciation",
+        "metadata": {},
+        "source_account_ids": [
+          "Accumulated Depreciation"
+        ],
+        "values": {
+          "2023": "50",
+          "2024": "110"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Total Assets",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "800",
+          "2024": "1170"
+        }
+      },
+      {
+        "account_id": "accounts_payable",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Accounts Payable",
+        "metadata": {},
+        "source_account_ids": [
+          "Accounts Payable"
+        ],
+        "values": {
+          "2023": "120",
+          "2024": "140"
+        }
+      },
+      {
+        "account_id": "accrued_expenses",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Accrued Expenses",
+        "metadata": {},
+        "source_account_ids": [
+          "Accrued Expenses"
+        ],
+        "values": {
+          "2023": "80",
+          "2024": "90"
+        }
+      },
+      {
+        "account_id": "debt",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Debt",
+        "metadata": {},
+        "source_account_ids": [
+          "Notes Payable"
+        ],
+        "values": {
+          "2023": "300",
+          "2024": "354"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Total Liabilities",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "500",
+          "2024": "584"
+        }
+      },
+      {
+        "account_id": "equity",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Equity",
+        "metadata": {},
+        "source_account_ids": [
+          "Owners Equity"
+        ],
+        "values": {
+          "2023": "36",
+          "2024": "270"
+        }
+      },
+      {
+        "account_id": "retained_earnings",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Retained Earnings",
+        "metadata": {},
+        "source_account_ids": [
+          "Retained Earnings"
+        ],
+        "values": {
+          "2023": "264",
+          "2024": "316"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Total Equity",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "300",
+          "2024": "586"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": true,
+        "is_subtotal": true,
+        "label": "Balance Check",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "0",
+          "2024": "0"
+        }
+      }
+    ],
+    "name": "Balance Sheet",
+    "periods": [
+      {
+        "end_date": "2023-12-31",
+        "label": "2023",
+        "period_type": "year",
+        "start_date": "2023-01-01"
+      },
+      {
+        "end_date": "2024-12-31",
+        "label": "2024",
+        "period_type": "year",
+        "start_date": "2024-01-01"
+      }
+    ]
+  },
+  "cash_flow_statement": {
+    "lines": [
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Net Income",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "264",
+          "2024": "316"
+        }
+      },
+      {
+        "account_id": "depreciation_addback",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Depreciation Add-back",
+        "metadata": {},
+        "source_account_ids": [
+          "Depreciation Addback"
+        ],
+        "values": {
+          "2023": "0",
+          "2024": "60"
+        }
+      },
+      {
+        "account_id": "working_capital_movement",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Working Capital Movement",
+        "metadata": {},
+        "source_account_ids": [
+          "Change in Working Capital"
+        ],
+        "values": {
+          "2023": "0",
+          "2024": "-50"
+        }
+      },
+      {
+        "account_id": "capex",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Capital Expenditures",
+        "metadata": {},
+        "source_account_ids": [
+          "Capital Expenditures"
+        ],
+        "values": {
+          "2023": "0",
+          "2024": "-100"
+        }
+      },
+      {
+        "account_id": "financing_movement",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Financing Movement",
+        "metadata": {},
+        "source_account_ids": [
+          "Debt Proceeds"
+        ],
+        "values": {
+          "2023": "0",
+          "2024": "54"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Net Change In Cash",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "264",
+          "2024": "280"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": true,
+        "is_subtotal": true,
+        "label": "Cash Flow Tie-Out",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "-264",
+          "2024": "0"
+        }
+      }
+    ],
+    "name": "Cash Flow Statement",
+    "periods": [
+      {
+        "end_date": "2023-12-31",
+        "label": "2023",
+        "period_type": "year",
+        "start_date": "2023-01-01"
+      },
+      {
+        "end_date": "2024-12-31",
+        "label": "2024",
+        "period_type": "year",
+        "start_date": "2024-01-01"
+      }
+    ]
+  },
+  "entity_name": "Fixture Co",
+  "income_statement": {
+    "lines": [
+      {
+        "account_id": "revenue",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Revenue",
+        "metadata": {},
+        "source_account_ids": [
+          "Sales"
+        ],
+        "values": {
+          "2023": "1000",
+          "2024": "1200"
+        }
+      },
+      {
+        "account_id": "cogs",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Cost of Goods Sold",
+        "metadata": {},
+        "source_account_ids": [
+          "Cost of Goods Sold"
+        ],
+        "values": {
+          "2023": "400",
+          "2024": "480"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Gross Profit",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "600",
+          "2024": "720"
+        }
+      },
+      {
+        "account_id": "operating_expenses",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Operating Expenses",
+        "metadata": {},
+        "source_account_ids": [
+          "Operating Expenses"
+        ],
+        "values": {
+          "2023": "200",
+          "2024": "240"
+        }
+      },
+      {
+        "account_id": "depreciation_amortization",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Depreciation & Amortization",
+        "metadata": {},
+        "source_account_ids": [
+          "Depreciation"
+        ],
+        "values": {
+          "2023": "50",
+          "2024": "60"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Operating Income",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "350",
+          "2024": "420"
+        }
+      },
+      {
+        "account_id": "interest_expense",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Interest Expense",
+        "metadata": {},
+        "source_account_ids": [
+          "Interest Expense"
+        ],
+        "values": {
+          "2023": "20",
+          "2024": "25"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Pre-Tax Income",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "330",
+          "2024": "395"
+        }
+      },
+      {
+        "account_id": "tax_expense",
+        "is_check": false,
+        "is_subtotal": false,
+        "label": "Tax Expense",
+        "metadata": {},
+        "source_account_ids": [
+          "Income Tax Expense"
+        ],
+        "values": {
+          "2023": "66",
+          "2024": "79"
+        }
+      },
+      {
+        "account_id": null,
+        "is_check": false,
+        "is_subtotal": true,
+        "label": "Net Income",
+        "metadata": {},
+        "source_account_ids": [],
+        "values": {
+          "2023": "264",
+          "2024": "316"
+        }
+      }
+    ],
+    "name": "Income Statement",
+    "periods": [
+      {
+        "end_date": "2023-12-31",
+        "label": "2023",
+        "period_type": "year",
+        "start_date": "2023-01-01"
+      },
+      {
+        "end_date": "2024-12-31",
+        "label": "2024",
+        "period_type": "year",
+        "start_date": "2024-01-01"
+      }
+    ]
+  },
+  "metadata": {
+    "source": "qbo"
+  },
+  "periods": [
+    {
+      "end_date": "2023-12-31",
+      "label": "2023",
+      "period_type": "year",
+      "start_date": "2023-01-01"
+    },
+    {
+      "end_date": "2024-12-31",
+      "label": "2024",
+      "period_type": "year",
+      "start_date": "2024-01-01"
+    }
+  ],
+  "schema_version": "1.0.0",
+  "validation_issues": []
+}

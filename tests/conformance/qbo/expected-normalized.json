@@ -1,0 +1,815 @@
+{
+  "entity_name": "Fixture Co",
+  "metadata": {
+    "source": "qbo"
+  },
+  "periods": [
+    {
+      "end_date": "2023-12-31",
+      "label": "2023",
+      "period_type": "year",
+      "start_date": "2023-01-01"
+    },
+    {
+      "end_date": "2024-12-31",
+      "label": "2024",
+      "period_type": "year",
+      "start_date": "2024-01-01"
+    }
+  ],
+  "records": [
+    {
+      "amount": "1000",
+      "metadata": {
+        "name": "Sales",
+        "period": "2023",
+        "source_account_id": "Sales",
+        "source_account_name": "Sales",
+        "statement": "income_statement"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Sales",
+        "source_label": "Sales",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Sales",
+      "source_account_name": "Sales",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "400",
+      "metadata": {
+        "name": "Cost of Goods Sold",
+        "period": "2023",
+        "source_account_id": "Cost of Goods Sold",
+        "source_account_name": "Cost of Goods Sold",
+        "statement": "income_statement"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Cost of Goods Sold",
+        "source_label": "Cost of Goods Sold",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Cost of Goods Sold",
+      "source_account_name": "Cost of Goods Sold",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "200",
+      "metadata": {
+        "name": "Operating Expenses",
+        "period": "2023",
+        "source_account_id": "Operating Expenses",
+        "source_account_name": "Operating Expenses",
+        "statement": "income_statement"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Operating Expenses",
+        "source_label": "Operating Expenses",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Operating Expenses",
+      "source_account_name": "Operating Expenses",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "50",
+      "metadata": {
+        "name": "Depreciation",
+        "period": "2023",
+        "source_account_id": "Depreciation",
+        "source_account_name": "Depreciation",
+        "statement": "income_statement"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Depreciation",
+        "source_label": "Depreciation",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Depreciation",
+      "source_account_name": "Depreciation",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "20",
+      "metadata": {
+        "name": "Interest Expense",
+        "period": "2023",
+        "source_account_id": "Interest Expense",
+        "source_account_name": "Interest Expense",
+        "statement": "income_statement"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Interest Expense",
+        "source_label": "Interest Expense",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Interest Expense",
+      "source_account_name": "Interest Expense",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "66",
+      "metadata": {
+        "name": "Income Tax Expense",
+        "period": "2023",
+        "source_account_id": "Income Tax Expense",
+        "source_account_name": "Income Tax Expense",
+        "statement": "income_statement"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Income Tax Expense",
+        "source_label": "Income Tax Expense",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Income Tax Expense",
+      "source_account_name": "Income Tax Expense",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "1200",
+      "metadata": {
+        "name": "Sales",
+        "period": "2024",
+        "source_account_id": "Sales",
+        "source_account_name": "Sales",
+        "statement": "income_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Sales",
+        "source_label": "Sales",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Sales",
+      "source_account_name": "Sales",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "480",
+      "metadata": {
+        "name": "Cost of Goods Sold",
+        "period": "2024",
+        "source_account_id": "Cost of Goods Sold",
+        "source_account_name": "Cost of Goods Sold",
+        "statement": "income_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Cost of Goods Sold",
+        "source_label": "Cost of Goods Sold",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Cost of Goods Sold",
+      "source_account_name": "Cost of Goods Sold",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "240",
+      "metadata": {
+        "name": "Operating Expenses",
+        "period": "2024",
+        "source_account_id": "Operating Expenses",
+        "source_account_name": "Operating Expenses",
+        "statement": "income_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Operating Expenses",
+        "source_label": "Operating Expenses",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Operating Expenses",
+      "source_account_name": "Operating Expenses",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "60",
+      "metadata": {
+        "name": "Depreciation",
+        "period": "2024",
+        "source_account_id": "Depreciation",
+        "source_account_name": "Depreciation",
+        "statement": "income_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Depreciation",
+        "source_label": "Depreciation",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Depreciation",
+      "source_account_name": "Depreciation",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "25",
+      "metadata": {
+        "name": "Interest Expense",
+        "period": "2024",
+        "source_account_id": "Interest Expense",
+        "source_account_name": "Interest Expense",
+        "statement": "income_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Interest Expense",
+        "source_label": "Interest Expense",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Interest Expense",
+      "source_account_name": "Interest Expense",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "79",
+      "metadata": {
+        "name": "Income Tax Expense",
+        "period": "2024",
+        "source_account_id": "Income Tax Expense",
+        "source_account_name": "Income Tax Expense",
+        "statement": "income_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Income Tax Expense",
+        "source_label": "Income Tax Expense",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Income Tax Expense",
+      "source_account_name": "Income Tax Expense",
+      "source_account_type": null,
+      "statement": "income_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "100",
+      "metadata": {
+        "name": "Checking",
+        "period": "2023",
+        "source_account_id": "Checking",
+        "source_account_name": "Checking",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Checking",
+        "source_label": "Checking",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Checking",
+      "source_account_name": "Checking",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "150",
+      "metadata": {
+        "name": "Accounts Receivable",
+        "period": "2023",
+        "source_account_id": "Accounts Receivable",
+        "source_account_name": "Accounts Receivable",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Accounts Receivable",
+        "source_label": "Accounts Receivable",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accounts Receivable",
+      "source_account_name": "Accounts Receivable",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "100",
+      "metadata": {
+        "name": "Inventory",
+        "period": "2023",
+        "source_account_id": "Inventory",
+        "source_account_name": "Inventory",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Inventory",
+        "source_label": "Inventory",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Inventory",
+      "source_account_name": "Inventory",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "500",
+      "metadata": {
+        "name": "Fixed Assets",
+        "period": "2023",
+        "source_account_id": "Fixed Assets",
+        "source_account_name": "Fixed Assets",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Fixed Assets",
+        "source_label": "Fixed Assets",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Fixed Assets",
+      "source_account_name": "Fixed Assets",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "50",
+      "metadata": {
+        "name": "Accumulated Depreciation",
+        "period": "2023",
+        "source_account_id": "Accumulated Depreciation",
+        "source_account_name": "Accumulated Depreciation",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Accumulated Depreciation",
+        "source_label": "Accumulated Depreciation",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accumulated Depreciation",
+      "source_account_name": "Accumulated Depreciation",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "120",
+      "metadata": {
+        "name": "Accounts Payable",
+        "period": "2023",
+        "source_account_id": "Accounts Payable",
+        "source_account_name": "Accounts Payable",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Accounts Payable",
+        "source_label": "Accounts Payable",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accounts Payable",
+      "source_account_name": "Accounts Payable",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "80",
+      "metadata": {
+        "name": "Accrued Expenses",
+        "period": "2023",
+        "source_account_id": "Accrued Expenses",
+        "source_account_name": "Accrued Expenses",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Accrued Expenses",
+        "source_label": "Accrued Expenses",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accrued Expenses",
+      "source_account_name": "Accrued Expenses",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "300",
+      "metadata": {
+        "name": "Notes Payable",
+        "period": "2023",
+        "source_account_id": "Notes Payable",
+        "source_account_name": "Notes Payable",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Notes Payable",
+        "source_label": "Notes Payable",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Notes Payable",
+      "source_account_name": "Notes Payable",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "36",
+      "metadata": {
+        "name": "Owners Equity",
+        "period": "2023",
+        "source_account_id": "Owners Equity",
+        "source_account_name": "Owners Equity",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Owners Equity",
+        "source_label": "Owners Equity",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Owners Equity",
+      "source_account_name": "Owners Equity",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "264",
+      "metadata": {
+        "name": "Retained Earnings",
+        "period": "2023",
+        "source_account_id": "Retained Earnings",
+        "source_account_name": "Retained Earnings",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2023",
+      "source": {
+        "metadata": {},
+        "source_id": "Retained Earnings",
+        "source_label": "Retained Earnings",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Retained Earnings",
+      "source_account_name": "Retained Earnings",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "380",
+      "metadata": {
+        "name": "Checking",
+        "period": "2024",
+        "source_account_id": "Checking",
+        "source_account_name": "Checking",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Checking",
+        "source_label": "Checking",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Checking",
+      "source_account_name": "Checking",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "180",
+      "metadata": {
+        "name": "Accounts Receivable",
+        "period": "2024",
+        "source_account_id": "Accounts Receivable",
+        "source_account_name": "Accounts Receivable",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Accounts Receivable",
+        "source_label": "Accounts Receivable",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accounts Receivable",
+      "source_account_name": "Accounts Receivable",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "120",
+      "metadata": {
+        "name": "Inventory",
+        "period": "2024",
+        "source_account_id": "Inventory",
+        "source_account_name": "Inventory",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Inventory",
+        "source_label": "Inventory",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Inventory",
+      "source_account_name": "Inventory",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "600",
+      "metadata": {
+        "name": "Fixed Assets",
+        "period": "2024",
+        "source_account_id": "Fixed Assets",
+        "source_account_name": "Fixed Assets",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Fixed Assets",
+        "source_label": "Fixed Assets",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Fixed Assets",
+      "source_account_name": "Fixed Assets",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "110",
+      "metadata": {
+        "name": "Accumulated Depreciation",
+        "period": "2024",
+        "source_account_id": "Accumulated Depreciation",
+        "source_account_name": "Accumulated Depreciation",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Accumulated Depreciation",
+        "source_label": "Accumulated Depreciation",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accumulated Depreciation",
+      "source_account_name": "Accumulated Depreciation",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "140",
+      "metadata": {
+        "name": "Accounts Payable",
+        "period": "2024",
+        "source_account_id": "Accounts Payable",
+        "source_account_name": "Accounts Payable",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Accounts Payable",
+        "source_label": "Accounts Payable",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accounts Payable",
+      "source_account_name": "Accounts Payable",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "90",
+      "metadata": {
+        "name": "Accrued Expenses",
+        "period": "2024",
+        "source_account_id": "Accrued Expenses",
+        "source_account_name": "Accrued Expenses",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Accrued Expenses",
+        "source_label": "Accrued Expenses",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Accrued Expenses",
+      "source_account_name": "Accrued Expenses",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "354",
+      "metadata": {
+        "name": "Notes Payable",
+        "period": "2024",
+        "source_account_id": "Notes Payable",
+        "source_account_name": "Notes Payable",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Notes Payable",
+        "source_label": "Notes Payable",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Notes Payable",
+      "source_account_name": "Notes Payable",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "270",
+      "metadata": {
+        "name": "Owners Equity",
+        "period": "2024",
+        "source_account_id": "Owners Equity",
+        "source_account_name": "Owners Equity",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Owners Equity",
+        "source_label": "Owners Equity",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Owners Equity",
+      "source_account_name": "Owners Equity",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "316",
+      "metadata": {
+        "name": "Retained Earnings",
+        "period": "2024",
+        "source_account_id": "Retained Earnings",
+        "source_account_name": "Retained Earnings",
+        "statement": "balance_sheet"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Retained Earnings",
+        "source_label": "Retained Earnings",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Retained Earnings",
+      "source_account_name": "Retained Earnings",
+      "source_account_type": null,
+      "statement": "balance_sheet",
+      "unit": "USD"
+    },
+    {
+      "amount": "60",
+      "metadata": {
+        "name": "Depreciation Addback",
+        "period": "2024",
+        "source_account_id": "Depreciation Addback",
+        "source_account_name": "Depreciation Addback",
+        "statement": "cash_flow_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Depreciation Addback",
+        "source_label": "Depreciation Addback",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Depreciation Addback",
+      "source_account_name": "Depreciation Addback",
+      "source_account_type": null,
+      "statement": "cash_flow_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "-50",
+      "metadata": {
+        "name": "Change in Working Capital",
+        "period": "2024",
+        "source_account_id": "Change in Working Capital",
+        "source_account_name": "Change in Working Capital",
+        "statement": "cash_flow_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Change in Working Capital",
+        "source_label": "Change in Working Capital",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Change in Working Capital",
+      "source_account_name": "Change in Working Capital",
+      "source_account_type": null,
+      "statement": "cash_flow_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "-100",
+      "metadata": {
+        "name": "Capital Expenditures",
+        "period": "2024",
+        "source_account_id": "Capital Expenditures",
+        "source_account_name": "Capital Expenditures",
+        "statement": "cash_flow_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Capital Expenditures",
+        "source_label": "Capital Expenditures",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Capital Expenditures",
+      "source_account_name": "Capital Expenditures",
+      "source_account_type": null,
+      "statement": "cash_flow_statement",
+      "unit": "USD"
+    },
+    {
+      "amount": "54",
+      "metadata": {
+        "name": "Debt Proceeds",
+        "period": "2024",
+        "source_account_id": "Debt Proceeds",
+        "source_account_name": "Debt Proceeds",
+        "statement": "cash_flow_statement"
+      },
+      "period_label": "2024",
+      "source": {
+        "metadata": {},
+        "source_id": "Debt Proceeds",
+        "source_label": "Debt Proceeds",
+        "source_system": "qbo"
+      },
+      "source_account_id": "Debt Proceeds",
+      "source_account_name": "Debt Proceeds",
+      "source_account_type": null,
+      "statement": "cash_flow_statement",
+      "unit": "USD"
+    }
+  ],
+  "schema_version": "1.0.0"
+}
